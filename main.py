@@ -1,27 +1,14 @@
-from flask import Flask
+from flask import Flask,render_template
+from pymongo import MongoClient
 
-app = Flask(__name__)
-
-
-def wrap_html(message: str) -> str:
-    return """
-        <html>
-            <body>
-                <div style='font-size:120px;'>
-                    <center>
-                        <br>
-                        {0}
-                        <br>
-                    </center>
-                </div>
-            </body>
-        </html>""".format(message)
+app = Flask(__name__, template_folder='Sweep-Backend')
 
 
 @app.route('/')
-def hello_world() -> str:
-    return wrap_html("Welcome to Sweep!")
+def hello_world():
+    return render_template("index.html")
 
 
 if __name__ == '__main__':
+    app.debug = True
     app.run()
