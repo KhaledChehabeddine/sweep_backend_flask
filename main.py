@@ -11,7 +11,7 @@ from flask_marshmallow import Marshmallow
 app = Flask(__name__, template_folder='templates')
 
 client = pymongo.MongoClient("mongodb+srv://admin:<c32C219F332>@cluster0.zahtuza.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
-mongo = PyMongo(app)
+mongo = client.Sweep
 
 # Initialize the Marshmallow serializer
 ma = Marshmallow(app)
@@ -92,7 +92,7 @@ def add_promotion_restaurant():
     rating = request.json['rating']
     promotion_category_id = request.json['promotion_category_id']
     promotion_restaurant = {'image_url': image_url, 'title': title, 'subtitle': subtitle, 'rating': rating,'promotion_category_id': promotion_category_id}
-        # create an instance of the PromotionRestaurant model using the provided data
+    # create an instance of the PromotionRestaurant model using the provided data
     new_promotion_restaurant = PromotionRestaurant(**promotion_restaurant)
     # save the new promotion restaurant to the database
     new_promotion_restaurant.save()
