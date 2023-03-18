@@ -6,7 +6,10 @@ application = create_app()
 
 
 def handler(event, context):
-    response = application.full_dispatch_request(request.json)
+    method = event['requestContext']['http']['method']
+    path = event['requestContext']['http']['path']
+    with application.test_request_context(path=path, method=method):
+        response = application.full_dispatch_request(request.json)
     return {
         'statusCode': response.status_code,
         'headers': dict(response.headers),
