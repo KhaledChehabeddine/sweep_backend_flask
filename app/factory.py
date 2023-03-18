@@ -17,15 +17,15 @@ class MongoJsonEncoder(JSONEncoder):
 
 
 def create_app():
-    app = Flask(__name__)
+    application = Flask(__name__)
 
-    CORS(app)
-    app.json_encoder = MongoJsonEncoder
-    app.register_blueprint(sweep_api_v1)
+    CORS(application)
+    application.json_encoder = MongoJsonEncoder
+    application.register_blueprint(sweep_api_v1)
 
-    @app.route(rule='/', defaults={'path': ''})
-    @app.route('/<path:path>')
+    @application.route(rule='/', defaults={'path': ''})
+    @application.route('/<path:path>')
     def home(path):
         return "Hello World!"
 
-    return app
+    return application
