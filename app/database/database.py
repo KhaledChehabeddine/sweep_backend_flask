@@ -1,15 +1,14 @@
-from flask import g, current_app
+from flask import current_app
 from flask_pymongo import PyMongo
 from werkzeug.local import LocalProxy
 
+database = None
+
 
 def get_database():
-    """
-    Initialize the MongoDB Client globally, reducing the number of connections to improve performance.
-    """
-    database = getattr(g, '_database', None)
+    global database
     if database is None:
-        database = g._database = PyMongo(current_app).db
+        database = PyMongo(current_app).db
     return database
 
 
