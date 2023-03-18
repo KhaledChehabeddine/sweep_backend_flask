@@ -39,3 +39,14 @@ jobs:
           aws lambda update-function-code \
             --function-name application_entry_point \
             --zip-file fileb://function.zip
+
+      - name: Configure AWS Lambda
+        run: |
+          aws lambda update-function-configuration \
+            --function-name application_entry_point \
+            --handler app.handler.handler \
+            --runtime python3.9 \
+            --timeout 30 \
+            --memory-size 128 \
+            --environment Variables="{DB_URI=${{ secrets.DB_URI }}}"
+          
