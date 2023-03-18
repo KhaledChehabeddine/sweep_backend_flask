@@ -1,7 +1,7 @@
-from app.database.database import mongodb_client
+from app.database.database import get_mongodb_client
 
 
-class User(mongodb_client.Document):
+class User(get_mongodb_client().Document):
     def __init__(self, address: str, country: str, country_code: str, email: str, number: str, password: str):
         self.address = address
         self.country = country
