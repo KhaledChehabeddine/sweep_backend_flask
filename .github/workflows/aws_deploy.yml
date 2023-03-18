@@ -8,7 +8,7 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: us-east-1
+  AWS_DEFAULT_REGION: eu-north-1
 
 jobs:
   deploy:
@@ -27,6 +27,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install awscli
+
+      - name: Install dependencies
+        run: pip install --target=./ -r requirements.txt
 
       - name: Zip repository
         run: zip -r function.zip .
