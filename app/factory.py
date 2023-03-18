@@ -23,9 +23,9 @@ def create_app():
     application.json_encoder = MongoJsonEncoder
     application.register_blueprint(sweep_api_v1)
 
-    @application.route(rule='/', defaults={'path': ''})
+    @application.route('/', defaults={'path': ''})
     @application.route('/<path:path>')
     def home(path):
-        return "Hello World!"
+        return 'Path = ' + path
 
     return application
