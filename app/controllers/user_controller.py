@@ -3,7 +3,8 @@ from flask_cors import CORS
 from pymongo.errors import OperationFailure
 from app.database.database import mongodb_client
 from app.models.user import User
-from app.routes.blueprints import sweep_api_v1, user_api_v1
+
+user_api_v1 = Blueprint('user_api_v1', __name__, url_prefix='/user')
 
 
 @user_api_v1.route('/create', methods=['POST'])
