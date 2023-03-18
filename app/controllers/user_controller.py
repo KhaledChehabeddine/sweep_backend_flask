@@ -6,16 +6,24 @@ from app.models.user import User
 from app.routes.blueprints import sweep_api_v1, user_api_v1
 
 
-@user_api_v1.route(rule='/create', methods=['POST'])
-def create_user(user: User) -> (Response, int):
+@user_api_v1.route('/create', methods=['POST'])
+def create_user() -> (Response, int):
     try:
+        user = User(
+            request.form.get('address'),
+            request.form.get('country'),
+            request.form.get('country_code'),
+            request.form.get('email'),
+            request.form.get('number'),
+            request.form.get('password')
+        )
         result = mongodb_client.users.insert_one(user.convert_to_document())
     except OperationFailure:
         return jsonify({'message': 'Could not add user to the database.'}), 500
     return jsonify(result), 200
 
 
-@user_api_v1.route(rule='/read/<email>', methods=['GET'])
+@user_api_v1.route('/read/<email>', methods=['GET'])
 def read_user_by_email(email: str) -> (Response, int):
     user = mongodb_client.users.find_one({
         'email': email
@@ -23,7 +31,7 @@ def read_user_by_email(email: str) -> (Response, int):
     return jsonify(user), 200 if user else jsonify({'message': 'User not found using email.'}), 404
 
 
-@user_api_v1.route(rule='/update/<email>', methods=['PUT'])
+@user_api_v1.route('/update/<email>', methods=['PUT'])
 def update_user(user: User) -> (Response, int):
     result = mongodb_client.users.update_one(
         {'email': user.get_email()},
@@ -33,7 +41,7 @@ def update_user(user: User) -> (Response, int):
         else jsonify({'message': 'User not found using email.'}), 404
 
 
-@user_api_v1.route(rule='/delete/<email>', methods=['DELETE'])
+@user_api_v1.route('/delete/<email>', methods=['DELETE'])
 def delete_user(email: str):
     result = mongodb_client.users.delete_one({'email': email})
     return jsonify({'message': 'User successfully deleted.'}), 200 if result.deleted_count == 1 \
