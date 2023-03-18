@@ -17,11 +17,7 @@ class MongoJsonEncoder(JSONEncoder):
 
 
 def create_app():
-    app_dir = os.path.abspath(os.path.dirname(__file__))
-    static_folder = os.path.join(app_dir, 'build/static')
-    template_folder = os.path.join(app_dir, 'build')
-
-    app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
+    app = Flask(__name__)
 
     CORS(app)
     app.json_encoder = MongoJsonEncoder
@@ -31,10 +27,5 @@ def create_app():
     @app.route('/<path:path>')
     def home(path):
         return "Hello World!"
-
-    # @app.route(rule='/', defaults={'path': ''})
-    # @app.route('/<path:path>')
-    # def serve(path):
-    #     return render_template(template_name_or_list='index.html')
 
     return app
