@@ -18,5 +18,5 @@ def get_database():
 def get_mongodb_client():
     global mongodb_client
     if mongodb_client is None:
-        mongodb_client = LocalProxy(get_database())
+        mongodb_client = get_database()
     return mongodb_client
