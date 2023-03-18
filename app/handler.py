@@ -1,5 +1,6 @@
 import json
 from app.factory import create_app
+from flask import request
 
 application = create_app()
 
