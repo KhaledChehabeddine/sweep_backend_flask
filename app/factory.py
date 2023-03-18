@@ -1,9 +1,9 @@
+from app.database.database import initialize_database
 from bson import json_util, ObjectId
 from datetime import datetime
 from flask import Flask
 from flask.json import JSONEncoder
 from flask_cors import CORS
-from app.routes.blueprints import sweep_api_v1
 import os
 
 
@@ -21,6 +21,10 @@ def create_app():
 
     CORS(application)
     application.json_encoder = MongoJsonEncoder
+
+    initialize_database(application)
+
+    from app.controllers.sweep_controller import sweep_api_v1
     application.register_blueprint(sweep_api_v1)
 
     @application.route('/', defaults={'path': ''})
