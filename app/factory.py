@@ -21,6 +21,7 @@ def create_app():
 
     CORS(application)
     application.json_encoder = MongoJsonEncoder
+    application.config['MONGO_URI'] = os.environ.get('DB_URI')
 
     initialize_database(application)
 
