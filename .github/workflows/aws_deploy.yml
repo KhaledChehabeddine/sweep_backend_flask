@@ -30,7 +30,9 @@ jobs:
           pip install awscli
 
       - name: Install dependencies
-        run: pip install --target=./ -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install --target=./ -r requirements.txt
 
       - name: Zip repository
         run: zip -r function.zip .
