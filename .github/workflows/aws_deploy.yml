@@ -6,6 +6,7 @@ on:
       - main
 
 env:
+  ATLAS_MONGODB_PASSWORD: ${{ secrets.ATLAS_MONGODB_PASSWORD }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: eu-north-1
@@ -22,6 +23,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.11'
+
+      - name: Pass Var to File
 
       - name: Install AWS CLI
         run: |
@@ -44,9 +47,9 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name application_entry_point \
+            --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
             --handler app.handler.handler \
             --runtime python3.9 \
             --timeout 30 \
             --memory-size 128 \
-            --environment Variables="{DB_URI=${{ secrets.DB_URI }}}"
           
