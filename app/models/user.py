@@ -1,11 +1,20 @@
 class User:
-    def __init__(self, address: str, country: str, country_code: str, email: str, number: str, password: str):
-        self.address = address
-        self.country = country
-        self.country_code = country_code
-        self.email = email
-        self.number = number
-        self.password = password
+    def __init__(self, address: str = None, country: str = None, country_code: str = None, email: str = None,
+                 number: str = None, password: str = None, user_document: dict = None):
+        if user_document is None:
+            self.address = address
+            self.country = country
+            self.country_code = country_code
+            self.email = email
+            self.number = number
+            self.password = password
+        else:
+            self.address = user_document['address']
+            self.country = user_document['country']
+            self.country_code = user_document['country_code']
+            self.email = user_document['email']
+            self.number = user_document['number']
+            self.password = user_document['password']
 
     def get_address(self):
         return self.address
