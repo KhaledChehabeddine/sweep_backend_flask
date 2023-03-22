@@ -45,9 +45,8 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name application_entry_point \
-            --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
             --handler app.handler.handler \
             --runtime python3.9 \
             --timeout 30 \
             --memory-size 128 \
-          
+            --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
