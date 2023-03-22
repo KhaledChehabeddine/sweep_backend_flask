@@ -1,7 +1,4 @@
-from app.database.database import get_mongodb_client
-
-
-class User(get_mongodb_client().Document):
+class User:
     def __init__(self, address: str, country: str, country_code: str, email: str, number: str, password: str):
         self.address = address
         self.country = country
@@ -9,16 +6,6 @@ class User(get_mongodb_client().Document):
         self.email = email
         self.number = number
         self.password = password
-
-    def convert_to_document(self):
-        return {
-            'address': self.get_address(),
-            'country': self.get_country(),
-            'country_code': self.get_country_code(),
-            'email': self.get_email(),
-            'number': self.get_number(),
-            'password': self.get_password()
-        }
 
     def get_address(self):
         return self.address

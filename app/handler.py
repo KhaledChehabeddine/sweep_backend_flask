@@ -1,8 +1,6 @@
-import json
-from app.factory import create_app
-from flask import request
+from app.factory import create_application
 
-application = create_app()
+application = create_application()
 
 
 def handler(event, context):

@@ -1,13 +1,7 @@
-from app.factory import create_app
-import configparser
-import os.path
-
-config = configparser.ConfigParser()
-config.read(os.path.abspath(os.path.join('config.ini')))
+from app.factory import create_application
 
 if __name__ == '__main__':
-    app = create_app()
-    app.config['DEBUG'] = True
-    app.config['MONGO_URI'] = config['PROD']['DB_URI']
+    application = create_application()
+    application.config['DEBUG'] = True
 
-    app.run(host='0.0.0.0')
+    application.run(host='0.0.0.0')

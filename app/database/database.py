@@ -1,22 +1,22 @@
-from flask_pymongo import PyMongo
-from werkzeug.local import LocalProxy
+import os
+from pymongo import MongoClient
+
+CONNECTION_STRING = 'mongodb+srv://admin:' + os.getenv('ATLAS_MONGODB_PASSWORD') + '@cluster0.zahtuza.mongodb.net' \
+                                                                                   '/?retryWrites=true&w=majority'
 
 database = None
-mongodb_client = None
-
-
-def initialize_database(application):
-    global database
-    database = PyMongo(application).db
+mongo_client = None
 
 
 def get_database():
     global database
+    if database is None:
+        database = get_mongo_client()['student_db']
     return database
 
 
-def get_mongodb_client():
-    global mongodb_client
-    if mongodb_client is None:
-        mongodb_client = get_database()
-    return mongodb_client
+def get_mongo_client():
+    global mongo_client
+    if mongo_client is None:
+        mongo_client = MongoClient(CONNECTION_STRING, retryWrites=True, retryReads=True)
+    return mongo_client
