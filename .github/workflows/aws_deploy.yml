@@ -45,10 +45,18 @@ jobs:
 
       - name: Configure AWS Lambda
         run: |
-          aws lambda update-function-configuration \
-            --function-name application_entry_point \
-            --handler app.handler.handler \
-            --runtime python3.9 \
-            --timeout 30 \
-            --memory-size 128 \
-            --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
+          while true; do
+            aws lambda update-function-configuration \
+              --function-name application_entry_point \
+              --handler app.handler.handler \
+              --runtime python3.9 \
+              --timeout 30 \
+              --memory-size 128 \
+              --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
+            if [ $? -eq 0 ]; then
+              break
+            else
+              echo "Deployment failed, retrying in 15 seconds..."
+              sleep 15
+            fi
+          done
