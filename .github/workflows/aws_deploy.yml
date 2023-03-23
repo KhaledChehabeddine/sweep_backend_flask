@@ -37,7 +37,7 @@ jobs:
       - name: Zip repository
         run: zip -r function.zip .
 
-      - name: Upload zip file to AWS Lambda
+      - name: Upload Zip File to AWS Lambda
         run: |
           aws lambda update-function-code \
             --function-name application_entry_point \

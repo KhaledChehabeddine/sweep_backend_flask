@@ -1,8 +1,14 @@
+"""Summary: User Controller CRUD Operations
+
+A user controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update,
+and delete users from the database
+"""
+
+from flask import Blueprint, Response, jsonify, request
+from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.user import User
 from app.routes.blueprints import sweep_api_v1
-from flask import Blueprint, Response, jsonify, request
-from pymongo.errors import OperationFailure
 
 user_api_v1 = Blueprint('user_api_v1', __name__, url_prefix='/user')
 user_collection = get_database()['users']
@@ -10,14 +16,11 @@ user_collection = get_database()['users']
 
 @user_api_v1.route('/create', methods=['POST'])
 def create_user() -> Response:
-    user = User(
-        address=request.json['address'],
-        country=request.json['country'],
-        country_code=request.json['country_code'],
-        email=request.json['email'],
-        number=request.json['number'],
-        password=request.json['password']
-    )
+    """
+    :return: Response object with a message describing if the user was created and the status code
+    """
+    user_document = request.json
+    user = User(user_document=user_document)
     try:
         user_collection.insert_one(user.__dict__)
     except OperationFailure:
@@ -33,7 +36,12 @@ def create_user() -> Response:
 
 @user_api_v1.route('/read/<string:email>', methods=['GET'])
 def read_user_by_email(email: str) -> Response:
-    user_document = user_collection.find_one({'email': email})
+    """
+    :param email: User's email
+    :return: Response object with a message describing if the user was found (if yes: add user object) and the status
+    code
+    """
+    user_document = user_collection.find_one({'email': email})['user']
     if user_document:
         user = User(user_document=user_document)
         return jsonify({
@@ -49,15 +57,13 @@ def read_user_by_email(email: str) -> Response:
 
 @user_api_v1.route('/update/<string:email>', methods=['PUT'])
 def update_user(email: str) -> Response:
+    """
+    :param email: User's email
+    :return: Response object with a message describing if the user was found (if yes: update user) and the status code
+    """
     if read_user_by_email(email).json['status'] == 200:
-        user = User(
-            address=request.json['address'],
-            country=request.json['country'],
-            country_code=request.json['country_code'],
-            email=request.json['email'],
-            number=request.json['number'],
-            password=request.json['password']
-        )
+        user_document = request.json
+        user = User(user_document=user_document)
         result = user_collection.update_one(
             {'email': email},
             {'$set': user.__dict__}
@@ -66,7 +72,6 @@ def update_user(email: str) -> Response:
             return jsonify({
                 'message': 'User updated in the database using the email.',
                 'status': 200,
-                'user': user.__dict__
             })
     return jsonify({
         'message': 'User not found in the database using the email.',
@@ -76,6 +81,10 @@ def update_user(email: str) -> Response:
 
 @user_api_v1.route('/delete/<email>', methods=['DELETE'])
 def delete_user(email: str) -> Response:
+    """
+    :param email: User's email
+    :return: Response object with a message describing if the user was found (if yes: delete user) and the status code
+    """
     result = user_collection.delete_one({'email': email})
     if result.deleted_count == 1:
         return jsonify({

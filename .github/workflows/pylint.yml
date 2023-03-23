@@ -20,6 +20,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Analysing Code with Pylint
-      run: |
-        pylint $(git ls-files '*.py')
+    - name: Run Pylint
+      run: pylint --rcfile=.pylintrc sweep_backend
