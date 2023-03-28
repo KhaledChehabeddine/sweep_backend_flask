@@ -3,6 +3,7 @@
 A user controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update,
 and delete users from the database
 """
+
 import json
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
@@ -53,6 +54,30 @@ def read_user_by_email(email: str) -> Response:
         })
     return jsonify({
         'message': 'User not found in the database using the email.',
+        'status': 404
+    })
+
+
+@user_api_v1.route('/read', methods=['GET'])
+def read_users() -> Response:
+    """
+    :return: Response object with a message describing if all the users were found (if yes: add user objects) and the
+    status code
+    """
+    users = []
+    user_documents = user_collection.find()
+    if user_documents:
+        for user_document in user_documents:
+            user_document = json.loads(json_util.dumps(user_document), object_hook=json_util.object_hook)
+            user = User(user_document=user_document)
+            users.append(user.__dict__)
+        return jsonify({
+            'message': 'Users found in the database.',
+            'status': 200,
+            'users': users
+        })
+    return jsonify({
+        'message': 'No user found in the database.',
         'status': 404
     })
 
