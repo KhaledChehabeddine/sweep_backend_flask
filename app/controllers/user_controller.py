@@ -3,7 +3,8 @@
 A user controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update,
 and delete users from the database
 """
-
+import json
+from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -41,7 +42,8 @@ def read_user_by_email(email: str) -> Response:
     :return: Response object with a message describing if the user was found (if yes: add user object) and the status
     code
     """
-    user_document = user_collection.find_one({'email': email})['user']
+    user_document = json.loads(json_util.dumps(user_collection.find_one({'email': email})),
+                               object_hook=json_util.object_hook)
     if user_document:
         user = User(user_document=user_document)
         return jsonify({
@@ -56,7 +58,7 @@ def read_user_by_email(email: str) -> Response:
 
 
 @user_api_v1.route('/update/<string:email>', methods=['PUT'])
-def update_user(email: str) -> Response:
+def update_user_by_email(email: str) -> Response:
     """
     :param email: User's email
     :return: Response object with a message describing if the user was found (if yes: update user) and the status code
@@ -79,8 +81,8 @@ def update_user(email: str) -> Response:
     })
 
 
-@user_api_v1.route('/delete/<email>', methods=['DELETE'])
-def delete_user(email: str) -> Response:
+@user_api_v1.route('/delete/<string:email>', methods=['DELETE'])
+def delete_user_by_email(email: str) -> Response:
     """
     :param email: User's email
     :return: Response object with a message describing if the user was found (if yes: delete user) and the status code
