@@ -5,7 +5,7 @@ only made once to avoid unnecessary overhead.
 """
 
 import os
-from typing import Mapping, Any
+from typing import Any, Mapping
 from pymongo import MongoClient
 from pymongo.database import Database
 

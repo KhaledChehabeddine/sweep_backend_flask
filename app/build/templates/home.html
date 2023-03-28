@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Sweep REST API</title>
+  </head>
+
+  <body style="padding:20px">
+    <h1 style="display:flex;justify-content:center">
+      Welcome to the Sweep Rest API
+    </h1>
+
+    <p style="display:flex;justify-content:center;text-align:justify;padding:0 20px">
+      Ladies and gentlemen, get ready to witness a force to be reckoned with! Hailing from parts unknown,
+      standing at 170cm and weighing in at 60kg, this wrestler is a true powerhouse in the ring. With a
+      fierce determination and an unbreakable will, there's no opponent tough enough for this warrior to take down.
+      Known for their signature moves and relentless aggression, they'll stop at nothing to claim victory in the
+      squared circle. So lets give it up for the one, the only, HASHEM SHIBLI!
+    </p>
+
+    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:yellow;
+              font-weight:bold">
+      Html styling and back-end routing were done by Mohamad Mustapha, courtesy of his kindness. He is the 4th group
+      member.
+    </p>
+
+    <p style="display:flex;justify-content:center;padding:0 20px;font-style:italic;font-size:14px">
+      © Mohamad Mustapha Co.
+    </p>
+
+    <p id="legends" onmouseenter="legendsHover()" style="margin:auto;font-weight:bold;
+                                                         cursor:pointer;width:fit-content;padding-bottom:10px">
+      Click Me
+    </p>
+
+    <img id="legendsImage" src="{{url_for('static', filename='legends.png')}}" style="display:none;margin:auto">
+
+    <script>
+      function legendsHover() {
+        document.getElementById("legendsImage").style.display = "block"
+        document.getElementById("legendsImage").style.width = "700px"
+      }
+    </script>
+  </body>
+</html>
