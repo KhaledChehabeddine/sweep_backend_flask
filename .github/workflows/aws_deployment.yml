@@ -53,8 +53,8 @@ jobs:
               --timeout 30 \
               --memory-size 128 \
               --environment Variables="{ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}}"
-            exit_code=$?
-            if [ $exit_code -eq 0 ] || [ $exit_code -eq 255 ]; then
+            if [ $? -eq 0 ]; then
+              echo "Deployment successful!"
               break
             else
               echo "Deployment failed, retrying in 15 seconds..."
