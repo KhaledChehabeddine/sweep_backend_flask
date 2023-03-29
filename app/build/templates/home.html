@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>Sweep REST API</title>
   </head>
 
@@ -26,8 +25,18 @@
       member.
     </p>
 
+    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
+              font-weight:bold">
+      Consultancy and massive parallelization guidance were provided by the true 4th group member, Ali Yassine.
+      (P.S: payment expected by May 1st or legal action will be pursued. Take this as an advice not as a threat.)
+    </p>
+
     <p style="display:flex;justify-content:center;padding:0 20px;font-style:italic;font-size:14px">
-      © Mohamad Mustapha Co.
+      © Mohamad Mustapha Co. 2023
+    </p>
+
+    <p style="display:flex;justify-content:center;padding:0 20px;font-style:italic;font-size:14px">
+      © Ali Yassine Inc. 2023
     </p>
 
     <p id="legends" onmouseenter="legendsHover()" style="margin:auto;font-weight:bold;
@@ -35,12 +44,13 @@
       Click Me
     </p>
 
-    <img id="legendsImage" src="{{url_for('static', filename='legends.png')}}" style="display:none;margin:auto">
+    <!--suppress HtmlUnknownTarget -->
+    <img  alt="" id="legendsImage" src="{{url_for('static', filename='legends.png')}}" style="display:none;margin:auto">
 
     <script>
       function legendsHover() {
         document.getElementById("legendsImage").style.display = "block"
-        document.getElementById("legendsImage").style.width = "700px"
+        document.getElementById("legendsImage").style.width = "550px"
       }
     </script>
   </body>
