@@ -52,7 +52,7 @@ def read_account_main_category() -> Response:
         return jsonify({
             'message': 'Account main categories found in the database.',
             'status': 200,
-            'users': account_main_category.__dict__
+            'account_main_category': account_main_category.__dict__
         })
     return jsonify({
         'message': 'No account main category found in the database.',
