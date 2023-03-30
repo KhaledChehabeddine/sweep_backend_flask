@@ -5,7 +5,7 @@ An account sub category model used to convert an account sub category document i
 """
 
 from typing import List
-from app.models.account_category_item import AccountMainCategoryItem
+from app.models.account_category_item import AccountCategoryItem
 
 
 class AccountSubCategory:
@@ -36,13 +36,13 @@ class AccountSubCategory:
         self.category = category
         self.account_main_category_items = account_main_category_document['account_main_category_items']
 
-    def get_account_main_category_items(self) -> List[AccountMainCategoryItem]:
+    def get_account_main_category_items(self) -> List[AccountCategoryItem]:
         """
         :return: Account sub category's items
         """
         return self.account_main_category_items
 
-    def set_account_main_category_items(self, account_main_category_items: List[AccountMainCategoryItem]) -> None:
+    def set_account_main_category_items(self, account_main_category_items: List[AccountCategoryItem]) -> None:
         """
         :param account_main_category_items: Account sub category's items
         """
