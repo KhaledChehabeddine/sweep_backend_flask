@@ -1,7 +1,7 @@
 """Summary: User Controller CRUD Operations
 
-A user controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update,
-and delete users from the database
+A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
+delete users from the database
 """
 
 import json

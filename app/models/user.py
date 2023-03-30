@@ -6,7 +6,7 @@ A user model used to convert a user document into a user object
 
 class User:
     """
-    A class to represent a user
+    A class to represent a user model
 
 
     Attributes
