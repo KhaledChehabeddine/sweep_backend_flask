@@ -1,5 +1,4 @@
-"""
-Summary: account Sub Category Model
+"""Summary: Account Sub Category Model
 
 An account sub category model used to convert an account sub category document into an account sub category object
 """
@@ -16,9 +15,9 @@ class AccountSubCategory:
     Attributes
     ----------
     category : str
-        account sub category's name
-    account_main_category_items : List[AccountMainCategoryItem]
-        account sub category's items
+        Account sub category's name
+    account_category_items : List[AccountMainCategoryItem]
+        Account sub category's items
 
     Methods
     -------
@@ -32,30 +31,30 @@ class AccountSubCategory:
         Sets the account sub category's name
     """
 
-    def __init__(self, category: str, account_main_category_document: dict) -> None:
-        self.category = category
-        self.account_main_category_items = account_main_category_document['account_main_category_items']
+    def __init__(self, account_main_category_document: dict) -> None:
+        self.account_category_items = account_main_category_document['account_category_items']
+        self.category = account_main_category_document['category']
 
     def get_account_main_category_items(self) -> List[AccountCategoryItem]:
         """
-        :return: account sub category's items
+        :return: Account sub category's items
         """
-        return self.account_main_category_items
+        return self.account_category_items
 
-    def set_account_main_category_items(self, account_main_category_items: List[AccountCategoryItem]) -> None:
+    def set_account_main_category_items(self, account_category_items: List[AccountCategoryItem]) -> None:
         """
-        :param account_main_category_items: account sub category's items
+        :param account_category_items: Account sub category's items
         """
-        self.account_main_category_items = account_main_category_items
+        self.account_category_items = account_category_items
 
     def get_category(self) -> str:
         """
-        :return: account sub category's items
+        :return: Account sub category's items
         """
         return self.category
 
     def set_category(self, category: str) -> None:
         """
-        :param category: account sub category's items
+        :param category: Account sub category's items
         """
         self.category = category

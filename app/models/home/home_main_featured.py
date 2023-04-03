@@ -2,8 +2,9 @@
 
 A home main featured model used to convert a home main featured document into a home main featured object
 """
+
 from typing import List
-from app.models.homepage.home_main_featured_item import HomeMainFeaturedItem
+from app.models.home.home_main_featured_item import HomeMainFeaturedItem
 
 
 class HomeMainFeatured:

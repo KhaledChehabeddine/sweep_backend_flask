@@ -1,29 +1,29 @@
-"""Service category item model.
+"""Summary: Service Category Item Model
 
-This model represents a service category item. It is used to convert a service category item document into a
-service category item object.
+A service category item model used to convert a service category item document into a service category item object
 """
 
 
 class ServiceCategoryItem:
     """
-    This model represents a service category item.
+    A class to represent a service category item model
+
 
     Attributes
     ----------
     active : bool
-        service category item's active
+        Service category item's activity
     icon : str
-        service category item's icon
+        Service category item's icon
     name : str
-        service category item's name
+        Service category item's name
 
     Methods
     -------
     get_active() : bool
-        Returns the service category item's active
+        Returns the service category item's activity
     set_active(active) : None
-        Sets the service category item's active
+        Sets the service category item's activity
     get_icon() : str
         Returns the service category item's icon
     set_icon(icon) : None
@@ -41,36 +41,36 @@ class ServiceCategoryItem:
 
     def get_active(self) -> bool:
         """
-        :return: service category item's active
+        :return: Service category item's activity
         """
         return self.active
 
     def set_active(self, active: bool) -> None:
         """
-        :param active: service category item's active
+        :param active: Service category item's activity
         """
         self.active = active
 
     def get_icon(self) -> str:
         """
-        :return: service category item's icon
+        :return: Service category item's icon
         """
         return self.icon
 
     def set_icon(self, icon: str) -> None:
         """
-        :param icon: service category item's icon
+        :param icon: Service category item's icon
         """
         self.icon = icon
 
     def get_name(self) -> str:
         """
-        :return: service category item's name
+        :return: Service category item's name
         """
         return self.name
 
     def set_name(self, name: str) -> None:
         """
-        :param name: service category item's name
+        :param name: Service category item's name
         """
         self.name = name

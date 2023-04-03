@@ -1,4 +1,4 @@
-"""Summary:
+"""Summary: Account Main Category Controller CRUD Operations
 
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete account main categories from the database
@@ -27,11 +27,11 @@ def create_account_main_category() -> Response:
         account_main_category_collection.insert_one(account_main_category.__dict__)
     except OperationFailure:
         return jsonify({
-            'message': 'account main category not added to the database.',
+            'message': 'Account main category not added to the database.',
             'status': 500
         })
     return jsonify({
-        'message': 'account main category added to the database.',
+        'message': 'Account main category added to the database.',
         'status': 200
     })
 
@@ -50,7 +50,7 @@ def read_account_main_category() -> Response:
                 .loads(json_util.dumps(account_main_category_document), object_hook=json_util.object_hook)
             account_main_category = AccountMainCategory(account_main_category_document=account_main_category_document)
         return jsonify({
-            'message': 'account main categories found in the database.',
+            'message': 'Account main categories found in the database.',
             'status': 200,
             'account_main_category': account_main_category.__dict__
         })
@@ -66,20 +66,19 @@ def update_account_main_category() -> Response:
     :return: Response object with a message describing if the account main category was found (if yes: update account
     main category) and the status code
     """
-    if read_account_main_category().json['status'] == 200:
-        account_main_category_document = request.json
-        account_main_category = AccountMainCategory(account_main_category_document=account_main_category_document)
-        result = account_main_category_collection.update_one(
-            {},
-            {'$set': account_main_category.__dict__}
-        )
-        if result.modified_count == 1:
-            return jsonify({
-                'message': 'account main category updated in the database.',
-                'status': 200,
-            })
+    account_main_category_document = request.json
+    account_main_category = AccountMainCategory(account_main_category_document=account_main_category_document)
+    result = account_main_category_collection.update_one(
+        {},
+        {'$set': account_main_category.__dict__}
+    )
+    if result.modified_count == 1:
+        return jsonify({
+            'message': 'Account main category updated in the database.',
+            'status': 200,
+        })
     return jsonify({
-        'message': 'account main category not found in the database.',
+        'message': 'Account main category not found in the database.',
         'status': 404
     })
 
@@ -93,11 +92,11 @@ def delete_account_main_category() -> Response:
     result = account_main_category_collection.delete_one({}, {'limit': 1})
     if result.deleted_count == 1:
         return jsonify({
-            'message': 'account main category deleted from the database.',
+            'message': 'Account main category deleted from the database.',
             'status': 200
         })
     return jsonify({
-        'message': 'account main category not found in the database using the email.',
+        'message': 'Account main category not found in the database.',
         'status': 404
     })
 

@@ -1,4 +1,4 @@
-"""Summary:
+"""Summary: Account Category Item Controller CRUD Operations
 
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete account categories items from the database
@@ -27,11 +27,11 @@ def create_account_item_category() -> Response:
         account_category_item_collection.insert_one(account_category_item.__dict__)
     except OperationFailure:
         return jsonify({
-            'message': 'account category item not added to the database.',
+            'message': 'Account category item not added to the database.',
             'status': 500
         })
     return jsonify({
-        'message': 'account category item added to the database.',
+        'message': 'Account category item added to the database.',
         'status': 200
     })
 
@@ -52,12 +52,12 @@ def read_account_category_items() -> Response:
                 account_category_item_document=account_category_item_document)
             account_category_items.append(account_category_item.__dict__)
         return jsonify({
-            'message': 'account category items found in the database.',
+            'message': 'Account category items found in the database.',
             'status': 200,
             'account_category_item': account_category_items
         })
     return jsonify({
-        'message': 'No account category item is found in the database.',
+        'message': 'No account category item found in the database.',
         'status': 404
     })
 
@@ -65,41 +65,42 @@ def read_account_category_items() -> Response:
 @account_category_item_api_v1.route('/update/<string:name>', methods=['PUT'])
 def update_account_category_item_by_name(name: str) -> Response:
     """
+    :param name: Account category item's name
     :return: Response object with a message describing if the account category item was found (if yes: update
     account category) and the status code
     """
-    if read_account_category_items().json['status'] == 200:
-        account_category_item_document = request.json
-        account_category_item = AccountCategoryItem(
-            account_category_item_document=account_category_item_document)
-        result = account_category_item_collection.update_one(
-            {'name': name},
-            {'$set': account_category_item.__dict__}
-        )
-        if result.modified_count == 1:
-            return jsonify({
-                'message': 'account category updated in the database.',
-                'status': 200,
-            })
+    account_category_item_document = request.json
+    account_category_item = AccountCategoryItem(
+        account_category_item_document=account_category_item_document)
+    result = account_category_item_collection.update_one(
+        {'name': name},
+        {'$set': account_category_item.__dict__}
+    )
+    if result.modified_count == 1:
+        return jsonify({
+            'message': 'Account category updated in the database using the name.',
+            'status': 200,
+        })
     return jsonify({
-        'message': 'account category not found in the database.',
+        'message': 'Account category not found in the database using the name.',
         'status': 404
     })
 
 
 @account_category_item_api_v1.route('/delete/<string:name>', methods=['DELETE'])
-def delete_account_category(name: str) -> Response:
+def delete_account_category_by_name(name: str) -> Response:
     """
+    :param name: Account category item's name
     :return: Response object with a message describing if the account category item was found (if yes: delete
     account category) and the status code
     """
     result = account_category_item_collection.delete_one({'name': name})
     if result.deleted_count == 1:
         return jsonify({
-            'message': 'account category item deleted from the database using the name.',
+            'message': 'Account category item deleted from the database using the name.',
             'status': 200
         })
     return jsonify({
-        'message': 'account category item not found in the database using the name.',
+        'message': 'Account category item not found in the database using the name.',
         'status': 404
     })

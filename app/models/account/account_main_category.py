@@ -1,4 +1,4 @@
-"""Summary: account Main Category Model
+"""Summary: Account Main Category Model
 
 An account main category model used to convert an account main category document into an account main category object
 """
@@ -15,7 +15,7 @@ class AccountMainCategory:
     Attributes
     ----------
     account_category_items : List[AccountMainCategoryItem]
-        account main category's items
+        Account main category's items
 
     Methods
     -------
@@ -29,12 +29,12 @@ class AccountMainCategory:
 
     def get_account_category_items(self) -> List[AccountCategoryItem]:
         """
-        :return: account main category's items
+        :return: Account main category's items
         """
         return self.account_category_items
 
     def set_account_category_items(self, account_category_items: List[AccountCategoryItem]) -> None:
         """
-        :param account_category_items: account main category's items
+        :param account_category_items: Account main category's items
         """
         self.account_category_items = account_category_items

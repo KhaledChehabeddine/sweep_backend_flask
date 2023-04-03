@@ -1,4 +1,4 @@
-"""Summary: user Model
+"""Summary: User Model
 
 A user model used to convert a user document into a user object
 """
@@ -12,17 +12,17 @@ class User:
     Attributes
     ----------
     address : str
-        user's address
+        User's address
     country : str
-        user's country
+        User's country
     country_code : str
-        user's country code
+        User's country code
     email : str
-        user's email
+        User's email
     password : str
-        user's password
+        User's password
     phone_number : str
-        user's phone number
+        User's phone number
 
     Methods
     -------
@@ -62,72 +62,72 @@ class User:
 
     def get_address(self) -> str:
         """
-        :return: user's address
+        :return: User's address
         """
         return self.address
 
-    def set_address(self, address) -> None:
+    def set_address(self, address: str) -> None:
         """
-        :param address: user's address
+        :param address: User's address
         """
         self.address = address
 
     def get_country(self) -> str:
         """
-        :return: user's country
+        :return: User's country
         """
         return self.country
 
-    def set_country(self, country) -> None:
+    def set_country(self, country: str) -> None:
         """
-        :param country: user's country
+        :param country: User's country
         """
         self.country = country
 
-    def get_country_code(self):
+    def get_country_code(self) -> str:
         """
-        :return: user's country code
+        :return: User's country code
         """
         return self.country_code
 
-    def set_country_code(self, country_code):
+    def set_country_code(self, country_code: str) -> None:
         """
-        :param country_code: user's country code
+        :param country_code: User's country code
         """
         self.country_code = country_code
 
-    def get_email(self):
+    def get_email(self) -> str:
         """
-        :return: user's email
+        :return: User's email
         """
         return self.email
 
-    def set_email(self, email):
+    def set_email(self, email: str) -> None:
         """
-        :param email: user's email
+        :param email: User's email
         """
         self.email = email
 
-    def get_password(self):
+    def get_password(self) -> str:
         """
-        :return: user's password
+        :return: User's password
         """
         return self.password
 
-    def set_password(self, password):
+    def set_password(self, password: str) -> None:
         """
-        :param password: user's password
+        :param password: User's password
         """
         self.password = password
 
-    def get_phone_number(self):
+    def get_phone_number(self) -> str:
         """
-        :return: user's phone number
+        :return: User's phone number
         """
         return self.phone_number
 
-    def set_phone_number(self, number):
+    def set_phone_number(self, phone_number: str) -> None:
         """
-        :param number: user's phone number
+        :param phone_number: User's phone number
         """
-        self.phone_number = number
+        self.phone_number = phone_number
