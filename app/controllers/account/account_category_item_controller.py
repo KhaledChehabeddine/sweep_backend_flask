@@ -9,7 +9,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.account_category_item import AccountCategoryItem
+from app.models.account.account_category_item import AccountCategoryItem
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_categories_items']
@@ -27,11 +27,11 @@ def create_account_item_category() -> Response:
         account_category_item_collection.insert_one(account_category_item.__dict__)
     except OperationFailure:
         return jsonify({
-            'message': 'Account category item not added to the database.',
+            'message': 'account category item not added to the database.',
             'status': 500
         })
     return jsonify({
-        'message': 'Account category item added to the database.',
+        'message': 'account category item added to the database.',
         'status': 200
     })
 
@@ -52,7 +52,7 @@ def read_account_category_items() -> Response:
                 account_category_item_document=account_category_item_document)
             account_category_items.append(account_category_item.__dict__)
         return jsonify({
-            'message': 'Account category items found in the database.',
+            'message': 'account category items found in the database.',
             'status': 200,
             'account_category_item': account_category_items
         })
@@ -78,11 +78,11 @@ def update_account_category_item_by_name(name: str) -> Response:
         )
         if result.modified_count == 1:
             return jsonify({
-                'message': 'Account category updated in the database.',
+                'message': 'account category updated in the database.',
                 'status': 200,
             })
     return jsonify({
-        'message': 'Account category not found in the database.',
+        'message': 'account category not found in the database.',
         'status': 404
     })
 
@@ -96,10 +96,10 @@ def delete_account_category(name: str) -> Response:
     result = account_category_item_collection.delete_one({'name': name})
     if result.deleted_count == 1:
         return jsonify({
-            'message': 'Account category item deleted from the database using the name.',
+            'message': 'account category item deleted from the database using the name.',
             'status': 200
         })
     return jsonify({
-        'message': 'Account category item not found in the database using the name.',
+        'message': 'account category item not found in the database using the name.',
         'status': 404
     })

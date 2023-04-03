@@ -1,4 +1,4 @@
-"""Summary: Account Category Item Model
+"""Summary: account Category Item Model
 
 An account category item model used to convert an account category item document into an account category
 item object
@@ -13,9 +13,9 @@ class AccountCategoryItem:
     Attributes
     ----------
     icon : str
-        Account category item's icon
+        account category item's icon
     name : str
-        Account category item's name
+        account category item's name
 
     Methods
     -------
@@ -35,24 +35,24 @@ class AccountCategoryItem:
 
     def get_icon(self) -> str:
         """
-        :return: Account category item's icon
+        :return: account category item's icon
         """
         return self.icon
 
     def set_icon(self, icon: str) -> None:
         """
-        :param icon: Account category item's icon
+        :param icon: account category item's icon
         """
         self.icon = icon
 
     def get_name(self) -> str:
         """
-        :return: Account category item's name
+        :return: account category item's name
         """
         return self.name
 
     def set_name(self, name: str) -> None:
         """
-        :param name: Account category item's name
+        :param name: account category item's name
         """
         self.name = name

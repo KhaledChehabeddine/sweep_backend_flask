@@ -1,11 +1,11 @@
 """
-Summary: Account Sub Category Model
+Summary: account Sub Category Model
 
 An account sub category model used to convert an account sub category document into an account sub category object
 """
 
 from typing import List
-from app.models.account_category_item import AccountCategoryItem
+from app.models.account.account_category_item import AccountCategoryItem
 
 
 class AccountSubCategory:
@@ -16,9 +16,9 @@ class AccountSubCategory:
     Attributes
     ----------
     category : str
-        Account sub category's name
+        account sub category's name
     account_main_category_items : List[AccountMainCategoryItem]
-        Account sub category's items
+        account sub category's items
 
     Methods
     -------
@@ -38,24 +38,24 @@ class AccountSubCategory:
 
     def get_account_main_category_items(self) -> List[AccountCategoryItem]:
         """
-        :return: Account sub category's items
+        :return: account sub category's items
         """
         return self.account_main_category_items
 
     def set_account_main_category_items(self, account_main_category_items: List[AccountCategoryItem]) -> None:
         """
-        :param account_main_category_items: Account sub category's items
+        :param account_main_category_items: account sub category's items
         """
         self.account_main_category_items = account_main_category_items
 
     def get_category(self) -> str:
         """
-        :return: Account sub category's items
+        :return: account sub category's items
         """
         return self.category
 
     def set_category(self, category: str) -> None:
         """
-        :param category: Account sub category's items
+        :param category: account sub category's items
         """
         self.category = category

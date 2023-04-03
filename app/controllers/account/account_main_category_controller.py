@@ -9,7 +9,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.account_main_category import AccountMainCategory
+from app.models.account.account_main_category import AccountMainCategory
 from app.routes.blueprints import sweep_api_v1
 
 account_main_category_api_v1 = Blueprint('account_main_category_api_v1', __name__, url_prefix='/account_main_category')
@@ -27,11 +27,11 @@ def create_account_main_category() -> Response:
         account_main_category_collection.insert_one(account_main_category.__dict__)
     except OperationFailure:
         return jsonify({
-            'message': 'Account main category not added to the database.',
+            'message': 'account main category not added to the database.',
             'status': 500
         })
     return jsonify({
-        'message': 'Account main category added to the database.',
+        'message': 'account main category added to the database.',
         'status': 200
     })
 
@@ -50,7 +50,7 @@ def read_account_main_category() -> Response:
                 .loads(json_util.dumps(account_main_category_document), object_hook=json_util.object_hook)
             account_main_category = AccountMainCategory(account_main_category_document=account_main_category_document)
         return jsonify({
-            'message': 'Account main categories found in the database.',
+            'message': 'account main categories found in the database.',
             'status': 200,
             'account_main_category': account_main_category.__dict__
         })
@@ -75,11 +75,11 @@ def update_account_main_category() -> Response:
         )
         if result.modified_count == 1:
             return jsonify({
-                'message': 'Account main category updated in the database.',
+                'message': 'account main category updated in the database.',
                 'status': 200,
             })
     return jsonify({
-        'message': 'Account main category not found in the database.',
+        'message': 'account main category not found in the database.',
         'status': 404
     })
 
@@ -93,11 +93,11 @@ def delete_account_main_category() -> Response:
     result = account_main_category_collection.delete_one({}, {'limit': 1})
     if result.deleted_count == 1:
         return jsonify({
-            'message': 'Account main category deleted from the database.',
+            'message': 'account main category deleted from the database.',
             'status': 200
         })
     return jsonify({
-        'message': 'Account main category not found in the database using the email.',
+        'message': 'account main category not found in the database using the email.',
         'status': 404
     })
 
