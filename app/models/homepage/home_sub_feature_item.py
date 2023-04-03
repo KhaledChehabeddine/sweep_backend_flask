@@ -7,6 +7,36 @@ A home sub feature item model used to convert a home sub feature item document i
 
 class HomeSubFeatureItem:
 
+    """
+    A class to represent a home sub feature item model
+
+
+    Attributes
+    ----------
+    title : str
+        home sub feature item's title
+    description : str
+        home sub feature item's description
+    image : str
+        home sub feature item's image
+
+    Methods
+    -------
+    get_title() : str
+        Returns the home sub feature item's title
+    set_title(title) : None
+        Sets the home sub feature item's title
+    get_description() : str
+        Returns the home sub feature item's description
+    set_description(description) : None
+        Sets the home sub feature item's description
+    get_image() : str
+        Returns the home sub feature item's image
+    set_image(image) : None
+        Sets the home sub feature item's image
+
+    """
+
     def __init__(self, service_category_item_document: dict) -> None:
         self.title = service_category_item_document['title']
         self.description = service_category_item_document['description']
