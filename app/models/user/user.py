@@ -19,6 +19,8 @@ class User:
         User's country code
     email : str
         User's email
+    _id : str
+        User's id
     password : str
         User's password
     phone_number : str
@@ -42,6 +44,10 @@ class User:
         Returns the user's email
     set_email(email) : None
         Sets the user's email
+    get_id() : str
+        Returns the user's id
+    set_id(_id) : None
+        Sets the user's id
     get_password() : str
         Returns the user's password
     set_password(password) : None
@@ -57,6 +63,7 @@ class User:
         self.country = user_document['country']
         self.country_code = user_document['country_code']
         self.email = user_document['email']
+        self._id = user_document['_id']
         self.password = user_document['password']
         self.phone_number = user_document['phone_number']
 
@@ -66,7 +73,7 @@ class User:
         """
         return self.address
 
-    def set_address(self, address) -> None:
+    def set_address(self, address: str) -> None:
         """
         :param address: User's address
         """
@@ -78,56 +85,68 @@ class User:
         """
         return self.country
 
-    def set_country(self, country) -> None:
+    def set_country(self, country: str) -> None:
         """
         :param country: User's country
         """
         self.country = country
 
-    def get_country_code(self):
+    def get_country_code(self) -> str:
         """
         :return: User's country code
         """
         return self.country_code
 
-    def set_country_code(self, country_code):
+    def set_country_code(self, country_code: str) -> None:
         """
         :param country_code: User's country code
         """
         self.country_code = country_code
 
-    def get_email(self):
+    def get_email(self) -> str:
         """
         :return: User's email
         """
         return self.email
 
-    def set_email(self, email):
+    def set_email(self, email: str) -> None:
         """
         :param email: User's email
         """
         self.email = email
 
-    def get_password(self):
+    def get_id(self) -> str:
+        """
+        :return: User's id
+        """
+        return self._id
+
+    def set_id(self, _id: str) -> None:
+        """
+        :param _id: User's id
+        """
+        self._id = _id
+
+    def get_password(self) -> str:
         """
         :return: User's password
         """
         return self.password
 
-    def set_password(self, password):
+    def set_password(self, password: str) -> None:
         """
         :param password: User's password
         """
         self.password = password
 
-    def get_phone_number(self):
+    def get_phone_number(self) -> str:
         """
         :return: User's phone number
         """
         return self.phone_number
 
-    def set_phone_number(self, number):
+    def set_phone_number(self, phone_number: str) -> None:
         """
-        :param number: User's phone number
+        :param phone_number: User's phone number
         """
-        self.phone_number = number
+        self.phone_number = phone_number

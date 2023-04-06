@@ -9,7 +9,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.user import User
+from app.models.user.user import User
 from app.routes.blueprints import sweep_api_v1
 
 user_api_v1 = Blueprint('user_api_v1', __name__, url_prefix='/user')
@@ -88,21 +88,20 @@ def update_user_by_email(email: str) -> Response:
     :param email: User's email
     :return: Response object with a message describing if the user was found (if yes: update user) and the status code
     """
-    if read_user_by_email(email).json['status'] == 200:
-        user_document = request.json
-        user = User(user_document=user_document)
-        result = user_collection.update_one(
-            {'email': email},
-            {'$set': user.__dict__}
-        )
-        if result.modified_count == 1:
-            return jsonify({
-                'message': 'User updated in the database using the email.',
-                'status': 200,
-            })
+    user_document = request.json
+    user = User(user_document=user_document)
+    result = user_collection.update_one(
+        {'email': email},
+        {'$set': user.__dict__}
+    )
+    if result.modified_count == 1:
+        return jsonify({
+            'message': 'User updated in the database using the email.',
+            'status': 200,
+        })
     return jsonify({
         'message': 'User not found in the database using the email.',
-        'status': 404
+        'status': 500,
     })
 
 

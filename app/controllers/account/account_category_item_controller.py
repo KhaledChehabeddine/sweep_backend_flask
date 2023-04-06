@@ -1,4 +1,4 @@
-"""Summary:
+"""Summary: Account Category Item Controller CRUD Operations
 
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete account categories items from the database
@@ -9,10 +9,10 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.account_category_item import AccountCategoryItem
+from app.models.account.account_category_item import AccountCategoryItem
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
-account_category_item_collection = get_database()['account_categories_items']
+account_category_item_collection = get_database()['account_category_items']
 
 
 @account_category_item_api_v1.route('/create', methods=['POST'])
@@ -21,8 +21,7 @@ def create_account_item_category() -> Response:
     :return: Response object with a message describing if the account category was created and the status code
     """
     account_category_item_document = request.json
-    account_category_item = AccountCategoryItem(
-        account_category_item_document=account_category_item_document)
+    account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
         account_category_item_collection.insert_one(account_category_item.__dict__)
     except OperationFailure:
@@ -57,7 +56,7 @@ def read_account_category_items() -> Response:
             'account_category_item': account_category_items
         })
     return jsonify({
-        'message': 'No account category item is found in the database.',
+        'message': 'No account category item found in the database.',
         'status': 404
     })
 
@@ -65,31 +64,32 @@ def read_account_category_items() -> Response:
 @account_category_item_api_v1.route('/update/<string:name>', methods=['PUT'])
 def update_account_category_item_by_name(name: str) -> Response:
     """
+    :param name: Account category item's name
     :return: Response object with a message describing if the account category item was found (if yes: update
     account category) and the status code
     """
-    if read_account_category_items().json['status'] == 200:
-        account_category_item_document = request.json
-        account_category_item = AccountCategoryItem(
-            account_category_item_document=account_category_item_document)
-        result = account_category_item_collection.update_one(
-            {'name': name},
-            {'$set': account_category_item.__dict__}
-        )
-        if result.modified_count == 1:
-            return jsonify({
-                'message': 'Account category updated in the database.',
-                'status': 200,
-            })
+    account_category_item_document = request.json
+    account_category_item = AccountCategoryItem(
+        account_category_item_document=account_category_item_document)
+    result = account_category_item_collection.update_one(
+        {'name': name},
+        {'$set': account_category_item.__dict__}
+    )
+    if result.modified_count == 1:
+        return jsonify({
+            'message': 'Account category updated in the database using the name.',
+            'status': 200,
+        })
     return jsonify({
-        'message': 'Account category not found in the database.',
+        'message': 'Account category not found in the database using the name.',
         'status': 404
     })
 
 
 @account_category_item_api_v1.route('/delete/<string:name>', methods=['DELETE'])
-def delete_account_category(name: str) -> Response:
+def delete_account_category_by_name(name: str) -> Response:
     """
+    :param name: Account category item's name
     :return: Response object with a message describing if the account category item was found (if yes: delete
     account category) and the status code
     """
