@@ -19,6 +19,8 @@ class User:
         User's country code
     email : str
         User's email
+    _id : str
+        User's id
     password : str
         User's password
     phone_number : str
@@ -42,6 +44,10 @@ class User:
         Returns the user's email
     set_email(email) : None
         Sets the user's email
+    get_id() : str
+        Returns the user's id
+    set_id(_id) : None
+        Sets the user's id
     get_password() : str
         Returns the user's password
     set_password(password) : None
@@ -57,6 +63,7 @@ class User:
         self.country = user_document['country']
         self.country_code = user_document['country_code']
         self.email = user_document['email']
+        self._id = user_document['_id']
         self.password = user_document['password']
         self.phone_number = user_document['phone_number']
 
@@ -107,6 +114,18 @@ class User:
         :param email: User's email
         """
         self.email = email
+
+    def get_id(self) -> str:
+        """
+        :return: User's id
+        """
+        return self._id
+
+    def set_id(self, _id: str) -> None:
+        """
+        :param _id: User's id
+        """
+        self._id = _id
 
     def get_password(self) -> str:
         """

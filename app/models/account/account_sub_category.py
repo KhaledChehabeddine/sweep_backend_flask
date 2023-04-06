@@ -14,10 +14,12 @@ class AccountSubCategory:
 
     Attributes
     ----------
-    category : str
-        Account sub category's name
     account_category_items : List[AccountMainCategoryItem]
         Account sub category's items
+    category : str
+        Account sub category's name
+    _id : str
+        Account sub category's id
 
     Methods
     -------
@@ -29,11 +31,16 @@ class AccountSubCategory:
         Returns the account sub category's name
     set_category(category) : None
         Sets the account sub category's name
+    get_id() : str
+        Returns the account sub category's id
+    set_id(_id) : None
+        Sets the account sub category's id
     """
 
     def __init__(self, account_main_category_document: dict) -> None:
         self.account_category_items = account_main_category_document['account_category_items']
         self.category = account_main_category_document['category']
+        self._id = account_main_category_document['_id']
 
     def get_account_main_category_items(self) -> List[AccountCategoryItem]:
         """
@@ -58,3 +65,15 @@ class AccountSubCategory:
         :param category: Account sub category's items
         """
         self.category = category
+
+    def get_id(self) -> str:
+        """
+        :return: Account sub category's id
+        """
+        return self._id
+
+    def set_id(self, _id: str) -> None:
+        """
+        :param _id: Account sub category's id
+        """
+        self._id = _id

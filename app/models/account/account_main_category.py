@@ -16,6 +16,8 @@ class AccountMainCategory:
     ----------
     account_category_items : List[AccountMainCategoryItem]
         Account main category's items
+    _id : str
+        Account main category's id
 
     Methods
     -------
@@ -23,9 +25,14 @@ class AccountMainCategory:
         Returns the account main category's items
     set_account_category_items(account_category_items) : None
         Sets the account main category's items
+    get_id() : str
+        Returns the account main category's id
+    set_id(_id) : None
+        Sets the account main category's id
     """
     def __init__(self, account_main_category_document: dict) -> None:
         self.account_category_items = account_main_category_document['account_category_items']
+        self._id = account_main_category_document['_id']
 
     def get_account_category_items(self) -> List[AccountCategoryItem]:
         """
@@ -38,3 +45,15 @@ class AccountMainCategory:
         :param account_category_items: Account main category's items
         """
         self.account_category_items = account_category_items
+
+    def get_id(self) -> str:
+        """
+        :return: Account main category's id
+        """
+        return self._id
+
+    def set_id(self, _id: str) -> None:
+        """
+        :param _id: Account main category's id
+        """
+        self._id = _id

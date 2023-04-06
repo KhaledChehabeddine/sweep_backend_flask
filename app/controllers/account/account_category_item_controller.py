@@ -12,7 +12,7 @@ from app.database.database import get_database
 from app.models.account.account_category_item import AccountCategoryItem
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
-account_category_item_collection = get_database()['account_categories_items']
+account_category_item_collection = get_database()['account_category_items']
 
 
 @account_category_item_api_v1.route('/create', methods=['POST'])
@@ -21,8 +21,7 @@ def create_account_item_category() -> Response:
     :return: Response object with a message describing if the account category was created and the status code
     """
     account_category_item_document = request.json
-    account_category_item = AccountCategoryItem(
-        account_category_item_document=account_category_item_document)
+    account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
         account_category_item_collection.insert_one(account_category_item.__dict__)
     except OperationFailure:

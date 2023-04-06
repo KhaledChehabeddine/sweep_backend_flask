@@ -4,34 +4,54 @@ A home main featured item model used to convert a home main featured item docume
 """
 
 
-class HomeMainFeaturedItem:
+class HomeMainFeatureItem:
     """
     A class to represent a home main featured item model
 
+
     Attributes
     ----------
-    image_link : str
-        Home main featured item's image link
+    _id : str
+        Home main featured item's id
+    image : str
+        Home main featured item's image
 
     Methods
     -------
-    get_image_link() : str
-        Returns the home main featured item's image link
-    set_image_link(image_link) : None
-        Sets the home main featured item's image link
+    get_id() : str
+        Returns the home main featured item's id
+    set_id(_id) : None
+        Sets the home main featured item's id
+    get_image() : str
+        Returns the home main featured item's image
+    set_image(image) : None
+        Sets the home main featured item's image
     """
 
     def __init__(self, home_main_featured_item_document: dict) -> None:
-        self.image_link = home_main_featured_item_document['image_link']
+        self._id = home_main_featured_item_document['_id']
+        self.image = home_main_featured_item_document['image']
 
-    def get_image_link(self) -> str:
+    def get_id(self) -> str:
         """
-        :return: Home main featured item's image link
+        :return: Home main featured item's id
         """
-        return self.image_link
+        return self._id
 
-    def set_image_link(self, image_link: str) -> None:
+    def set_id(self, _id: str) -> None:
         """
-        :param image_link: Home main featured item's image link
+        :param _id: Home main featured item's id
         """
-        self.image_link = image_link
+        self._id = _id
+
+    def get_image(self) -> str:
+        """
+        :return: Home main featured item's image
+        """
+        return self.image
+
+    def set_image(self, image: str) -> None:
+        """
+        :param image: Home main featured item's image
+        """
+        self.image = image

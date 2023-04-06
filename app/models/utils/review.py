@@ -1,7 +1,7 @@
-"""Summary: Review model
-    a review model used to convert a review document into a review object
+"""Summary: Review Model
+
+A review model used to convert a review document into a review object
 """
-from typing import List
 
 from app.models.utils.service import Service
 
@@ -15,14 +15,14 @@ class Review:
     ----------
     feedback : str
         Review's feedback
+    _id : str
+        Review's id
     rating : int
         Review's rating
     reviewer : str
         Review's reviewer
-    review_id : str
-        Review's id
-    services : List[Service]
-        review's services
+    service_id : str
+        Review's service id
 
     Methods
     -------
@@ -30,6 +30,10 @@ class Review:
         Returns the review's feedback
     set_feedback(feedback) : None
         Sets the review's feedback
+    get_id() : str
+        Returns the review's id
+    set_id(_id) : None
+        Sets the review's id
     get_rating() : int
         Returns the review's rating
     set_rating(rating) : None
@@ -38,79 +42,75 @@ class Review:
         Returns the review's reviewer
     set_reviewer(reviewer) : None
         Sets the review's reviewer
-    get_review_id() : str
-        Returns the review's id
-    set_review_id(review_id) : None
-        Sets the review's id
-    get_services() : List[services]
-        Returns the review's services
-    set_services(services) : None
-        Sets the review's services
+    get_service_id() : str
+        Returns the review's service id
+    set_service_id(service_id) : None
+        Sets the review's service id
     """
 
-    def __init__(self, reviews_document: dict) -> None:
-        self.feedback = reviews_document['feedback']
-        self.rating = reviews_document['rating']
-        self.reviewer = reviews_document['reviewer']
-        self.review_id = reviews_document['review_id']
-        self.services = reviews_document['services']
+    def __init__(self, review_document: dict) -> None:
+        self.feedback = review_document['feedback']
+        self._id = review_document['_id']
+        self.rating = review_document['rating']
+        self.reviewer = review_document['reviewer']
+        self.service_id = review_document['service_id']
 
     def get_feedback(self) -> str:
         """
-        returns the feedback
+        :return: Review's feedback
         """
         return self.feedback
 
     def set_feedback(self, feedback: str) -> None:
         """
-        sets the feedback
+        :param feedback: Review's feedback
         """
         self.feedback = feedback
 
+    def get_id(self) -> str:
+        """
+        :return: Review's id
+        """
+        return self._id
+
+    def set_id(self, _id: str) -> None:
+        """
+        :param _id: Review's id
+        """
+        self._id = _id
+
     def get_rating(self) -> int:
         """
-        returns the rating
+        :return: Review's rating
         """
         return self.rating
 
     def set_rating(self, rating: int) -> None:
         """
-        sets the rating
+        :param rating: Review's rating
         """
         self.rating = rating
 
     def get_reviewer(self) -> str:
         """
-        returns the reviewer
+        :return: Review's reviewer
         """
         return self.reviewer
 
     def set_reviewer(self, reviewer: str) -> None:
         """
-        sets the reviewer
+        :param reviewer: Review's reviewer
         """
         self.reviewer = reviewer
 
-    def get_review_id(self) -> str:
+    def get_service_id(self) -> Service:
         """
-        returns the id
+        :return: Review's service id
         """
-        return self.review_id
+        return self.service_id
 
-    def set_review_id(self, review_id: str) -> None:
+    def set_service_id(self, service_id: Service) -> None:
         """
-        sets the id
+        :param service_id: Review's service id
         """
-        self.review_id = review_id
-
-    def get_services(self) -> List[Service]:
-        """
-        returns the service
-        """
-        return self.services
-
-    def set_services(self, services: List[Service]) -> None:
-        """
-        set the service
-        """
-        self.services = services
+        self.service_id = service_id

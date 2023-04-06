@@ -50,12 +50,12 @@ def read_account_main_category() -> Response:
                 .loads(json_util.dumps(account_main_category_document), object_hook=json_util.object_hook)
             account_main_category = AccountMainCategory(account_main_category_document=account_main_category_document)
         return jsonify({
-            'message': 'Account main categories found in the database.',
+            'message': 'Account main category found in the database.',
             'status': 200,
             'account_main_category': account_main_category.__dict__
         })
     return jsonify({
-        'message': 'No account main category found in the database.',
+        'message': 'Account main category not found in the database.',
         'status': 404
     })
 
