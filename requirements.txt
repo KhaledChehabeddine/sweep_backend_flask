@@ -7,7 +7,7 @@ dnslib==0.9.23
 dnspython==2.3.0
 Flask==2.2.3
 Flask-Cors==3.0.10
-flask-marshmallow==0.14.0
+flask-marshmallow==0.15.0
 Flask-PyMongo==2.3.0
 idna==3.4
 isort==5.12.0
