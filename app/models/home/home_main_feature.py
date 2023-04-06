@@ -4,7 +4,7 @@ A home main featured model used to convert a home main featured document into a 
 """
 
 from typing import List
-from app.models.home.home_main_featured_item import HomeMainFeaturedItem
+from app.models.home.home_main_feature_item import HomeMainFeaturedItem
 
 
 class HomeMainFeatured:
