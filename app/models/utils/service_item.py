@@ -1,10 +1,10 @@
 """Summary: Service Model
 
-A service model used to convert a service document into a service object
+A service model used to convert a service item document into a service object
 """
 
 
-class Service:
+class ServiceItem:
     """
     A class to represent a service model
 
@@ -46,12 +46,12 @@ class Service:
         Sets the service's price
     """
 
-    def __init__(self, service_document: dict) -> None:
-        self.description = service_document['description']
-        self._id = service_document['_id']
-        self.image = service_document['image']
-        self.name = service_document['name']
-        self.price = service_document['price']
+    def __init__(self, service_item_document: dict) -> None:
+        self.description = service_item_document['description']
+        self._id = service_item_document['_id']
+        self.image = service_item_document['image']
+        self.name = service_item_document['name']
+        self.price = service_item_document['price']
 
     def get_description(self) -> str:
         """
