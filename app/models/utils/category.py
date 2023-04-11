@@ -4,7 +4,7 @@ A category model used to convert a category document into a category object
 """
 
 from typing import List
-from app.models.utils.service import Service
+from app.models.utils.service_item import ServiceItem
 
 
 class Category:
@@ -65,13 +65,13 @@ class Category:
         """
         self.name = name
 
-    def get_services(self) -> List[Service]:
+    def get_services(self) -> List[ServiceItem]:
         """
         :return: Category's services
         """
         return self.services
 
-    def set_services(self, services: List[Service]) -> None:
+    def set_services(self, services: List[ServiceItem]) -> None:
         """
         :param services: Category's services
         """

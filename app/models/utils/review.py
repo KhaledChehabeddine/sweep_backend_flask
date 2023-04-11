@@ -3,8 +3,6 @@
 A review model used to convert a review document into a review object
 """
 
-from app.models.utils.service import Service
-
 
 class Review:
     """
@@ -21,8 +19,8 @@ class Review:
         Review's rating
     reviewer : str
         Review's reviewer
-    service_id : str
-        Review's service id
+    service_item_id : str
+        Review's service item's id
 
     Methods
     -------
@@ -42,10 +40,10 @@ class Review:
         Returns the review's reviewer
     set_reviewer(reviewer) : None
         Sets the review's reviewer
-    get_service_id() : str
+    get_service_item_id() : str
         Returns the review's service id
-    set_service_id(service_id) : None
-        Sets the review's service id
+    set_service_item_id(service_item_id) : None
+        Sets the review's service item's id
     """
 
     def __init__(self, review_document: dict) -> None:
@@ -53,7 +51,7 @@ class Review:
         self._id = review_document['_id']
         self.rating = review_document['rating']
         self.reviewer = review_document['reviewer']
-        self.service_id = review_document['service_id']
+        self.service_item_id = review_document['service_item_id']
 
     def get_feedback(self) -> str:
         """
@@ -103,14 +101,14 @@ class Review:
         """
         self.reviewer = reviewer
 
-    def get_service_id(self) -> Service:
+    def get_service_item_id(self) -> str:
         """
         :return: Review's service id
         """
-        return self.service_id
+        return self.service_item_id
 
-    def set_service_id(self, service_id: Service) -> None:
+    def set_service_item_id(self, service_item_id: str) -> None:
         """
-        :param service_id: Review's service id
+        :param service_item_id: Review's service id
         """
-        self.service_id = service_id
+        self.service_item_id = service_item_id

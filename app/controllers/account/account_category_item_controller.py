@@ -10,6 +10,7 @@ from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.account.account_category_item import AccountCategoryItem
+from app.routes.blueprints import sweep_api_v1
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_category_items']
@@ -103,3 +104,6 @@ def delete_account_category_by_name(name: str) -> Response:
         'message': 'Account category item not found in the database using the name.',
         'status': 404
     })
+
+
+sweep_api_v1.register_blueprint(account_category_item_api_v1)
