@@ -4,8 +4,8 @@ A home sub feature item model used to convert a home sub feature item document i
 """
 
 from typing import List
-from app.models.utils.category import Category
-from app.models.utils.review import Review
+from app.models.utilities.category import Category
+from app.models.utilities.review import Review
 
 
 class HomeSubFeatureItem:

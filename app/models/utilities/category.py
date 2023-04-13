@@ -4,7 +4,7 @@ A category model used to convert a category document into a category object
 """
 
 from typing import List
-from app.models.utils.service_item import ServiceItem
+from app.models.utilities.service_item import ServiceItem
 
 
 class Category:

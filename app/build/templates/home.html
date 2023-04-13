@@ -1,142 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href='../static/favicon_sweep_logo.png' rel='icon' type='image/x-icon'>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Sweep REST API</title>
   </head>
 
-  <body style="padding:20px">
-    <h1 style="display:flex;justify-content:center">
-      Welcome to the Sweep Rest API
+  <body style='padding: 1rem'>
+    <!--suppress HtmlUnknownTarget -->
+    <img alt='Sweep Logo'
+         src='{{url_for("static", filename="sweep_logo.png")}}'
+         style='display: flex; margin: 2rem auto 3rem;'
+         width='100'>
+
+    <h1 style='display: flex; margin-bottom: 3rem; font-family: Monospace, monospace; justify-content: center'>
+      Sweep Rest API
     </h1>
 
-    <p style="display:flex;justify-content:center;text-align:justify;padding:0 20px">
-      Ladies and gentlemen, get ready to witness a force to be reckoned with! Hailing from parts unknown,
-      standing at 173cm and weighing in at 60kg, this wrestler is a true powerhouse in the ring. With a
-      fierce determination and an unbreakable will, there's no opponent tough enough for this warrior to take down.
-      Known for their signature moves and relentless aggression, they'll stop at nothing to claim victory in the
-      squared circle. So lets give it up for the one, the only, HASHEM SHIBLI!
+    <p style='display: flex; font-family: Monospace, monospace; justify-content: center; padding: 0 20px;
+              text-align: justify;'>
+      Welcome to the Sweep API, a REST-ful API that provides a comprehensive solution for managing and tracking our
+      android application. It easily allows to create, read, update, and delete our database entities. It is designed
+      to be flexible, scalable, and easy to integrate with other Sweep applications or services.
     </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:yellow;
-              font-weight:bold">
-      Html styling and back-end routing were done by Mohamad Mustapha, courtesy of his kindness. He is the 4th group
-      member.
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      Consultancy and massive parallelization guidance were provided by the true 4th group member, Ali Yassine.
-      (P.S: payment expected by May 1st or legal action will be pursued. Take this as an advice not as a threat.)
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      Booooooooo ~ fadi Meraabi
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      taylor swift is the music industry ~tia
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      The entire fried chicken establishment known as "KFC" is owned by the ghaddaf family -H.Ghaddaf
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      do u ever feel like a plastic bag -nadine
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      bro do something monkey -loza
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      My name is Enrico Montoya. You killed my father, prepare to die. - Esteban Julio Ricardo Montoya de la Rosa Ramires
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      among us sussy baka impostor ~Majd Fakih
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      to2borne your back end shu ashta ~yvan
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      slayyy gurll slayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ~fatima
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      allah w hitler ~ zainab
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      communism is God's chosen system ~yara hiajziii
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      denial is a river in egypt,YOUR HUSBAND IS GAYYYYYYYYYY ~J // slay kween :*)
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      hitler was right look at israel - Ali El Khatib
-    </p>
-
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      stop social loafing-sal
-    </p>
-    
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      allah w walid baik ~ ragheed
-    </p>
-                 
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      ana msattara el yawm ~ Jana
-    </p>
-              
-    <p style="display:flex;justify-content:center;text-align:justify;padding:20px;background-color:black;color:white;
-              font-weight:bold">
-      Ola Ola Jouni Ola Ola Jouni!!!!!!!
-    </p>
-
-    <p style="display:flex;justify-content:center;padding:0 20px;font-style:italic;font-size:14px">
-      © Mohamad Mustapha Co. 2023
-    </p>
-
-    <p style="display:flex;justify-content:center;padding:0 20px;font-style:italic;font-size:14px">
-      © Ali Yassine Inc. 2023
-    </p>
-
-    <p id="legends" onmouseenter="legendsHover()" style="margin:auto;font-weight:bold;
-                                                         cursor:pointer;width:fit-content;padding-bottom:10px">
-      Click Me
-    </p>
-
-    <!--suppress HtmlUnknownTarget -->
-    <img  alt="" id="legendsImage" src="{{url_for('static', filename='legends.png')}}" style="display:none;margin:auto">
-
-    <script>
-      function legendsHover() {
-        document.getElementById("legendsImage").style.display = "block"
-        document.getElementById("legendsImage").style.width = "550px"
-      }
-    </script>
   </body>
 </html>
