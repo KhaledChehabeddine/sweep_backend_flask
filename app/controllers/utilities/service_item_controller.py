@@ -8,7 +8,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.utils.service_item import ServiceItem
+from app.models.utilities.service_item import ServiceItem
 from app.routes.blueprints import sweep_api_v1
 
 service_item_api_v1 = Blueprint('service_item_api_v1', __name__, url_prefix='/service_item')

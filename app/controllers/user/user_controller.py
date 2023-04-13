@@ -5,6 +5,7 @@ delete users from the database
 """
 
 import json
+import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
@@ -15,6 +16,10 @@ from app.routes.blueprints import sweep_api_v1
 user_api_v1 = Blueprint('user_api_v1', __name__, url_prefix='/user')
 user_collection = get_database()['users']
 
+user_collection.create_index([('email', pymongo.ASCENDING)], unique=True)
+user_collection.create_index([('phone_number', pymongo.ASCENDING)], unique=True)
+user_collection.create_index([('username', pymongo.ASCENDING)], unique=True)
+
 
 @user_api_v1.route('/create', methods=['POST'])
 def create_user() -> Response:
@@ -24,7 +29,7 @@ def create_user() -> Response:
     user_document = request.json
     user = User(user_document=user_document)
     try:
-        user_collection.insert_one(user.__dict__)
+        user_collection.insert_one(user.create_dict())
     except OperationFailure:
         return jsonify({
             'message': 'User not added to the database.',
@@ -33,28 +38,6 @@ def create_user() -> Response:
     return jsonify({
         'message': 'User added to the database.',
         'status': 200
-    })
-
-
-@user_api_v1.route('/read/<string:email>', methods=['GET'])
-def read_user_by_email(email: str) -> Response:
-    """
-    :param email: User's email
-    :return: Response object with a message describing if the user was found (if yes: add user object) and the status
-    code
-    """
-    user_document = json.loads(json_util.dumps(user_collection.find_one({'email': email})),
-                               object_hook=json_util.object_hook)
-    if user_document:
-        user = User(user_document=user_document)
-        return jsonify({
-            'message': 'User found in the database using the email.',
-            'status': 200,
-            'user': user.__dict__
-        })
-    return jsonify({
-        'message': 'User not found in the database using the email.',
-        'status': 404
     })
 
 
@@ -72,9 +55,9 @@ def read_users() -> Response:
             user = User(user_document=user_document)
             users.append(user.__dict__)
         return jsonify({
+            'data': users,
             'message': 'Users found in the database.',
-            'status': 200,
-            'users': users
+            'status': 200
         })
     return jsonify({
         'message': 'No user found in the database.',
@@ -82,7 +65,29 @@ def read_users() -> Response:
     })
 
 
-@user_api_v1.route('/update/<string:email>', methods=['PUT'])
+@user_api_v1.route('/read/email/<string:email>', methods=['GET'])
+def read_user_by_email(email: str) -> Response:
+    """
+    :param email: User's email
+    :return: Response object with a message describing if the user was found (if yes: add user object) and the status
+    code
+    """
+    user_document = json.loads(json_util.dumps(user_collection.find_one({'email': email})),
+                               object_hook=json_util.object_hook)
+    if user_document:
+        user = User(user_document=user_document)
+        return jsonify({
+            'user': user.__dict__,
+            'message': 'User found in the database using the email.',
+            'status': 200
+        })
+    return jsonify({
+        'message': 'User not found in the database using the email.',
+        'status': 404
+    })
+
+
+@user_api_v1.route('/update/email/<string:email>', methods=['PUT'])
 def update_user_by_email(email: str) -> Response:
     """
     :param email: User's email
@@ -105,7 +110,7 @@ def update_user_by_email(email: str) -> Response:
     })
 
 
-@user_api_v1.route('/delete/<string:email>', methods=['DELETE'])
+@user_api_v1.route('/delete/email/<string:email>', methods=['DELETE'])
 def delete_user_by_email(email: str) -> Response:
     """
     :param email: User's email

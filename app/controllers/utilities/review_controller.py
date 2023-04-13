@@ -9,7 +9,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.utils.review import Review
+from app.models.utilities.review import Review
 from app.routes.blueprints import sweep_api_v1
 
 review_api_v1 = Blueprint('review_api_v1', __name__, url_prefix='/review')
