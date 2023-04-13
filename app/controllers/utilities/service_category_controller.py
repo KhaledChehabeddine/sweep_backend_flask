@@ -9,7 +9,7 @@ from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.utils.service_category import ServiceCategory
+from app.models.utilities.service_category import ServiceCategory
 from app.routes.blueprints import sweep_api_v1
 
 service_category_api_v1 = Blueprint('service_category_api_v1', __name__, url_prefix='/service_category')
