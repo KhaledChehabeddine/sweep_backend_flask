@@ -3,10 +3,6 @@
 A category model used to convert a category document into a category object
 """
 
-from typing import List
-from app.models.utilities.service_item import ServiceItem
-
-
 class Category:
     """
     A class to represent a category model
