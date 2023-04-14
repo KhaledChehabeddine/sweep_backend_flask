@@ -22,25 +22,6 @@ class HomeSubFeature:
         Home sub feature's subtitle
     title : str
         Home sub feature's title
-
-    Methods
-    -------
-    get_home_sub_feature_items() : List[HomeSubFeatureItem]
-        Returns the home sub feature's items
-    set_home_sub_feature_items(home_sub_feature_items) : None
-        Sets the home sub feature's items
-    get_id() : str
-        Returns the home sub feature's id
-    set_id(_id) : None
-        Sets the home sub feature's id
-    get_subtitle() : str
-        Returns the home sub feature's sub_title
-    set_subtitle(subtitle) : None
-        Sets the home sub feature's sub_title
-    get_title() : str
-        Returns the home sub feature's title
-    set_title(title) : None
-        Sets the home sub feature's title
     """
 
     def __init__(self, home_sub_feature_document: dict) -> None:
@@ -49,50 +30,12 @@ class HomeSubFeature:
         self.subtitle = home_sub_feature_document['subtitle']
         self.title = home_sub_feature_document['title']
 
-    def get_home_sub_feature_items(self) -> List[HomeSubFeatureItem]:
+    def create_dict(self) -> dict:
         """
-        :return: Home sub feature's items
+        :return: Home sub feature's dict (without _id)
         """
-        return self.home_sub_feature_items
-
-    def set_home_sub_feature_items(self, home_sub_feature_items: List[HomeSubFeatureItem]) -> None:
-        """
-        :param home_sub_feature_items: Home sub feature's items
-        """
-        self.home_sub_feature_items = home_sub_feature_items
-
-    def get_id(self) -> str:
-        """
-        :return: Home sub feature's id
-        """
-        return self._id
-
-    def set_id(self, _id: str) -> None:
-        """
-        :param _id: Home sub feature's id
-        """
-        self._id = _id
-
-    def get_subtitle(self) -> str:
-        """
-        :return: Home sub feature's subtitle
-        """
-        return self.subtitle
-
-    def set_subtitle(self, subtitle: str) -> None:
-        """
-        :param subtitle: Home sub feature's subtitle
-        """
-        self.subtitle = subtitle
-
-    def get_title(self) -> str:
-        """
-        :return: Home sub feature's title
-        """
-        return self.title
-
-    def set_title(self, title: str) -> None:
-        """
-        :param title: Home sub feature's title
-        """
-        self.title = title
+        return {
+            'home_sub_feature_items': self.home_sub_feature_items,
+            'subtitle': self.subtitle,
+            'title': self.title
+        }
