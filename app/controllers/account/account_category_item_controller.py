@@ -5,7 +5,6 @@ delete account category items from the database
 """
 
 import json
-import os
 import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
@@ -13,7 +12,8 @@ from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.account.account_category_item import AccountCategoryItem
 from app.routes.blueprints import sweep_api_v1
-from app.utilities.aws_s3_client import upload_to_aws_s3, create_presigned_url
+from app.utilities.aws_cloudfront_client import get_cloudfront_url
+from app.utilities.aws_s3_client import upload_to_aws_s3
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_category_items']
@@ -28,10 +28,7 @@ def _configure_account_category_item(account_category_item_document: dict) -> Ac
     account_category_item_document = json.loads(json_util.dumps(account_category_item_document),
                                                 object_hook=json_util.object_hook)
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
-    account_category_item.image_url = create_presigned_url(
-        bucket=os.getenv('AWS_S3_BUCKET'),
-        file_name=account_category_item.file_name
-    )
+    account_category_item.image_url = get_cloudfront_url(file_path=account_category_item.file_path)
     return account_category_item
 
 
@@ -41,11 +38,7 @@ def create_account_category_item() -> Response:
     :return: Response object with a message describing if the account category item was created and the status code
     """
     account_category_item_document = request.json
-    upload_to_aws_s3(
-        bucket=os.getenv('AWS_S3_BUCKET'),
-        file_data=request.json['image'],
-        file_name=request.json['file_name']
-    )
+    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
         account_category_item_collection.insert_one(account_category_item.create_dict())
