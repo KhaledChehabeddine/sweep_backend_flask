@@ -13,8 +13,8 @@ class AccountCategoryItem:
     ----------
     account_category_name : str
         Account category item's account category name
-    file_name : str
-        Account category item's file name
+    file_path : str
+        Account category item's file path
     _id : str
         Account category item's id
     image_url : str
@@ -25,7 +25,7 @@ class AccountCategoryItem:
 
     def __init__(self, account_category_item_document: dict) -> None:
         self.account_category_name = account_category_item_document['account_category_name']
-        self.file_name = account_category_item_document['file_name']
+        self.file_path = account_category_item_document['file_path']
         self._id = account_category_item_document['_id']
         self.image_url = ""
         self.name = account_category_item_document['name']
@@ -36,7 +36,7 @@ class AccountCategoryItem:
         """
         return {
             'account_category_id': self.account_category_name,
-            'file_name': self.file_name,
+            'file_path': self.file_path,
             'image_url': self.image_url,
             'name': self.name
         }
