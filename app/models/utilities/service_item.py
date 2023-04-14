@@ -32,7 +32,7 @@ class ServiceItem:
 
     def create_dict(self) -> dict:
         """
-        :return: Service's dictionary representation
+        :return: Service's dict (without _id)
         """
         return {
             'description': self.description,

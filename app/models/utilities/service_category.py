@@ -28,7 +28,7 @@ class ServiceCategory:
 
     def create_dict(self) -> dict:
         """
-        :return: Service Category's dictionary representation
+        :return: Service Category's dict (without _id)
         """
         return {
             'name': self.name,

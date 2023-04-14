@@ -3,6 +3,7 @@
 A category model used to convert a category document into a category object
 """
 
+
 class Category:
     """
     A class to represent a category model
@@ -24,7 +25,7 @@ class Category:
 
     def create_dict(self) -> dict:
         """
-        :return: Category's dictionary representation
+        :return: Category's dict (without _id)
         """
         return {
             'name': self.name,

@@ -32,7 +32,7 @@ class Review:
 
     def create_dict(self) -> dict:
         """
-        :return: Review's dictionary representation
+        :return: Review's dict (without _id)
         """
         return {
             'feedback': self.feedback,
