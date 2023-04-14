@@ -3,10 +3,6 @@
 A home sub feature item model used to convert a home sub feature item document into a home sub feature item object
 """
 
-from typing import List
-from app.models.utilities.category import Category
-from app.models.utilities.review import Review
-
 
 class HomeSubFeatureItem:
     """
@@ -19,6 +15,8 @@ class HomeSubFeatureItem:
         Home sub feature item's categories
     description : str
         Home sub feature item's description
+    file_path : str
+        Home sub feature item's file_path
     flags : List[str]
         Home sub feature item's flags
     _id : str
@@ -38,6 +36,7 @@ class HomeSubFeatureItem:
     """
 
     def __init__(self, home_sub_feature_item_document: dict) -> None:
+        self.file_path = home_sub_feature_item_document['file_path']
         self.categories = home_sub_feature_item_document['categories']
         self.description = home_sub_feature_item_document['description']
         self.flags = home_sub_feature_item_document['flags']

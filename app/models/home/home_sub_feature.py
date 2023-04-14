@@ -3,9 +3,6 @@
 A home sub feature model used to convert a home sub feature document into a home sub feature object
 """
 
-from typing import List
-from app.models.home.home_sub_feature_item import HomeSubFeatureItem
-
 
 class HomeSubFeature:
     """

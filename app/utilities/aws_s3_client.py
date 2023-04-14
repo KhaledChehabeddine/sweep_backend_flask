@@ -1,4 +1,4 @@
-"""Summary: AWS S3 Client Operations
+"""Summary: AWS S3 Operations
 
 A client that contains operations related to AWS S3
 """
@@ -21,43 +21,45 @@ def get_aws_s3_client() -> BaseClient:
     """
     global AWS_S3_CLIENT
     if AWS_S3_CLIENT is None:
-        AWS_S3_CLIENT = boto3.client('s3',
-                                     aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-                                     aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+        AWS_S3_CLIENT = boto3.client(
+            's3',
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+        )
     return AWS_S3_CLIENT
 
 
-def create_presigned_url(bucket: str, file_name: str) -> str:
+def create_presigned_url(file_path: str) -> str:
     """
-    :param bucket: The bucket of the file
-    :param file_name: The path of the file
+    :param file_path: The path of the file
     :return: Presigned URL for the file in the bucket
     """
-    return get_aws_s3_client().generate_presigned_url('get_object',
-                                                      ExpiresIn=3600,
-                                                      Params={
-                                                          'Bucket': bucket,
-                                                          'Key': file_name
-                                                      })
+    return get_aws_s3_client().generate_presigned_url(
+        'get_object',
+        ExpiresIn=3600,
+        Params={
+            'Bucket': os.getenv('AWS_S3_BUCKET'),
+            'Key': file_path
+        }
+    )
 
 
-def upload_to_aws_s3(bucket: str, file_data: str, file_name: str) -> Response:
+def upload_to_aws_s3(file_data: str, file_path: str) -> Response:
     """
-    :param bucket: The bucket of the file
     :param file_data: The byte data of the file
-    :param file_name: The path of the file
+    :param file_path: The path of the file
     :return: Response object with a message describing if the file was uploaded and the status code
     """
     try:
         file_bytes = base64.b64decode(file_data)
         with BytesIO(file_bytes) as file:
-            get_aws_s3_client().upload_fileobj(file, bucket, file_name)
+            get_aws_s3_client().upload_fileobj(file, os.getenv('AWS_S3_BUCKET'), file_path)
     except ClientError:
         return jsonify({
-            'message': 'File not uploaded into AWS S3 bucket.',
+            'message': 'File not uploaded into the AWS S3 bucket.',
             'status': 500
         })
     return jsonify({
-        'message': 'File uploaded into AWS S3 bucket.',
+        'message': 'File uploaded into the AWS S3 bucket.',
         'status:': 200
     })

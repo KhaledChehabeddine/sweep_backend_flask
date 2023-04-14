@@ -3,9 +3,6 @@
 A home main featured model used to convert a home main featured document into a home main featured object
 """
 
-from typing import List
-from app.models.home.home_main_feature_item import HomeMainFeatureItem
-
 
 class HomeMainFeature:
     """

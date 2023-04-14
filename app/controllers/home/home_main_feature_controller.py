@@ -1,7 +1,7 @@
 """Summary: Home Main Feature Controller CRUD Operations
 
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
-delete home categories from the database
+delete home main features from the database
 """
 
 import json
@@ -14,7 +14,7 @@ from app.models.home.home_main_feature import HomeMainFeature
 from app.routes.blueprints import sweep_api_v1
 
 home_main_feature_api_v1 = Blueprint('home_main_feature_api_v1', __name__, url_prefix='/home_main_feature')
-home_main_feature_collection = get_database()['home_categories']
+home_main_feature_collection = get_database()['home_main_features']
 
 home_main_feature_collection.create_index([('name', pymongo.ASCENDING)], unique=True)
 
@@ -40,26 +40,26 @@ def create_home_main_feature() -> Response:
 
 
 @home_main_feature_api_v1.route('/read', methods=['GET'])
-def read_home_categories() -> Response:
+def read_home_main_features() -> Response:
     """
-    :return: Response object with a message describing if all the home categories were found (if yes: add home
-    categories) and the status code
+    :return: Response object with a message describing if all the home main features were found (if yes: add home
+    main features) and the status code
     """
-    home_categories = []
+    home_main_features = []
     home_main_feature_documents = home_main_feature_collection.find()
     if home_main_feature_documents:
         for home_main_feature_document in home_main_feature_documents:
             home_main_feature_document = json \
                 .loads(json_util.dumps(home_main_feature_document), object_hook=json_util.object_hook)
             home_main_feature = HomeMainFeature(home_main_feature_document=home_main_feature_document)
-            home_categories.append(home_main_feature.__dict__)
+            home_main_features.append(home_main_feature.__dict__)
         return jsonify({
-            'data': home_categories,
-            'message': 'Home categories found in the database.',
+            'data': home_main_features,
+            'message': 'Home main feature found in the database.',
             'status': 200
         })
     return jsonify({
-        'message': 'No home main feature found in the database.',
+        'message': 'No home main features found in the database.',
         'status': 404
     })
 
@@ -80,7 +80,7 @@ def read_home_main_feature_by_name(name: str) -> Response:
             'status': 200
         })
     return jsonify({
-        'message': 'Home main feature not found in the database using the name.',
+        'message': 'Home main features not found in the database using the name.',
         'status': 404
     })
 
@@ -104,7 +104,7 @@ def update_home_main_feature_by_name(name: str) -> Response:
             'status': 200
         })
     return jsonify({
-        'message': 'Home main feature not found in the database using the name.',
+        'message': 'Home main features not found in the database using the name.',
         'status': 404
     })
 
@@ -123,7 +123,7 @@ def delete_home_main_feature_by_name(name: str) -> Response:
             'status': 200
         })
     return jsonify({
-        'message': 'Home main feature not found in the database using the name.',
+        'message': 'Home main features not found in the database using the name.',
         'status': 404
     })
 

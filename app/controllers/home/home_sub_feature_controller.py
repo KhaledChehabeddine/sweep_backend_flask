@@ -14,7 +14,7 @@ from app.models.home.home_sub_feature import HomeSubFeature
 from app.routes.blueprints import sweep_api_v1
 
 home_sub_feature_api_v1 = Blueprint('home_sub_feature_api_v1', __name__, url_prefix='/home_sub_feature')
-home_sub_feature_collection = get_database()['home_categories']
+home_sub_feature_collection = get_database()['home_sub_features']
 
 home_sub_feature_collection.create_index([('name', pymongo.ASCENDING)], unique=True)
 
@@ -40,26 +40,26 @@ def create_home_sub_feature() -> Response:
 
 
 @home_sub_feature_api_v1.route('/read', methods=['GET'])
-def read_home_categories() -> Response:
+def read_home_sub_features() -> Response:
     """
-    :return: Response object with a message describing if all the home categories were found (if yes: add home
-    categories) and the status code
+    :return: Response object with a message describing if all the home sub features were found (if yes: add home
+    sub features) and the status code
     """
-    home_categories = []
+    home_sub_features = []
     home_sub_feature_documents = home_sub_feature_collection.find()
     if home_sub_feature_documents:
         for home_sub_feature_document in home_sub_feature_documents:
             home_sub_feature_document = json \
                 .loads(json_util.dumps(home_sub_feature_document), object_hook=json_util.object_hook)
             home_sub_feature = HomeSubFeature(home_sub_feature_document=home_sub_feature_document)
-            home_categories.append(home_sub_feature.__dict__)
+            home_sub_features.append(home_sub_feature.__dict__)
         return jsonify({
-            'data': home_categories,
-            'message': 'Home categories found in the database.',
+            'data': home_sub_features,
+            'message': 'Home sub features found in the database.',
             'status': 200
         })
     return jsonify({
-        'message': 'No home sub feature found in the database.',
+        'message': 'No home sub features found in the database.',
         'status': 404
     })
 
