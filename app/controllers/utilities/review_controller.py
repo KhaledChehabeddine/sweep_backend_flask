@@ -6,7 +6,6 @@ delete reviews from the database
 
 import json
 
-import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
