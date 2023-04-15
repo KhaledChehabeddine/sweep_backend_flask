@@ -4,6 +4,8 @@ delete service items from the database
 """
 
 import json
+
+import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
@@ -13,6 +15,8 @@ from app.routes.blueprints import sweep_api_v1
 
 service_item_api_v1 = Blueprint('service_item_api_v1', __name__, url_prefix='/service_item')
 service_item_collection = get_database()['service_items']
+
+service_item_collection.create_index([('name', pymongo.ASCENDING)], unique=True)
 
 
 @service_item_api_v1.route('/create', methods=['POST'])
