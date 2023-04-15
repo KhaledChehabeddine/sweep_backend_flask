@@ -17,8 +17,6 @@ from app.routes.blueprints import sweep_api_v1
 review_api_v1 = Blueprint('review_api_v1', __name__, url_prefix='/review')
 review_collection = get_database()['reviews']
 
-review_collection.create_index([('reviewer', pymongo.ASCENDING)], unique=True)
-
 
 @review_api_v1.route('/create', methods=['POST'])
 def create_review() -> Response:
