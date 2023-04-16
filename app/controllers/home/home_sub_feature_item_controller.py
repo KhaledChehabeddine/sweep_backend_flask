@@ -5,7 +5,6 @@ delete home sub feature items from the database
 """
 
 import json
-import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
@@ -18,11 +17,6 @@ from app.utilities.aws_s3_client import upload_to_aws_s3
 home_sub_feature_item_api_v1 = Blueprint('home_sub_feature_item_api_v1', __name__,
                                          url_prefix='/home_sub_feature_item')
 home_sub_feature_item_collection = get_database()['home_sub_feature_items']
-
-home_sub_feature_item_collection.create_index(
-    [('home_sub_feature_name', pymongo.ASCENDING), ('name', pymongo.ASCENDING)],
-    unique=True
-)
 
 
 def _configure_home_sub_feature_item(home_sub_feature_item_document: dict) -> HomeSubFeatureItem:

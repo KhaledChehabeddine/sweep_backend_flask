@@ -5,7 +5,6 @@ delete home main feature items from the database
 """
 
 import json
-import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
@@ -18,11 +17,6 @@ from app.utilities.aws_s3_client import upload_to_aws_s3
 home_main_feature_item_api_v1 = Blueprint('home_main_feature_item_api_v1', __name__,
                                           url_prefix='/home_main_feature_item')
 home_main_feature_item_collection = get_database()['home_main_feature_items']
-
-home_main_feature_item_collection.create_index(
-    [('home_main_feature_name', pymongo.ASCENDING), ('name', pymongo.ASCENDING)],
-    unique=True
-)
 
 
 def _configure_home_main_feature_item(home_main_feature_item_document: dict) -> HomeMainFeatureItem:

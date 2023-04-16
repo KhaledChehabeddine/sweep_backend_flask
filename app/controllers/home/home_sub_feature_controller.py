@@ -5,7 +5,6 @@ delete home sub features from the database
 """
 
 import json
-import pymongo
 from bson import json_util
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
@@ -15,8 +14,6 @@ from app.routes.blueprints import sweep_api_v1
 
 home_sub_feature_api_v1 = Blueprint('home_sub_feature_api_v1', __name__, url_prefix='/home_sub_feature')
 home_sub_feature_collection = get_database()['home_sub_features']
-
-home_sub_feature_collection.create_index([('name', pymongo.ASCENDING)], unique=True)
 
 
 @home_sub_feature_api_v1.route('/create', methods=['POST'])

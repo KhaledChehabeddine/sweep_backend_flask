@@ -21,17 +21,17 @@ class ServiceCategory:
     """
 
     def __init__(self, service_category_document: dict) -> None:
+        self.active = service_category_document['active']
+        self.icon = service_category_document['icon']
         self._id = service_category_document['_id']
         self.name = service_category_document['name']
-        self.icon = service_category_document['icon']
-        self.active = service_category_document['active']
 
     def create_dict(self) -> dict:
         """
         :return: Service Category's dict (without _id)
         """
         return {
-            'name': self.name,
+            'active': self.active,
             'icon': self.icon,
-            'active': self.active
+            'name': self.name,
         }
