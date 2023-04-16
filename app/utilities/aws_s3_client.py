@@ -29,6 +29,24 @@ def get_aws_s3_client() -> BaseClient:
     return AWS_S3_CLIENT
 
 
+def delete_from_aws_s3(file_path: str) -> Response:
+    """
+    :param file_path: The path of the file
+    :return: Response object with a message describing if the file was deleted and the status code
+    """
+    try:
+        get_aws_s3_client().delete_object(Bucket=os.getenv('AWS_S3_BUCKET'), Key=file_path)
+    except ClientError:
+        return jsonify(
+            message='File not deleted from the AWS S3 bucket.',
+            status=500
+        )
+    return jsonify(
+        message='File deleted from the AWS S3 bucket.',
+        status=200
+    )
+
+
 def upload_to_aws_s3(file_data: str, file_path: str) -> Response:
     """
     :param file_data: The byte data of the file
@@ -39,12 +57,13 @@ def upload_to_aws_s3(file_data: str, file_path: str) -> Response:
         file_bytes = base64.b64decode(file_data)
         with BytesIO(file_bytes) as file:
             get_aws_s3_client().upload_fileobj(file, os.getenv('AWS_S3_BUCKET'), file_path)
+
     except ClientError:
-        return jsonify({
-            'message': 'File not uploaded into the AWS S3 bucket.',
-            'status': 500
-        })
-    return jsonify({
-        'message': 'File uploaded into the AWS S3 bucket.',
-        'status:': 200
-    })
+        return jsonify(
+            message='File not uploaded into the AWS S3 bucket.',
+            status=500
+        )
+    return jsonify(
+        message='File uploaded into the AWS S3 bucket.',
+        status=200
+    )

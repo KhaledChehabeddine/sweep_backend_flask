@@ -20,7 +20,7 @@ class AccountCategory:
         self._id = str(account_category_document['_id'])
         self.name = account_category_document['name']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
         :return: Account category's dict (without _id)
         """
