@@ -17,7 +17,7 @@ class AccountCategory:
         Account category's name
     """
     def __init__(self, account_category_document: dict) -> None:
-        self._id = account_category_document['_id']
+        self._id = str(account_category_document['_id'])
         self.name = account_category_document['name']
 
     def create_dict(self) -> dict:

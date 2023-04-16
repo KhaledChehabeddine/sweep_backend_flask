@@ -29,21 +29,6 @@ def get_aws_s3_client() -> BaseClient:
     return AWS_S3_CLIENT
 
 
-def create_presigned_url(file_path: str) -> str:
-    """
-    :param file_path: The path of the file
-    :return: Presigned URL for the file in the bucket
-    """
-    return get_aws_s3_client().generate_presigned_url(
-        'get_object',
-        ExpiresIn=3600,
-        Params={
-            'Bucket': os.getenv('AWS_S3_BUCKET'),
-            'Key': file_path
-        }
-    )
-
-
 def upload_to_aws_s3(file_data: str, file_path: str) -> Response:
     """
     :param file_data: The byte data of the file

@@ -12,7 +12,8 @@ from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.home.home_sub_feature_item import HomeSubFeatureItem
 from app.routes.blueprints import sweep_api_v1
-from app.utilities.aws_s3_client import upload_to_aws_s3, create_presigned_url
+from app.utilities.aws_cloudfront_client import create_cloudfront_url
+from app.utilities.aws_s3_client import upload_to_aws_s3
 
 home_sub_feature_item_api_v1 = Blueprint('home_sub_feature_item_api_v1', __name__,
                                          url_prefix='/home_sub_feature_item')
@@ -28,9 +29,7 @@ def _configure_home_sub_feature_item(home_sub_feature_item_document: dict) -> Ho
     home_sub_feature_item_document = json.loads(json_util.dumps(home_sub_feature_item_document),
                                                 object_hook=json_util.object_hook)
     home_sub_feature_item = HomeSubFeatureItem(home_sub_feature_item_document=home_sub_feature_item_document)
-    home_sub_feature_item.image_url = create_presigned_url(
-        file_path=home_sub_feature_item.file_path
-    )
+    home_sub_feature_item.image_url = create_cloudfront_url(file_path=home_sub_feature_item.file_path)
     return home_sub_feature_item
 
 
