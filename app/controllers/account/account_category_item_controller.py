@@ -6,13 +6,13 @@ delete account category items from the database
 
 import json
 import pymongo
-from bson import json_util
+from bson import json_util, ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.account.account_category_item import AccountCategoryItem
 from app.routes.blueprints import sweep_api_v1
-from app.utilities.aws_cloudfront_client import get_cloudfront_url
+from app.utilities.aws_cloudfront_client import create_cloudfront_url
 from app.utilities.aws_s3_client import upload_to_aws_s3
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
@@ -28,7 +28,7 @@ def _configure_account_category_item(account_category_item_document: dict) -> Ac
     account_category_item_document = json.loads(json_util.dumps(account_category_item_document),
                                                 object_hook=json_util.object_hook)
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
-    account_category_item.image_url = get_cloudfront_url(file_path=account_category_item.file_path)
+    account_category_item.image_url = create_cloudfront_url(file_path=account_category_item.file_path)
     return account_category_item
 
 
@@ -63,9 +63,10 @@ def read_account_category_items() -> Response:
     account_category_item_documents = account_category_item_collection.find()
     if account_category_item_documents:
         for account_category_item_document in account_category_item_documents:
-            account_category_items.append(
-                _configure_account_category_item(account_category_item_document=account_category_item_document).__dict__
+            account_category_item = _configure_account_category_item(
+                account_category_item_document=account_category_item_document
             )
+            account_category_items.append(account_category_item.__dict__)
         return jsonify({
             'data': account_category_items,
             'message': 'Account category items found in the database.',
@@ -84,7 +85,7 @@ def read_account_category_item_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the account category item was found (if yes: add account
     category item) and the status code
     """
-    account_category_item_document = account_category_item_collection.find_one({'_id': _id})
+    account_category_item_document = account_category_item_collection.find_one({'_id': ObjectId(_id)})
     if account_category_item_document:
         account_category_item = _configure_account_category_item(
             account_category_item_document=account_category_item_document
@@ -112,9 +113,10 @@ def read_account_category_items_by_account_category_name(account_category_name: 
         .find({'account_category_name': account_category_name})
     if account_category_item_documents:
         for account_category_item_document in account_category_item_documents:
-            account_category_items.append(
-                _configure_account_category_item(account_category_item_document=account_category_item_document).__dict__
+            account_category_item = _configure_account_category_item(
+                account_category_item_document=account_category_item_document
             )
+            account_category_items.append(account_category_item.__dict__)
         return jsonify({
             'data': account_category_items,
             'message': 'Account category items found in the database using the account category name.',
@@ -136,7 +138,7 @@ def update_account_category_item_by_id(_id: str) -> Response:
     account_category_item_document = request.json
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     result = account_category_item_collection.update_one(
-        {'_id': _id},
+        {'_id': ObjectId(_id)},
         {'$set': account_category_item.__dict__}
     )
     if result.modified_count == 1:
@@ -157,7 +159,7 @@ def delete_account_category_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the account category item was found (if yes: delete
     account category item) and the status code
     """
-    result = account_category_item_collection.delete_one({'_id': _id})
+    result = account_category_item_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
         return jsonify({
             'message': 'Account category item deleted from the database using the id.',

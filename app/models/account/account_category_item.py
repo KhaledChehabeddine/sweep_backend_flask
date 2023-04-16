@@ -26,17 +26,16 @@ class AccountCategoryItem:
     def __init__(self, account_category_item_document: dict) -> None:
         self.account_category_name = account_category_item_document['account_category_name']
         self.file_path = account_category_item_document['file_path']
-        self._id = account_category_item_document['_id']
+        self._id = str(account_category_item_document['_id'])
         self.image_url = ""
         self.name = account_category_item_document['name']
 
     def create_dict(self) -> dict:
         """
-        :return: Account category item's dict (without _id)
+        :return: Account category item's dict (without _id and image_url)
         """
         return {
-            'account_category_id': self.account_category_name,
+            'account_category_name': self.account_category_name,
             'file_path': self.file_path,
-            'image_url': self.image_url,
             'name': self.name
         }

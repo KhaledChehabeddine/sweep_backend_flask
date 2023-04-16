@@ -34,7 +34,7 @@ class User:
         self.country = user_document['country']
         self.country_code = user_document['country_code']
         self.email = user_document['email']
-        self._id = user_document['_id']
+        self._id = str(user_document['_id'])
         self.password = user_document['password']
         self.phone_number = user_document['phone_number']
         self.username = user_document['username']
