@@ -30,9 +30,9 @@ class AccountCategoryItem:
         self.image_url = ""
         self.name = account_category_item_document['name']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Account category item's dict (without _id and image_url)
+        :return: Account category item's dictionary for creating a document (without _id and image_url)
         """
         return {
             'account_category_name': self.account_category_name,

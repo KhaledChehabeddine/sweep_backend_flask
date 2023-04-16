@@ -29,7 +29,7 @@ def create_user() -> Response:
     user_document = request.json
     user = User(user_document=user_document)
     try:
-        user_collection.insert_one(user.create_dict())
+        user_collection.insert_one(user.database_dict())
     except OperationFailure:
         return jsonify({
             'message': 'User not added to the database.',
@@ -38,30 +38,6 @@ def create_user() -> Response:
     return jsonify({
         'message': 'User added to the database.',
         'status': 200
-    })
-
-
-@user_api_v1.route('/read', methods=['GET'])
-def read_users() -> Response:
-    """
-    :return: Response object with a message describing if all the users were found (if yes: add user objects) and the
-    status code
-    """
-    users = []
-    user_documents = user_collection.find()
-    if user_documents:
-        for user_document in user_documents:
-            user_document = json.loads(json_util.dumps(user_document), object_hook=json_util.object_hook)
-            user = User(user_document=user_document)
-            users.append(user.__dict__)
-        return jsonify({
-            'data': users,
-            'message': 'Users found in the database.',
-            'status': 200
-        })
-    return jsonify({
-        'message': 'No user found in the database.',
-        'status': 404
     })
 
 
@@ -87,6 +63,30 @@ def read_user_by_email(email: str) -> Response:
     })
 
 
+@user_api_v1.route('/read', methods=['GET'])
+def read_users() -> Response:
+    """
+    :return: Response object with a message describing if all the users were found (if yes: add user objects) and the
+    status code
+    """
+    users = []
+    user_documents = user_collection.find()
+    if user_documents:
+        for user_document in user_documents:
+            user_document = json.loads(json_util.dumps(user_document), object_hook=json_util.object_hook)
+            user = User(user_document=user_document)
+            users.append(user.__dict__)
+        return jsonify(
+            data=users,
+            message='Users found in the database.',
+            status=200
+        )
+    return jsonify(
+        message='No users found in the database.',
+        status=404
+    )
+
+
 @user_api_v1.route('/update/email/<string:email>', methods=['PUT'])
 def update_user_by_email(email: str) -> Response:
     """
@@ -100,14 +100,14 @@ def update_user_by_email(email: str) -> Response:
         {'$set': user.__dict__}
     )
     if result.modified_count == 1:
-        return jsonify({
-            'message': 'User updated in the database using the email.',
-            'status': 200,
-        })
-    return jsonify({
-        'message': 'User not found in the database using the email.',
-        'status': 500,
-    })
+        return jsonify(
+            message='User updated in the database using the email.',
+            status=200
+        )
+    return jsonify(
+        message='User not found in the database using the email.',
+        status=500
+    )
 
 
 @user_api_v1.route('/delete/email/<string:email>', methods=['DELETE'])
@@ -118,14 +118,14 @@ def delete_user_by_email(email: str) -> Response:
     """
     result = user_collection.delete_one({'email': email})
     if result.deleted_count == 1:
-        return jsonify({
-            'message': 'User deleted from the database using the email.',
-            'status': 200
-        })
-    return jsonify({
-        'message': 'User not found in the database using the email.',
-        'status': 404
-    })
+        return jsonify(
+            message='User deleted from the database using the email.',
+            status=200
+        )
+    return jsonify(
+        message='User not found in the database using the email.',
+        status=500
+    )
 
 
 sweep_api_v1.register_blueprint(user_api_v1)

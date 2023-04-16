@@ -39,7 +39,7 @@ class User:
         self.phone_number = user_document['phone_number']
         self.username = user_document['username']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
         :return: User's dict (without _id)
         """
