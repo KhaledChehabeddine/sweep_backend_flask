@@ -28,14 +28,6 @@ def get_aws_cloudfront_client() -> BaseClient:
     return AWS_CLOUDFRONT_CLIENT
 
 
-def create_cloudfront_url(file_path: str) -> str:
-    """
-    :param file_path: The path of the file
-    :return: CloudFront URL for the file in the distribution origin
-    """
-    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + file_path
-
-
 def create_cloudfront_invalidation() -> Response:
     """
     :return: Response object with a message describing if the invalidation was created and the status code
@@ -62,3 +54,11 @@ def create_cloudfront_invalidation() -> Response:
         message='Invalidation created.',
         status=200
     )
+
+
+def create_cloudfront_url(file_path: str) -> str:
+    """
+    :param file_path: The path of the file
+    :return: CloudFront URL for the file in the distribution origin
+    """
+    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + file_path
