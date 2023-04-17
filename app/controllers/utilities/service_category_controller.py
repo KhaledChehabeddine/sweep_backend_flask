@@ -4,15 +4,15 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete service category items from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
+from app.functions.aws_update_operation_status import aws_update_operations
 from app.models.utilities.service_category import ServiceCategory
 from app.routes.blueprints import sweep_api_v1
-from app.aws.aws_cloudfront_client import create_cloudfront_url, create_cloudfront_invalidation
+from app.aws.aws_cloudfront_client import create_cloudfront_url
 from app.aws.aws_s3_client import upload_to_aws_s3, delete_from_aws_s3
 
 service_category_api_v1 = Blueprint('service_category_api_v1', __name__, url_prefix='/service_category')
@@ -22,8 +22,10 @@ service_category_collection.create_index([('name', pymongo.ASCENDING)], unique=T
 
 
 def _configure_service_category(service_category_document: dict) -> ServiceCategory:
-    service_category_document = json.loads(json_util.dumps(service_category_document),
-                                           object_hook=json_util.object_hook)
+    """
+    :param service_category_document: A dictionary representing a service category document
+    :return: A service category object with the image url configured
+    """
     service_category = ServiceCategory(service_category_document=service_category_document)
     service_category.image_url = create_cloudfront_url(file_path=service_category.file_path)
     return service_category
@@ -35,15 +37,9 @@ def create_service_category() -> Response:
     :return: Response object with a message describing if the service category was created and the status code
     """
     service_category_document = request.json
-    aws_operations_status = upload_to_aws_s3(
-        file_data=request.json['image'],
-        file_path=request.json['file_path']
-    ).json['status']
-    if aws_operations_status != 200:
-        return jsonify(
-            message='Account category item not added to the database.',
-            status=500
-        )
+
+    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
+
     service_category = ServiceCategory(service_category_document=service_category_document)
     try:
         service_category_collection.insert_one(service_category.__dict__)
@@ -65,10 +61,9 @@ def read_service_category_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the service categories were found (if yes: add user objects)
     and the status code
     """
-    service_category_document = json.loads(json_util.dumps(service_category_collection.find_one(
-        {'_id': ObjectId(_id)})), object_hook=json_util.object_hook)
+    service_category_document = service_category_collection.find_one({'_id': ObjectId(_id)})
     if service_category_document:
-        service_category = ServiceCategory(service_category_document=service_category_document)
+        service_category = _configure_service_category(service_category_document=service_category_document)
         return jsonify(
             data=service_category.__dict__,
             message='Service category found in the database using the id.',
@@ -76,7 +71,7 @@ def read_service_category_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Service category not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -90,16 +85,16 @@ def read_service_categories() -> Response:
     service_category_documents = service_category_collection.find()
     if service_category_documents:
         for service_category_document in service_category_documents:
-            service_item = ServiceCategory(service_category_document=service_category_document)
-            service_categories.append(service_item.__dict__)
+            service_category = _configure_service_category(service_category_document=service_category_document)
+            service_categories.append(service_category.__dict__)
         return jsonify(
             data=service_categories,
-            message='All categories found in the database.',
+            message='All service categories found in the database.',
             status=200,
         )
     return jsonify(
-        message='No categories not found in the database.',
-        status=404
+        message='No service category found in the database.',
+        status=500
     )
 
 
@@ -110,28 +105,22 @@ def update_service_category_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the service category was updated and the status code
     """
     service_category_document = request.json
-    aws_operations_status = 200
-    if request.json['image']:
-        aws_operations_status = upload_to_aws_s3(
-            file_data=request.json['image'],
-            file_path=request.json['file_path']
-        ).json['status']
-        if aws_operations_status == 200:
-            aws_operations_status = create_cloudfront_invalidation().json['status']
-    if aws_operations_status == 200:
-        service_category = ServiceCategory(service_category_document=service_category_document)
-        result = service_category_collection.update_one(
-            {'_id': ObjectId(_id)},
-            {'$set': service_category.database_dict()}
+
+    aws_update_operations(object_document=service_category_document)
+
+    service_category = ServiceCategory(service_category_document=service_category_document)
+    result = service_category_collection.update_one(
+        {'_id': ObjectId(_id)},
+        {'$set': service_category.database_dict()}
+    )
+    if service_category_document['image'] or result.modified_count == 1:
+        return jsonify(
+            message='Service category updated in the database using id.',
+            status=200
         )
-        if request.json['image'] or result.modified_count == 1:
-            return jsonify(
-                message='Service category updated in the database using id.',
-                status=200
-            )
     return jsonify(
         message='Service category not updated in the database using id.',
-        status=404
+        status=500
     )
 
 
@@ -142,17 +131,18 @@ def delete_service_category_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the service category was deleted and the status code
     """
     service_category_document = read_service_category_by_id(_id=_id).json['data']
-    aws_operations_status = delete_from_aws_s3(file_path=service_category_document['file_path']).json['status']
-    if aws_operations_status == 200:
-        result = service_category_collection.delete_one({'_id': ObjectId(_id)})
-        if result.deleted_count == 1:
-            return jsonify(
-                message='Service category item deleted from the database using the id.',
-                status=200
-            )
+
+    delete_from_aws_s3(file_path=service_category_document['file_path'])
+
+    result = service_category_collection.delete_one({'_id': ObjectId(_id)})
+    if result.deleted_count == 1:
+        return jsonify(
+            message='Service category item deleted from the database using the id.',
+            status=200
+        )
     return jsonify(
         message='Service category item not deleted from the database using the id.',
-        status=404
+        status=500
     )
 
 

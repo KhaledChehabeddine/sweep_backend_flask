@@ -4,9 +4,8 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete home sub features from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -46,8 +45,7 @@ def read_home_sub_feature_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the home sub feature was found (if yes: add home sub feature)
     and the status code
     """
-    home_sub_feature_document = json.loads(json_util.dumps(home_sub_feature_collection.find_one({'_id': ObjectId(_id)})),
-                                           object_hook=json_util.object_hook)
+    home_sub_feature_document = home_sub_feature_collection.find_one({'_id': ObjectId(_id)})
     if home_sub_feature_document:
         home_sub_feature = HomeSubFeature(home_sub_feature_document=home_sub_feature_document)
         return jsonify(
@@ -57,7 +55,7 @@ def read_home_sub_feature_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Home sub feature not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -71,8 +69,6 @@ def read_home_sub_features() -> Response:
     home_sub_feature_documents = home_sub_feature_collection.find()
     if home_sub_feature_documents:
         for home_sub_feature_document in home_sub_feature_documents:
-            home_sub_feature_document = json \
-                .loads(json_util.dumps(home_sub_feature_document), object_hook=json_util.object_hook)
             home_sub_feature = HomeSubFeature(home_sub_feature_document=home_sub_feature_document)
             home_sub_features.append(home_sub_feature.__dict__)
         return jsonify(
@@ -81,8 +77,8 @@ def read_home_sub_features() -> Response:
             status=200
         )
     return jsonify(
-        message='No home sub features found in the database.',
-        status=404
+        message='No home sub feature found in the database.',
+        status=500
     )
 
 
@@ -106,7 +102,7 @@ def update_home_sub_feature_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Home sub feature not updated in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -125,7 +121,7 @@ def delete_home_sub_feature_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Home sub feature not deleted the database using the sid.',
-        status=404
+        status=500
     )
 
 

@@ -10,7 +10,6 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
   AWS_CLOUDFRONT_DOMAIN_NAME: ${{ secrets.AWS_CLOUDFRONT_DOMAIN_NAME }}
-  AWS_DEFAULT_REGION: eu-north-1
   AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -25,47 +24,86 @@ jobs:
       - name: Setup Python 3.9
         uses: actions/setup-python@v4
         with:
-          python-version-file: python-version.txt
+          python-version: 3.9
 
-      - name: Install AWS CLI
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install awscli
+          pip install -r requirements.txt -t .
 
-      - name: Install dependencies
+      - name: Build Deployment Zip File
         run: |
-          python -m pip install --upgrade pip
-          pip install --target=./ -r requirements.txt
+          zip -r deployment.zip .
+          mv deployment.zip ../
 
-      - name: Zip repository
-        run: zip -r function.zip .
+      - name: Deploy to AWS Lambda
+        uses: appleboy/lambda-action@v0.1.9
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_region: eu-north-1
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          environment: |
+            {
+                "ATLAS_MONGODB_PASSWORD": "${{ secrets.ATLAS_MONGODB_PASSWORD }}",
+                "AWS_CLOUDFRONT_DISTRIBUTION_ID": "${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}",
+                "AWS_CLOUDFRONT_DOMAIN_NAME": "${{ secrets.AWS_CLOUDFRONT_DOMAIN_NAME }}",
+                "AWS_S3_BUCKET": "${{ secrets.AWS_S3_BUCKET }}"
+            }
+          function_name: application_entry_point
+          memory_size: 128
+          timeout: 30
+          handler: app.handler.handler
+          runtime: python3.9
+          zip_file: ../deployment.zip
 
-      - name: Upload Zip File to AWS Lambda
-        run: |
-          aws lambda update-function-code \
-            --function-name application_entry_point \
-            --zip-file fileb://function.zip
-
-      - name: Configure AWS Lambda
-        run: |
-          while true; do
-            aws lambda update-function-configuration \
-              --function-name application_entry_point \
-              --handler app.handler.handler \
-              --runtime python3.9 \
-              --timeout 30 \
-              --memory-size 128 \
-              --environment Variables="{ \
-                  ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}, \
-                  AWS_CLOUDFRONT_DISTRIBUTION_ID=${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}, \
-                  AWS_CLOUDFRONT_DOMAIN_NAME=${{ secrets.AWS_CLOUDFRONT_DOMAIN_NAME }}, \
-                  AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
-              }"
-            if [ $? -eq 0 ]; then
-              echo "Deployment successful!"
-              break
-            else
-              echo "Deployment failed, retrying in 15 seconds..."
-              sleep 15
-            fi
-          done
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v3
+#
+#      - name: Setup Python 3.9
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.9
+#
+#      - name: Install AWS CLI
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install awscli
+#
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install --target=./ -r requirements.txt
+#
+#      - name: Zip repository
+#        run: zip -r function.zip .
+#
+#      - name: Upload Zip File to AWS Lambda
+#        run: |
+#          aws lambda update-function-code \
+#            --function-name application_entry_point \
+#            --zip-file fileb://function.zip
+#
+#      - name: Configure AWS Lambda
+#        run: |
+#          while true; do
+#            aws lambda update-function-configuration \
+#              --function-name application_entry_point \
+#              --handler app.handler.handler \
+#              --runtime python3.9 \
+#              --timeout 30 \
+#              --memory-size 128 \
+#              --environment Variables="{ \
+#                  ATLAS_MONGODB_PASSWORD=${{ secrets.ATLAS_MONGODB_PASSWORD }}, \
+#                  AWS_CLOUDFRONT_DISTRIBUTION_ID=${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}, \
+#                  AWS_CLOUDFRONT_DOMAIN_NAME=${{ secrets.AWS_CLOUDFRONT_DOMAIN_NAME }}, \
+#                  AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
+#              }"
+#            if [ $? -eq 0 ]; then
+#              echo "Deployment successful!"
+#              break
+#            else
+#              echo "Deployment failed, retrying in 15 seconds..."
+#              sleep 15
+#            fi
+#          done

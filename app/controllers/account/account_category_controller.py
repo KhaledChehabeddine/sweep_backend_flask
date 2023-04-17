@@ -4,9 +4,8 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete account categories from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -40,15 +39,13 @@ def create_account_category() -> Response:
 
 
 @account_category_api_v1.route('/read/id/<string:_id>', methods=['GET'])
-def read_account_category_by__id(_id: str) -> Response:
+def read_account_category_by_id(_id: str) -> Response:
     """
-    :param _id: Account category's _id
+    :param _id: Account category's id
     :return: Response object with a message describing if the account category was found (if yes: add account category)
     and the status code
     """
-    account_category_document = json.loads(
-        json_util.dumps(account_category_collection.find_one({'_id': ObjectId(_id)})),
-        object_hook=json_util.object_hook)
+    account_category_document = account_category_collection.find_one({'_id': ObjectId(_id)})
     if account_category_document:
         account_category = AccountCategory(account_category_document=account_category_document)
         return jsonify(
@@ -58,7 +55,7 @@ def read_account_category_by__id(_id: str) -> Response:
         )
     return jsonify(
         message='Account category not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -72,8 +69,6 @@ def read_account_categories() -> Response:
     account_category_documents = account_category_collection.find()
     if account_category_documents:
         for account_category_document in account_category_documents:
-            account_category_document = json \
-                .loads(json_util.dumps(account_category_document), object_hook=json_util.object_hook)
             account_category = AccountCategory(account_category_document=account_category_document)
             account_categories.append(account_category.__dict__)
         return jsonify(
@@ -82,15 +77,15 @@ def read_account_categories() -> Response:
             status=200
         )
     return jsonify(
-        message='No account categories found in the database.',
-        status=404
+        message='No account category found in the database.',
+        status=500
     )
 
 
 @account_category_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
-def update_account_category_by__id(_id: str) -> Response:
+def update_account_category_by_id(_id: str) -> Response:
     """
-    :param _id: Account category's _id
+    :param _id: Account category's id
     :return: Response object with a message describing if the account category was found (if yes: update account
     category) and the status code
     """
@@ -107,12 +102,12 @@ def update_account_category_by__id(_id: str) -> Response:
         )
     return jsonify(
         message='Account category not updated in the database using the id.',
-        status=404
+        status=500
     )
 
 
 @account_category_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
-def delete_account_category_by__id(_id: str) -> Response:
+def delete_account_category_by_id(_id: str) -> Response:
     """
     :param _id: Account category's id
     :return: Response object with a message describing if the account category was found (if yes: delete account
@@ -126,7 +121,7 @@ def delete_account_category_by__id(_id: str) -> Response:
         )
     return jsonify(
         message='Account category not deleted in the database using the id.',
-        status=404
+        status=500
     )
 
 

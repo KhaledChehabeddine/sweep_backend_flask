@@ -4,8 +4,7 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete reviews from the database
 """
 
-import json
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -43,8 +42,7 @@ def read_review_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the reviews were found (if yes: add user objects) and the
     status code
     """
-    review_document = json.loads(json_util.dumps(review_collection.find_one({'_id': ObjectId(_id)})),
-                                 object_hook=json_util.object_hook)
+    review_document = review_collection.find_one({'_id': ObjectId(_id)})
     if review_document:
         review = Review(review_document=review_document)
         return jsonify(
@@ -54,7 +52,7 @@ def read_review_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Review not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -68,7 +66,6 @@ def read_reviews() -> Response:
     review_documents = review_collection.find()
     if review_documents:
         for review_document in review_documents:
-            review_document = json.loads(json_util.dumps(review_document), object_hook=json_util.object_hook)
             review = Review(review_document=review_document)
             reviews.append(review.__dict__)
         return jsonify(
@@ -78,7 +75,7 @@ def read_reviews() -> Response:
         )
     return jsonify(
         message='No review found in the database.',
-        status=404
+        status=500
     )
 
 
@@ -100,7 +97,7 @@ def update_review_by_id(_id: str) -> Response:
             status=200,
         )
     return jsonify(
-        message='Review not found in the database using the id.',
+        message='Review not updated in the database using the id.',
         status=500,
     )
 
@@ -118,7 +115,7 @@ def delete_review_by_id(_id: str) -> Response:
             status=200,
         )
     return jsonify(
-        message='Review not found in the database using the id.',
+        message='Review not deleted in the database using the id.',
         status=500,
     )
 

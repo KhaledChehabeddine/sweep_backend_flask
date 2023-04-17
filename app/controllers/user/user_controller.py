@@ -4,9 +4,8 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete users from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -48,8 +47,7 @@ def read_user_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the user was found (if yes: add user object) and the status
     code
     """
-    user_document = json.loads(json_util.dumps(user_collection.find_one({'_id': ObjectId(_id)})),
-                               object_hook=json_util.object_hook)
+    user_document = user_collection.find_one({'_id': ObjectId(_id)})
     if user_document:
         user = User(user_document=user_document)
         return jsonify(
@@ -59,7 +57,7 @@ def read_user_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='User not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -73,7 +71,6 @@ def read_users() -> Response:
     user_documents = user_collection.find()
     if user_documents:
         for user_document in user_documents:
-            user_document = json.loads(json_util.dumps(user_document), object_hook=json_util.object_hook)
             user = User(user_document=user_document)
             users.append(user.__dict__)
         return jsonify(
@@ -82,8 +79,8 @@ def read_users() -> Response:
             status=200
         )
     return jsonify(
-        message='No users found in the database.',
-        status=404
+        message='No user found in the database.',
+        status=500
     )
 
 

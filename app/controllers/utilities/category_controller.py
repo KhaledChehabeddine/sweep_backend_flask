@@ -3,9 +3,8 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete categories from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -55,7 +54,7 @@ def read_category_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Category not found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -69,7 +68,6 @@ def read_categories() -> Response:
     category_documents = category_collection.find()
     if category_documents:
         for category_document in category_documents:
-            category_document = json.loads(json_util.dumps(category_document), object_hook=json_util.object_hook)
             category = Category(category_document=category_document)
             categories.append(category.__dict__)
         return jsonify(
@@ -78,8 +76,8 @@ def read_categories() -> Response:
             status=200,
         )
     return jsonify(
-        message='No categories not found in the database.',
-        status=404
+        message='No category found in the database.',
+        status=500
     )
 
 
@@ -112,7 +110,6 @@ def delete_category_by_id(_id: str) -> Response:
     :param _id: Category's id
     :return: Response object with a message describing if the category was deleted and the status code
     """
-
     result = category_collection.delete_one({_id: ObjectId(_id)})
     if result.deleted_count == 1:
         return jsonify(
