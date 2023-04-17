@@ -18,7 +18,7 @@ class ServiceItem:
     _id : str
         Service's id
     image_url : str
-        Service's image
+        Service's image url
     name : str
         Service's name
     price : float
