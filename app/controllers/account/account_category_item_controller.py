@@ -4,16 +4,16 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete account category items from the database
 """
 
-import json
 import pymongo
-from bson import json_util, ObjectId
+from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
+from app.functions.aws_update_operation_status import aws_update_operations
 from app.models.account.account_category_item import AccountCategoryItem
 from app.routes.blueprints import sweep_api_v1
-from app.utilities.aws_cloudfront_client import create_cloudfront_url, create_cloudfront_invalidation
-from app.utilities.aws_s3_client import delete_from_aws_s3, upload_to_aws_s3
+from app.aws.aws_cloudfront_client import create_cloudfront_url
+from app.aws.aws_s3_client import delete_from_aws_s3, upload_to_aws_s3
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_category_items']
@@ -25,8 +25,10 @@ account_category_item_collection.create_index(
 
 
 def _configure_account_category_item(account_category_item_document: dict) -> AccountCategoryItem:
-    account_category_item_document = json.loads(json_util.dumps(account_category_item_document),
-                                                object_hook=json_util.object_hook)
+    """
+    :param account_category_item_document: A dictionary representing an account category item document
+    :return: A account category item object with the image url configured
+    """
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     account_category_item.image_url = create_cloudfront_url(file_path=account_category_item.file_path)
     return account_category_item
@@ -38,15 +40,8 @@ def create_account_category_item() -> Response:
     :return: Response object with a message describing if the account category item was created and the status code
     """
     account_category_item_document = request.json
-    aws_operations_status = upload_to_aws_s3(
-        file_data=request.json['image'],
-        file_path=request.json['file_path']
-    ).json['status']
-    if aws_operations_status != 200:
-        return jsonify(
-            message='Account category item not added to the database.',
-            status=500
-        )
+
+    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
 
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
@@ -81,7 +76,7 @@ def read_account_category_item_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='No account category item found in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -108,7 +103,7 @@ def read_account_category_items_by_account_category_name(account_category_name: 
         )
     return jsonify(
         message='No account category item found in the database using the account category name.',
-        status=404
+        status=500
     )
 
 
@@ -133,7 +128,7 @@ def read_account_category_items() -> Response:
         )
     return jsonify(
         message='No account category item found in the database.',
-        status=404
+        status=500
     )
 
 
@@ -145,28 +140,22 @@ def update_account_category_item_by_id(_id: str) -> Response:
     account category item) and the status code
     """
     account_category_item_document = request.json
-    aws_operations_status = 200
-    if request.json['image']:
-        aws_operations_status = upload_to_aws_s3(
-            file_data=request.json['image'],
-            file_path=request.json['file_path']
-        ).json['status']
-        if aws_operations_status == 200:
-            aws_operations_status = create_cloudfront_invalidation().json['status']
-    if aws_operations_status == 200:
-        account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
-        result = account_category_item_collection.update_one(
-            {'_id': ObjectId(_id)},
-            {'$set': account_category_item.database_dict()}
+
+    aws_update_operations(object_document=account_category_item_document)
+
+    account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
+    result = account_category_item_collection.update_one(
+        {'_id': ObjectId(_id)},
+        {'$set': account_category_item.database_dict()}
+    )
+    if account_category_item_document['image'] or result.modified_count == 1:
+        return jsonify(
+            message='Account category item updated in the database using the id.',
+            status=200
         )
-        if request.json['image'] or result.modified_count == 1:
-            return jsonify(
-                message='Account category item updated in the database using the id.',
-                status=200
-            )
     return jsonify(
         message='Account category item not updated in the database using the id.',
-        status=404
+        status=500
     )
 
 
@@ -178,17 +167,18 @@ def delete_account_category_by_id(_id: str) -> Response:
     account category item) and the status code
     """
     account_category_item_document = read_account_category_item_by_id(_id=_id).json['data']
-    aws_operations_status = delete_from_aws_s3(file_path=account_category_item_document['file_path']).json['status']
-    if aws_operations_status == 200:
-        result = account_category_item_collection.delete_one({'_id': ObjectId(_id)})
-        if result.deleted_count == 1:
-            return jsonify(
-                message='Account category item deleted from the database using the id.',
-                status=200
-            )
+
+    delete_from_aws_s3(file_path=account_category_item_document['file_path'])
+
+    result = account_category_item_collection.delete_one({'_id': ObjectId(_id)})
+    if result.deleted_count == 1:
+        return jsonify(
+            message='Account category item deleted from the database using the id.',
+            status=200
+        )
     return jsonify(
         message='Account category item not deleted from the database using the id.',
-        status=404
+        status=500
     )
 
 

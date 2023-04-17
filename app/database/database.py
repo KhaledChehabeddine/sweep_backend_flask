@@ -1,7 +1,7 @@
 """Summary: Database Configurator
 
 Creates a mongodb client, using CONNECTION_STRING, which is used to connect to the project database(s). Connection is
-only made once to avoid unnecessary overhead.
+only made once to avoid unnecessary overhead
 """
 
 import os

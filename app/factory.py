@@ -7,6 +7,9 @@ from flask import Flask, Response, redirect, render_template, url_for
 from flask.logging import create_logger
 from app.controllers.account.account_category_item_controller import account_category_item_api_v1
 from app.controllers.account.account_category_controller import account_category_api_v1
+from app.controllers.home.home_main_feature_item_controller import home_main_feature_item_api_v1
+from app.controllers.home.home_sub_feature_controller import home_sub_feature_api_v1
+from app.controllers.home.home_sub_feature_item_controller import home_sub_feature_item_api_v1
 from app.controllers.user.user_controller import user_api_v1
 from app.controllers.utilities.category_controller import category_api_v1
 from app.controllers.utilities.review_controller import review_api_v1
@@ -19,11 +22,14 @@ def create_application() -> Flask:
     """
     :return: Flask application instance
     """
-    application = Flask(__name__, static_folder='build/static', template_folder='build/templates')
+    application = Flask(__name__, template_folder='build/templates')
 
     application.register_blueprint(account_category_api_v1)
     application.register_blueprint(account_category_item_api_v1)
     application.register_blueprint(category_api_v1)
+    application.register_blueprint(home_main_feature_item_api_v1)
+    application.register_blueprint(home_sub_feature_api_v1)
+    application.register_blueprint(home_sub_feature_item_api_v1)
     application.register_blueprint(review_api_v1)
     application.register_blueprint(service_category_api_v1)
     application.register_blueprint(service_item_api_v1)

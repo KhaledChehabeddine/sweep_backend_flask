@@ -27,7 +27,7 @@ class AccountCategoryItem:
         self.account_category_name = account_category_item_document['account_category_name']
         self.file_path = account_category_item_document['file_path']
         self._id = str(account_category_item_document['_id'])
-        self.image_url = ""
+        self.image_url = ''
         self.name = account_category_item_document['name']
 
     def database_dict(self) -> dict:

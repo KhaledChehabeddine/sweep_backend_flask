@@ -27,9 +27,9 @@ class HomeSubFeature:
         self.subtitle = home_sub_feature_document['subtitle']
         self.title = home_sub_feature_document['title']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Home sub feature's dict (without _id)
+        :return: Home sub feature's dictionary for creating a document (without _id)
         """
         return {
             'home_sub_feature_items': self.home_sub_feature_items,

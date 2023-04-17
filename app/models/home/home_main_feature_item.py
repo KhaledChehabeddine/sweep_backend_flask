@@ -11,22 +11,27 @@ class HomeMainFeatureItem:
 
     Attributes
     ----------
+    file_path : str
+        Home main feature item's file path
     _id : str
         Home main feature item's id
-    image : str
-        Home main feature item's image
+    image_url : str
+        Home main feature item's images
+    type : str
+        Home main feature item's type
     """
 
     def __init__(self, home_main_feature_item_document: dict) -> None:
-        self._id = home_main_feature_item_document['_id']
-        self.image = home_main_feature_item_document['image']
         self.file_path = home_main_feature_item_document['file_path']
+        self._id = home_main_feature_item_document['_id']
+        self.image_url = ''
+        self.type = home_main_feature_item_document['type']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Home main feature item's dict (without _id)
+        :return: Home main feature item's dictionary for creating a document (without _id and image_url)
         """
         return {
-            'image': self.image,
-            'file_path': self.file_path
+            'file_path': self.file_path,
+            'type': self.type,
         }

@@ -21,7 +21,7 @@ class HomeSubFeatureItem:
         Home sub feature item's flags
     _id : str
         Home sub feature item's id
-    image : str
+    image_url : str
         Home sub feature item's image
     location: str
         Home sub feature item's location
@@ -36,27 +36,26 @@ class HomeSubFeatureItem:
     """
 
     def __init__(self, home_sub_feature_item_document: dict) -> None:
-        self.file_path = home_sub_feature_item_document['file_path']
         self.categories = home_sub_feature_item_document['categories']
         self.description = home_sub_feature_item_document['description']
+        self.file_path = home_sub_feature_item_document['file_path']
         self.flags = home_sub_feature_item_document['flags']
         self._id = home_sub_feature_item_document['_id']
-        self.image = home_sub_feature_item_document['image']
+        self.image_url = ''
         self.location = home_sub_feature_item_document['location']
         self.rating = home_sub_feature_item_document['rating']
         self.reviews = home_sub_feature_item_document['reviews']
         self.service_id = home_sub_feature_item_document['service_id']
         self.title = home_sub_feature_item_document['title']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Home sub feature item's dict (without _id)
+        :return: Home sub feature item's dictionary for creating a document (without _id and image_url)
         """
         return {
             'categories': self.categories,
             'description': self.description,
             'flags': self.flags,
-            'image': self.image,
             'location': self.location,
             'rating': self.rating,
             'reviews': self.reviews,
