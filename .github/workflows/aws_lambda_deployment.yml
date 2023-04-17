@@ -32,9 +32,7 @@ jobs:
           pip install -r requirements.txt -t .
 
       - name: Build Deployment Zip File
-        run: |
-          zip -r deployment.zip .
-          mv deployment.zip ../
+        run: zip -r deployment.zip .
 
       - name: Deploy to AWS Lambda
         uses: appleboy/lambda-action@v0.1.9
@@ -54,7 +52,7 @@ jobs:
           timeout: 30
           handler: app.handler.handler
           runtime: python3.9
-          zip_file: ../deployment.zip
+          zip_file: deployment.zip
 
 #    steps:
 #      - name: Checkout Code
