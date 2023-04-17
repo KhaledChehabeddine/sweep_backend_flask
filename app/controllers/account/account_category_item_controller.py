@@ -12,8 +12,8 @@ from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.models.account.account_category_item import AccountCategoryItem
 from app.routes.blueprints import sweep_api_v1
-from app.utilities.aws_cloudfront_client import create_cloudfront_url, create_cloudfront_invalidation
-from app.utilities.aws_s3_client import delete_from_aws_s3, upload_to_aws_s3
+from app.aws.aws_cloudfront_client import create_cloudfront_url, create_cloudfront_invalidation
+from app.aws.aws_s3_client import delete_from_aws_s3, upload_to_aws_s3
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_category_items']
@@ -47,7 +47,6 @@ def create_account_category_item() -> Response:
             message='Account category item not added to the database.',
             status=500
         )
-
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
         account_category_item_collection.insert_one(account_category_item.database_dict())

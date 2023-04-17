@@ -6,7 +6,7 @@ delete users from the database
 
 import json
 import pymongo
-from bson import json_util
+from bson import json_util, ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
@@ -31,36 +31,36 @@ def create_user() -> Response:
     try:
         user_collection.insert_one(user.database_dict())
     except OperationFailure:
-        return jsonify({
-            'message': 'User not added to the database.',
-            'status': 500
-        })
-    return jsonify({
-        'message': 'User added to the database.',
-        'status': 200
-    })
+        return jsonify(
+            message='User not added to the database.',
+            status=500
+        )
+    return jsonify(
+        message='User added to the database.',
+        status=200
+    )
 
 
-@user_api_v1.route('/read/email/<string:email>', methods=['GET'])
-def read_user_by_email(email: str) -> Response:
+@user_api_v1.route('/read/id/<string:_id>', methods=['GET'])
+def read_user_by_id(_id: str) -> Response:
     """
-    :param email: User's email
+    :param _id: User's id
     :return: Response object with a message describing if the user was found (if yes: add user object) and the status
     code
     """
-    user_document = json.loads(json_util.dumps(user_collection.find_one({'email': email})),
+    user_document = json.loads(json_util.dumps(user_collection.find_one({'_id': ObjectId(_id)})),
                                object_hook=json_util.object_hook)
     if user_document:
         user = User(user_document=user_document)
-        return jsonify({
-            'user': user.__dict__,
-            'message': 'User found in the database using the email.',
-            'status': 200
-        })
-    return jsonify({
-        'message': 'User not found in the database using the email.',
-        'status': 404
-    })
+        return jsonify(
+            user=user.__dict__,
+            message='User found in the database using the id.',
+            status=200
+        )
+    return jsonify(
+        message='User not found in the database using the id.',
+        status=404
+    )
 
 
 @user_api_v1.route('/read', methods=['GET'])
@@ -87,43 +87,43 @@ def read_users() -> Response:
     )
 
 
-@user_api_v1.route('/update/email/<string:email>', methods=['PUT'])
-def update_user_by_email(email: str) -> Response:
+@user_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
+def update_user_by_id(_id: str) -> Response:
     """
-    :param email: User's email
+    :param _id: User's id
     :return: Response object with a message describing if the user was found (if yes: update user) and the status code
     """
     user_document = request.json
     user = User(user_document=user_document)
     result = user_collection.update_one(
-        {'email': email},
+        {'_id': ObjectId(_id)},
         {'$set': user.__dict__}
     )
     if result.modified_count == 1:
         return jsonify(
-            message='User updated in the database using the email.',
+            message='User updated in the database using the id.',
             status=200
         )
     return jsonify(
-        message='User not found in the database using the email.',
+        message='User not updated in the database using the id.',
         status=500
     )
 
 
-@user_api_v1.route('/delete/email/<string:email>', methods=['DELETE'])
-def delete_user_by_email(email: str) -> Response:
+@user_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
+def delete_user_by_id(_id: str) -> Response:
     """
-    :param email: User's email
+    :param _id: User's id
     :return: Response object with a message describing if the user was found (if yes: delete user) and the status code
     """
-    result = user_collection.delete_one({'email': email})
+    result = user_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
         return jsonify(
-            message='User deleted from the database using the email.',
+            message='User deleted from the database using the id.',
             status=200
         )
     return jsonify(
-        message='User not found in the database using the email.',
+        message='User not deleted in the database using the id.',
         status=500
     )
 

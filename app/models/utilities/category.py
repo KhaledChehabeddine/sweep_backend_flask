@@ -23,9 +23,9 @@ class Category:
         self.name = category_document['name']
         self.services = category_document['services']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Category's dict (without _id)
+        :return: A dictionary representation of the category object (without _id)
         """
         return {
             'name': self.name,

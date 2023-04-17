@@ -30,9 +30,9 @@ class Review:
         self.reviewer = review_document['reviewer']
         self.service_item_id = review_document['service_item_id']
 
-    def create_dict(self) -> dict:
+    def database_dict(self) -> dict:
         """
-        :return: Review's dict (without _id)
+        :return: A dictionary representation of the review object (without _id)
         """
         return {
             'feedback': self.feedback,
