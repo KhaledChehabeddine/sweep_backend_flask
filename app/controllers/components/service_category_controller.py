@@ -38,7 +38,7 @@ def create_service_category() -> Response:
     """
     service_category_document = request.json
 
-    # upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
+    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
 
     service_category = ServiceCategory(service_category_document=service_category_document)
     try:
