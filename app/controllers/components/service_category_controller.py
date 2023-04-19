@@ -10,7 +10,7 @@ from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
 from app.functions.aws_update_operation_status import aws_update_operations
-from app.models.utilities.service_category import ServiceCategory
+from app.models.components.service_category import ServiceCategory
 from app.routes.blueprints import sweep_api_v1
 from app.aws.aws_cloudfront_client import create_cloudfront_url
 from app.aws.aws_s3_client import upload_to_aws_s3, delete_from_aws_s3
@@ -38,11 +38,11 @@ def create_service_category() -> Response:
     """
     service_category_document = request.json
 
-    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
+    # upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
 
     service_category = ServiceCategory(service_category_document=service_category_document)
     try:
-        service_category_collection.insert_one(service_category.__dict__)
+        service_category_collection.insert_one(service_category.database_dict())
     except OperationFailure:
         return jsonify(
             message='Service category not added to the database.',

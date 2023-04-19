@@ -10,7 +10,7 @@ from app.aws.aws_cloudfront_client import create_cloudfront_url
 from app.aws.aws_s3_client import upload_to_aws_s3, delete_from_aws_s3
 from app.database.database import get_database
 from app.functions.aws_update_operation_status import aws_update_operations
-from app.models.utilities.service_item import ServiceItem
+from app.models.components.service_item import ServiceItem
 from app.routes.blueprints import sweep_api_v1
 
 service_item_api_v1 = Blueprint('service_item_api_v1', __name__, url_prefix='/service_item')

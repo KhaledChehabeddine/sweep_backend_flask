@@ -25,12 +25,12 @@ class HomeFeatureItem:
         Home feature item's image url
     location: str
         Home feature item's location
-    rating : int
-        Home feature item's rating
+    rating : float
+        Home feature item's rating (average of all reviews)
     review_ids : List[str]
         Home feature item's reviews
     service_id : int
-        home feature item's id
+        Home feature item's service id
     title : str
         Home feature item's title
     """

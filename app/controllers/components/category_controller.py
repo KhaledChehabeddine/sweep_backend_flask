@@ -8,7 +8,7 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.models.utilities.category import Category
+from app.models.components.category import Category
 from app.routes.blueprints import sweep_api_v1
 
 category_api_v1 = Blueprint('category_api_v1', __name__, url_prefix='/category')
