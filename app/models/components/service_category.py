@@ -23,9 +23,9 @@ class ServiceCategory:
     """
 
     def __init__(self, service_category_document: dict) -> None:
-        self.active = service_category_document['active']
+        self.active = bool(service_category_document['active'])
         self.file_path = service_category_document['file_path']
-        self._id = service_category_document['_id']
+        self._id = str(service_category_document['_id'])
         self.image_url = ''
         self.name = service_category_document['name']
 

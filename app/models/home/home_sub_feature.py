@@ -11,7 +11,7 @@ class HomeSubFeature:
 
     Attributes
     ----------
-    home_sub_feature_items : List[HomeSubFeatureItem]
+    home_sub_feature_item_ids : List[str]
         Home sub feature's items
     _id : str
         Home sub feature's id
@@ -22,7 +22,7 @@ class HomeSubFeature:
     """
 
     def __init__(self, home_sub_feature_document: dict) -> None:
-        self.home_sub_feature_items = home_sub_feature_document['home_sub_feature_items']
+        self.home_sub_feature_item_ids = home_sub_feature_document['home_sub_feature_item_ids']
         self._id = home_sub_feature_document['_id']
         self.subtitle = home_sub_feature_document['subtitle']
         self.title = home_sub_feature_document['title']
@@ -32,7 +32,7 @@ class HomeSubFeature:
         :return: Home sub feature's dictionary for creating a document (without _id)
         """
         return {
-            'home_sub_feature_items': self.home_sub_feature_items,
+            'home_sub_feature_item_ids': self.home_sub_feature_item_ids,
             'subtitle': self.subtitle,
             'title': self.title
         }

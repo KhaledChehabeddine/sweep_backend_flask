@@ -14,14 +14,14 @@ class Category:
         Category's id
     name : str
         Category's name
-    services : List[Service]
-        Category's services
+    service_ids : List[str]
+        Category's service ids
     """
 
     def __init__(self, category_document) -> None:
         self._id = category_document['_id']
         self.name = category_document['name']
-        self.services = category_document['services']
+        self.service_ids = category_document['service_ids']
 
     def database_dict(self) -> dict:
         """
@@ -29,5 +29,5 @@ class Category:
         """
         return {
             'name': self.name,
-            'services': self.services
+            'service_ids': self.service_ids
         }
