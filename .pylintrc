@@ -1,4 +1,4 @@
 [MASTER]
-disable=too-few-public-methods,too-many-instance-attributes
+disable=global-statement,too-few-public-methods,too-many-instance-attributes
 init-hook='import sys; sys.path.append(".")'
 max-line-length = 120

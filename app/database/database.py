@@ -1,30 +1,19 @@
-"""Summary: Database Configurator
+"""Summary: Database Initializer
 
-Creates a mongodb client, using CONNECTION_STRING, which is used to connect to the project database(s). Connection is
-only made once to avoid unnecessary overhead
+Initializes a database using a mongodb client only once to avoid unnecessary overhead
 """
-
-import os
 from typing import Any, Mapping
-from pymongo import MongoClient
 from pymongo.database import Database
+from app.database.mongodb_client import get_mongodb_client
 
-CONNECTION_STRING = 'mongodb+srv://admin:' + os.getenv('ATLAS_MONGODB_PASSWORD') + '@cluster0.zahtuza.mongodb.net' \
-                                                                                   '/?retryWrites=true&w=majority'
-
-
-def get_mongodb_client() -> MongoClient[Mapping[str, Any]]:
-    """
-    :return: MongoDB Client instance
-    """
-    return MongoClient(CONNECTION_STRING)
+DATABASE = None
 
 
 def get_database() -> Database[Mapping[str, Any]]:
     """
     :return: Database instance
     """
-    return get_mongodb_client()['sweep_db']
-
-
-database = get_database()
+    global DATABASE
+    if DATABASE is None:
+        DATABASE = get_mongodb_client()['sweep_db']
+    return DATABASE

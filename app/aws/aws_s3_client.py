@@ -14,7 +14,6 @@ from flask import jsonify, Response
 AWS_S3_CLIENT = None
 
 
-# pylint: disable=global-statement
 def get_aws_s3_client() -> BaseClient:
     """
     :return: AWS S3 client
@@ -55,9 +54,14 @@ def upload_to_aws_s3(file_data: str, file_path: str) -> Response:
     """
     try:
         file_bytes = base64.b64decode(file_data)
-        with BytesIO(file_bytes) as file:
-            get_aws_s3_client().upload_fileobj(file, os.getenv('AWS_S3_BUCKET'), file_path)
-
+        get_aws_s3_client().upload_fileobj(
+            BytesIO(file_bytes),
+            os.getenv('AWS_S3_BUCKET'),
+            file_path,
+            ExtraArgs={
+                'ContentType': 'image/' + 'svg+xml' if file_path.endswith('.svg') else 'image/jpeg',
+            }
+        )
     except ClientError:
         return jsonify(
             message='File not uploaded into the AWS S3 bucket.',

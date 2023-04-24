@@ -1,4 +1,5 @@
 """Summary: Category Controller
+
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete categories from the database
 """

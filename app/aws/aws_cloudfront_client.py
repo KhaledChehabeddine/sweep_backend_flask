@@ -13,7 +13,6 @@ from flask import Response, jsonify
 AWS_CLOUDFRONT_CLIENT = None
 
 
-# pylint: disable=global-statement
 def get_aws_cloudfront_client() -> BaseClient:
     """
     :return: AWS CloudFront client
@@ -38,9 +37,7 @@ def create_cloudfront_invalidation() -> Response:
             InvalidationBatch={
                 'Paths': {
                     'Quantity': 1,
-                    'Items': [
-                        '/*',
-                    ]
+                    'Items': ['/*']
                 },
                 'CallerReference': str(uuid.uuid4())
             }
