@@ -12,6 +12,7 @@ from app.aws.aws_s3_client import upload_to_aws_s3, delete_from_aws_s3
 from app.database.database import get_database
 from app.functions.aws_s3_update import aws_s3_update
 from app.functions.create_metadatas import create_service_provider_metadata, create_user_metadata
+from app.functions.update_metadatas import update_user_metadata
 from app.models.user.worker import Worker
 from app.routes.blueprints import sweep_api_v1
 
@@ -147,6 +148,19 @@ def update_worker_by_id(_id: str) -> Response:
     code
     """
     worker_document = request.json
+
+    worker_document['metadata'] = {
+        'formatted_name': (
+                worker_document['first_name'] + ' ' + worker_document['middle_name'] + ' ' +
+                worker_document['last_name']
+        )
+    }
+
+    worker_document['service_provider']['metadata'] = \
+        create_service_provider_metadata(service_provider_document=worker_document['service_provider'])
+
+    worker_document['user']['metadata'] = \
+        update_user_metadata(user_metadata_document=worker_document['user']['metadata'])
 
     worker_image_list = []
     if worker_document['banner_image']:
