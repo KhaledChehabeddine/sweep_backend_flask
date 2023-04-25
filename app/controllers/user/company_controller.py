@@ -13,6 +13,7 @@ from app.controllers.user.worker_controller import read_workers_by_company_id
 from app.database.database import get_database
 from app.functions.aws_s3_update import aws_s3_update
 from app.functions.create_metadatas import create_service_provider_metadata, create_user_metadata
+from app.functions.update_metadatas import update_user_metadata
 from app.models.user.company import Company
 from app.routes.blueprints import sweep_api_v1
 
@@ -122,6 +123,16 @@ def update_company_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the company was updated and the status code
     """
     company_document = request.json
+
+    company_document['metadata'] = {
+        'number_of_employees': len(read_workers_by_company_id(company_id=company_document['_id']).json['data'])
+    }
+
+    company_document['service_provider']['metadata'] = \
+        create_service_provider_metadata(service_provider_document=company_document['service_provider'])
+
+    company_document['user']['metadata'] = \
+        update_user_metadata(user_metadata_document=company_document['user']['metadata'])
 
     company_image_list = []
     if company_document['banner_image']:

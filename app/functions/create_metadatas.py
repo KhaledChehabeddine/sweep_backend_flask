@@ -21,7 +21,6 @@ def create_service_provider_metadata(service_provider_document: dict) -> dict:
 
 def create_user_metadata() -> dict:
     """
-    :param user_document: A user document
     :return: A dictionary representation of the user metadata
     """
     return {
