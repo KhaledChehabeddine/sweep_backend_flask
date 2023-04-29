@@ -11,7 +11,7 @@ class Search:
 
     Attributes
     ----------
-    id : str
+    _id : str
         The ID of the search object
     metadata : SearchMetadata
         The metadata for the search object
@@ -22,7 +22,7 @@ class Search:
     """
 
     def __init__(self, search_dict: dict) -> None:
-        self.id = search_dict['_id']
+        self._id = search_dict['_id']
         self.metadata = SearchMetadata(search_dict['metadata'])
         self.categories = search_dict['categories']
         self.recent_searches = search_dict['recent_searches']

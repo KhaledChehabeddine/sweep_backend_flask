@@ -12,7 +12,7 @@ class SearchResultPage:
 
     Attributes
     ----------
-    id : str
+    _id : str
         The ID of the search result page object
     metadata : SearchResultPageMetadata
         The metadata for the search result page object
@@ -22,7 +22,7 @@ class SearchResultPage:
         A list of search results for the search result page
     """
     def __init__(self, search_result_page_dict: dict) -> None:
-        self.id = search_result_page_dict['_id']
+        self._id = search_result_page_dict['_id']
         self.metadata = SearchResultPageMetadata(search_result_page_dict['metadata'])
         self.search_results = search_result_page_dict['search_results']
         self.results = []
