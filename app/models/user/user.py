@@ -2,6 +2,7 @@
 
 A user model used to convert a user document into a user object
 """
+from app.models.components.address import Address
 from app.models.user.metadata.user_metadata import UserMetadata
 
 
@@ -27,7 +28,7 @@ class User:
     phone_number : str
         User's phone number
     user_type : str
-        User's type (company, customer, or worker)
+        User's type (service_provider, or worker)
     username : str
         User's username
     verified : bool
@@ -35,7 +36,9 @@ class User:
     """
 
     def __init__(self, user_document: dict) -> None:
-        self.addresses = user_document['addresses']
+        self.addresses = [
+            Address(address_document=address_document).__dict__ for address_document in user_document['addresses']
+        ]
         self.country = user_document['country']
         self.country_code = user_document['country_code']
         self.email = user_document['email']
