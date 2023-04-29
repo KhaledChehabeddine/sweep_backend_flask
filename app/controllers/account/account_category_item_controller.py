@@ -9,11 +9,10 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.functions.aws_update_operation_status import aws_update_operations
 from app.models.account.account_category_item import AccountCategoryItem
 from app.routes.blueprints import sweep_api_v1
 from app.aws.aws_cloudfront_client import create_cloudfront_url
-from app.aws.aws_s3_client import delete_from_aws_s3, upload_to_aws_s3
+from app.aws.aws_s3_client import delete_image_from_aws_s3
 
 account_category_item_api_v1 = Blueprint('account_category_item_api_v1', __name__, url_prefix='/account_category_item')
 account_category_item_collection = get_database()['account_category_items']
@@ -41,7 +40,7 @@ def create_account_category_item() -> Response:
     """
     account_category_item_document = request.json
 
-    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
+    # upload_image_to_aws_s3(image_data=request.json['image'], image_path=request.json['file_path'])
 
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     try:
@@ -141,7 +140,7 @@ def update_account_category_item_by_id(_id: str) -> Response:
     """
     account_category_item_document = request.json
 
-    aws_update_operations(object_document=account_category_item_document)
+    # aws_update_operations(object_document=account_category_item_document)
 
     account_category_item = AccountCategoryItem(account_category_item_document=account_category_item_document)
     result = account_category_item_collection.update_one(
@@ -168,7 +167,7 @@ def delete_account_category_by_id(_id: str) -> Response:
     """
     account_category_item_document = read_account_category_item_by_id(_id=_id).json['data']
 
-    delete_from_aws_s3(file_path=account_category_item_document['file_path'])
+    delete_image_from_aws_s3(image_path=account_category_item_document['file_path'])
 
     result = account_category_item_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:

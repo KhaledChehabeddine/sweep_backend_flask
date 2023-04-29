@@ -2,7 +2,6 @@
 
 Creates an application instance before configuring and running it on an AWS Lamda, named application_entry_point
 """
-
 from app.factory import create_application
 
 application = create_application()
