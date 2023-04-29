@@ -1,8 +1,10 @@
-"""Summary: Home Main feature Reward Model
+"""Summary: Home Main Feature Reward Model
 
 A home main feature reward model used to convert a home main feature reward document into a home main feature reward
 object
 """
+from app.models.home.home_main_feature import HomeMainFeature
+from app.models.home.metadata.home_main_feature_reward_metadata import HomeMainFeatureRewardMetadata
 
 
 class HomeMainFeatureReward:
@@ -14,29 +16,38 @@ class HomeMainFeatureReward:
     ----------
     amount : float
         Home main feature reward's amount
+    claimed_customer_ids : list[str]
+        Home main feature reward's claimed customer ids
     code : str
         Home main feature reward's code
-    file_path : str
-        Home main feature reward's file path
     _id : str
         Home main feature reward's id
-    image_url : str
-        Home main feature reward's image url
+    home_main_feature : dict
+        Home main feature reward's home main feature document
+    metadata : dict
+        Home main feature reward's metadata document
     """
 
     def __init__(self, home_main_feature_reward_document: dict) -> None:
         self.amount = home_main_feature_reward_document['amount']
+        self.claimed_customer_ids = home_main_feature_reward_document['claimed_customer_ids']
         self.code = home_main_feature_reward_document['code']
-        self.file_path = home_main_feature_reward_document['file_path']
         self._id = home_main_feature_reward_document['_id']
-        self.image_url = ''
+        self.home_main_feature = HomeMainFeature(
+            home_main_feature_document=home_main_feature_reward_document['home_main_feature']
+        ).__dict__
+        self.metadata = HomeMainFeatureRewardMetadata(
+            home_main_feature_reward_metadata_document=home_main_feature_reward_document['metadata']
+        ).__dict__
 
     def database_dict(self) -> dict:
         """
-        :return: Home main feature reward's dictionary for creating a document (without _id and image_url)
+        :return: Home main feature reward's dictionary for creating a document (without _id)
         """
         return {
             'amount': self.amount,
+            'claimed_customer_ids': self.claimed_customer_ids,
             'code': self.code,
-            'file_path': self.file_path,
+            'home_main_feature': self.home_main_feature,
+            'metadata': self.metadata,
         }

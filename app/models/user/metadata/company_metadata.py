@@ -11,9 +11,30 @@ class CompanyMetadata:
 
     Attributes
     ----------
-    number_of_employees : int
-        Company's number of employees
+    banner_image_format : str
+        Company's banner image format
+    banner_image_height : int
+        Company's banner image height
+    banner_image_width : int
+        Company's banner image width
+    logo_image_format : str
+        Company's logo image format
+    logo_image_height : int
+        Company's logo image height
+    logo_image_width : int
+        Company's logo image width
+    total_employees : int
+        Company's total employees
+    total_service_categories : int
+        Service provider's total service categories
     """
 
     def __init__(self, company_metadata_document: dict) -> None:
-        self.number_of_employees = company_metadata_document['number_of_employees']
+        self.banner_image_format = company_metadata_document['banner_image_format']
+        self.banner_image_height = company_metadata_document['banner_image_height']
+        self.banner_image_width = company_metadata_document['banner_image_width']
+        self.logo_image_format = company_metadata_document['logo_image_format']
+        self.logo_image_height = company_metadata_document['logo_image_height']
+        self.logo_image_width = company_metadata_document['logo_image_width']
+        self.total_employees = company_metadata_document['total_employees']
+        self.total_service_categories = company_metadata_document['total_service_categories']

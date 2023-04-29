@@ -2,7 +2,6 @@
 
 A client that contains operations related to AWS CloudFront
 """
-
 import os
 import uuid
 import boto3

@@ -3,16 +3,15 @@
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete home main feature promotions from the database
 """
-
 from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.functions.aws_update_operation_status import aws_update_operations
+from app.functions.create_object_metadatas import create_home_feature_metadata
+from app.functions.update_object_metadatas import update_home_main_feature_metadata
 from app.models.home.home_main_feature_promotion import HomeMainFeaturePromotion
 from app.routes.blueprints import sweep_api_v1
-from app.aws.aws_cloudfront_client import create_cloudfront_url
-from app.aws.aws_s3_client import upload_to_aws_s3, delete_from_aws_s3
+from app.aws.aws_s3_client import delete_image_from_aws_s3
 
 home_main_feature_promotion_api_v1 = Blueprint(
     'home_main_feature_promotion_api_v1',
@@ -22,39 +21,43 @@ home_main_feature_promotion_api_v1 = Blueprint(
 home_main_feature_promotion_collection = get_database()['home_main_feature_promotions']
 
 
-def _configure_home_main_feature_promotion(home_main_feature_promotion_document: dict) -> HomeMainFeaturePromotion:
-    """
-    :param home_main_feature_promotion_document: A dictionary representing a home main feature promotion document
-    :return: A home main feature promotion object with the image url configured
-    """
-    home_main_feature_promotion = HomeMainFeaturePromotion(
-        home_main_feature_promotion_document=home_main_feature_promotion_document
-    )
-    home_main_feature_promotion.image_url = create_cloudfront_url(file_path=home_main_feature_promotion.file_path)
-    return home_main_feature_promotion
-
-
 @home_main_feature_promotion_api_v1.route('/create', methods=['POST'])
 def create_home_main_feature_promotion() -> Response:
     """
-    :return: Response object with a message describing if the home main feature promotion was created and the status
-    code
+    :return: Response object with a message describing if the home main feature promotion was created (if yes: add home
+    main feature promotion) and the status code
     """
     home_main_feature_promotion_document = request.json
 
-    upload_to_aws_s3(file_data=request.json['image'], file_path=request.json['file_path'])
+    home_main_feature_promotion_document['metadata'] = {
+        'total_companies': len(home_main_feature_promotion_document['company_ids']),
+        'total_service_providers': len(
+            home_main_feature_promotion_document['company_ids'] + home_main_feature_promotion_document['worker_ids']
+        ),
+        'total_workers': len(home_main_feature_promotion_document['worker_ids']),
+    }
+
+    # aws_s3_upload_response = upload_image_to_aws_s3(image_data=request.json['image'], image_path=request.json[
+    # 'file_path']).json home_main_feature_promotion_document['home_main_feature']['metadata'] = \
+    # create_home_main_feature_metadata(aws_s3_upload_data=aws_s3_upload_response['data'])
+
+    home_main_feature_promotion_document['home_main_feature']['home_feature']['metadata'] = \
+        create_home_feature_metadata()
 
     home_main_feature_promotion = HomeMainFeaturePromotion(
         home_main_feature_promotion_document=home_main_feature_promotion_document
     )
     try:
-        home_main_feature_promotion_collection.insert_one(home_main_feature_promotion.database_dict())
+        home_main_feature_promotion_id = str(
+            home_main_feature_promotion_collection.insert_one(home_main_feature_promotion.database_dict()).inserted_id
+        )
     except OperationFailure:
         return jsonify(
             message='Home main feature promotion not added to the database.',
             status=500
         )
     return jsonify(
+        data=home_main_feature_promotion_id,
         message='Home main feature promotion added to the database.',
         status=200
     )
@@ -69,7 +72,7 @@ def read_home_main_feature_promotion_by_id(_id: str) -> Response:
     """
     home_main_feature_promotion_document = home_main_feature_promotion_collection.find_one({'_id': ObjectId(_id)})
     if home_main_feature_promotion_document:
-        home_main_feature_promotion = _configure_home_main_feature_promotion(
+        home_main_feature_promotion = HomeMainFeaturePromotion(
             home_main_feature_promotion_document=home_main_feature_promotion_document
         )
         return jsonify(
@@ -93,7 +96,7 @@ def read_home_main_feature_promotions() -> Response:
     home_main_feature_promotion_documents = home_main_feature_promotion_collection.find()
     if home_main_feature_promotion_documents:
         for home_main_feature_promotion_document in home_main_feature_promotion_documents:
-            home_main_feature_promotion = _configure_home_main_feature_promotion(
+            home_main_feature_promotion = HomeMainFeaturePromotion(
                 home_main_feature_promotion_document=home_main_feature_promotion_document
             )
             home_main_feature_promotions.append(home_main_feature_promotion.__dict__)
@@ -117,7 +120,17 @@ def update_home_main_feature_promotion_by_id(_id: str) -> Response:
     """
     home_main_feature_promotion_document = request.json
 
-    aws_update_operations(object_document=home_main_feature_promotion_document)
+    home_main_feature_promotion_document['metadata'] = {
+        'total_companies': len(home_main_feature_promotion_document['company_ids']),
+        'total_service_providers': len(
+            home_main_feature_promotion_document['company_ids'] + home_main_feature_promotion_document['worker_ids']
+        ),
+        'total_workers': len(home_main_feature_promotion_document['worker_ids']),
+    }
+
+    home_main_feature_promotion_document = update_home_main_feature_metadata(
+        object_document=home_main_feature_promotion_document
+    )
 
     home_main_feature_promotion = HomeMainFeaturePromotion(
         home_main_feature_promotion_document=home_main_feature_promotion_document
@@ -146,7 +159,7 @@ def delete_home_main_feature_promotion_by_id(_id: str) -> Response:
     """
     home_main_feature_promotion_document = read_home_main_feature_promotion_by_id(_id=_id).json['data']
 
-    delete_from_aws_s3(file_path=home_main_feature_promotion_document['file_path'])
+    delete_image_from_aws_s3(image_path=home_main_feature_promotion_document['file_path'])
 
     result = home_main_feature_promotion_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
