@@ -7,6 +7,18 @@ from app.aws.aws_s3_client import upload_image_to_aws_s3
 from app.functions.create_object_metadatas import create_address_metadata
 
 
+def update_account_category_metadata(account_category_document: dict) -> dict:
+    """
+    :param account_category_document: An account category document
+    :return: A dictionary representation of the account category metadata
+    """
+    account_category_document['metadata']['total_account_category_items'] = \
+        len(account_category_document['account_category_items'])
+    account_category_document['metadata']['updated_date'] = datetime.now()
+
+    return account_category_document['metadata']
+
+
 def update_category_metadata(category_metadata_document: dict) -> dict:
     """
     :param category_metadata_document: A category metadata document

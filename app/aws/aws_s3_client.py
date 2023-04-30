@@ -11,6 +11,7 @@ from PIL import Image
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from flask import jsonify, Response
+from svglib.svglib import svg2rlg
 from app.aws.aws_cloudfront_client import create_cloudfront_invalidation
 
 AWS_IMAGE_FORMATS = {
@@ -86,14 +87,16 @@ def upload_image_to_aws_s3(object_metadata_document: dict, object_image: tuple[s
     :return: Response object with a message describing if the image was uploaded and the status code
     """
     try:
+        object_metadata_document[object_image[0] + 'image_format'] = object_image[2].split('.')[-1]
         image_bytes = base64.b64decode(object_image[1])
         with BytesIO(image_bytes) as image_bytes_io:
-            image = Image.open(image_bytes_io)
-            image_size = image.size
+            if object_metadata_document[object_image[0] + 'image_format'] == 'svg':
+                image = svg2rlg(image_bytes_io)
+            else:
+                image = Image.open(image_bytes_io)
 
-            object_metadata_document[object_image[0] + 'image_format'] = image.format.lower()
-            object_metadata_document[object_image[0] + 'image_height'] = image_size[0]
-            object_metadata_document[object_image[0] + 'image_width'] = image_size[1]
+            object_metadata_document[object_image[0] + 'image_height'] = image.height
+            object_metadata_document[object_image[0] + 'image_width'] = image.width
 
             content_type = AWS_IMAGE_FORMATS[object_metadata_document[object_image[0] + 'image_format']]
 
