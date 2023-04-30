@@ -5,6 +5,18 @@ Functions to create metadatas for their respective object
 from datetime import datetime
 
 
+def create_account_category_metadata(account_category_document: dict) -> dict:
+    """
+    :param account_category_document: An account category document
+    :return: A dictionary representation of the account category metadata
+    """
+    return {
+        'created_date': datetime.now(),
+        'total_account_category_items': len(account_category_document['account_category_items']),
+        'updated_date': datetime.now()
+    }
+
+
 def create_address_metadata(address_document: dict) -> dict:
     """
     :param address_document: An address document
