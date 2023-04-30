@@ -14,13 +14,13 @@ class SearchMetadata:
     ----------
     created_date : datetime
         The date and time the search object was created
-    user_id : str
-        The ID of the user who made the search
-    query : str
-        The search query entered by the user
+    updated_date : datetime
+        The date and time the search object was updated
+    total_categories : int
+        The total number of categories for the search object
     """
 
     def __init__(self, search_metadata_dict: dict) -> None:
+        self.total_categories = search_metadata_dict['total_categories']
         self.created_date = datetime.strptime(search_metadata_dict['created_date'], '%Y-%m-%d %H:%M:%S')
-        self.user_id = search_metadata_dict['user_id']
-        self.query = search_metadata_dict['query']
+        self.updated_date = datetime.strptime(search_metadata_dict['updated_date'], '%Y-%m-%d %H:%M:%S')

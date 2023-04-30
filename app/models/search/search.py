@@ -17,12 +17,9 @@ class Search:
         The metadata for the search object
     categories : List[str]
         A list of categories for the search results
-    recent_searches : List[str]
-        A list of recent searches made by the user
     """
 
     def __init__(self, search_dict: dict) -> None:
         self._id = search_dict['_id']
         self.metadata = SearchMetadata(search_dict['metadata'])
         self.categories = search_dict['categories']
-        self.recent_searches = search_dict['recent_searches']
