@@ -23,8 +23,7 @@ class HomeFeature:
     """
 
     def __init__(self, home_feature_document: dict) -> None:
-        self.active = home_feature_document['active']
-        self.clicks = home_feature_document['clicks']
-        self.home_feature_type = home_feature_document['home_feature_type']
+        self.active = bool(home_feature_document['active'])
+        self.home_feature_type = str(home_feature_document['home_feature_type'])
         self.metadata = HomeFeatureMetadata(home_feature_metadata_document=home_feature_document['metadata']).__dict__
-        self.priority = home_feature_document['priority']
+        self.priority = int(home_feature_document['priority'])

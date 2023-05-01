@@ -30,7 +30,7 @@ class AccountCategory:
         ]
         self._id = str(account_category_document['_id'])
         self.metadata = AccountCategoryMetadata(account_category_document['metadata']).__dict__
-        self.name = account_category_document['name']
+        self.name = str(account_category_document['name'])
 
     def database_dict(self) -> dict:
         """

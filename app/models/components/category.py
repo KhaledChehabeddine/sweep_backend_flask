@@ -26,5 +26,5 @@ class Category:
     def __init__(self, category_document) -> None:
         self._id = ObjectId(category_document['_id']) if ObjectId.is_valid(category_document['_id']) else ObjectId()
         self.metadata = CategoryMetadata(category_document['metadata']).__dict__
-        self.name = category_document['name']
-        self.service_item_ids = category_document['service_item_ids']
+        self.name = str(category_document['name'])
+        self.service_item_ids = [str(service_item_id) for service_item_id in category_document['service_item_ids']]

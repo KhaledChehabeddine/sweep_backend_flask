@@ -27,15 +27,15 @@ class HomeMainFeaturePromotion:
     """
 
     def __init__(self, home_main_feature_promotion_document: dict) -> None:
-        self.company_ids = home_main_feature_promotion_document['company_ids']
-        self._id = home_main_feature_promotion_document['_id']
+        self.company_ids = [str(company_id) for company_id in home_main_feature_promotion_document['company_ids']]
+        self._id = str(home_main_feature_promotion_document['_id'])
         self.home_main_feature = HomeMainFeature(
             home_main_feature_document=home_main_feature_promotion_document['home_main_feature']
         ).__dict__
         self.metadata = HomeMainFeaturePromotionMetadata(
             home_main_feature_promotion_metadata_document=home_main_feature_promotion_document['metadata']
         ).__dict__
-        self.worker_ids = home_main_feature_promotion_document['worker_ids']
+        self.worker_ids = [str(worker_id) for worker_id in home_main_feature_promotion_document['worker_ids']]
 
     def database_dict(self) -> dict:
         """

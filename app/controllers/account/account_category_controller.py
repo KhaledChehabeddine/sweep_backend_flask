@@ -3,14 +3,13 @@
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete account categories from the database
 """
+from datetime import datetime
 from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo import ASCENDING
 from pymongo.errors import OperationFailure
 from app.aws.aws_s3_client import upload_image_to_aws_s3, delete_images_from_aws_s3
 from app.database.database import get_database
-from app.functions.create_object_metadatas import create_account_category_metadata
-from app.functions.update_object_metadatas import update_account_category_metadata
 from app.models.account.account_category import AccountCategory
 
 raw_account_category_api_v1 = Blueprint('account_category_api_v1', __name__, url_prefix='/account_category')
@@ -20,23 +19,26 @@ account_category_collection.create_index([('name', ASCENDING)], unique=True)
 account_category_collection.create_index([('account_category_items.name', ASCENDING)], unique=True)
 
 
-def _configure_account_category_document(account_category_document: dict,) -> dict:
+def _configure_account_category_document(account_category_document: dict) -> tuple[dict, bool]:
     """
     :param account_category_document: An account category document
     :return: An account category document with a configured metadata
     """
+    image_updated = False
     for account_category_item_document in account_category_document['account_category_items']:
-        account_category_item_image = (
-            '',
-            account_category_item_document['image'],
-            account_category_item_document['image_path']
-        )
-        account_category_item_document['metadata'] = upload_image_to_aws_s3(
-            object_metadata_document=account_category_item_document['metadata'],
-            object_image=account_category_item_image
-        ).json['data']
+        if account_category_item_document['image']:
+            image_updated = True
+            account_category_item_image = (
+                '',
+                account_category_item_document['image'],
+                account_category_item_document['image_path']
+            )
+            account_category_item_document['metadata'] = upload_image_to_aws_s3(
+                object_metadata_document=account_category_item_document['metadata'],
+                object_image=account_category_item_image
+            ).json['data']
 
-    return account_category_document
+    return account_category_document, image_updated
 
 
 @raw_account_category_api_v1.route('/create', methods=['POST'])
@@ -47,11 +49,13 @@ def create_account_category() -> Response:
     """
     account_category_document = request.json
 
-    account_category_document['metadata'] = \
-        create_account_category_metadata(account_category_document=account_category_document)
+    account_category_document['metadata']['created_date'] = datetime.now()
+    account_category_document['metadata']['total_account_category_items'] = len(
+        account_category_document['account_category_items']
+    )
 
     account_category_document = \
-        _configure_account_category_document(account_category_document=account_category_document)
+        _configure_account_category_document(account_category_document=account_category_document)[0]
 
     account_category = AccountCategory(account_category_document=account_category_document)
     try:
@@ -166,15 +170,19 @@ def update_account_category_by_id(_id: str) -> Response:
     """
     account_category_document = request.json
 
-    account_category_document['metadata'] = \
-        update_account_category_metadata(account_category_document=account_category_document)
+    account_category_document['metadata']['total_account_category_items'] = \
+        len(account_category_document['account_category_items'])
+    account_category_document['metadata']['updated_date'] = datetime.now()
+
+    account_category_document, image_updated = \
+        _configure_account_category_document(account_category_document=account_category_document)
 
     account_category = AccountCategory(account_category_document=account_category_document)
     result = account_category_collection.update_one(
         {'_id': ObjectId(_id)},
         {'$set': account_category.database_dict()}
     )
-    if result.modified_count == 1:
+    if image_updated or result.modified_count == 1:
         return jsonify(
             message='Account category updated in the database using the id.',
             status=200

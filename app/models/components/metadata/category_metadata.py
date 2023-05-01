@@ -12,7 +12,7 @@ class CategoryMetadata:
     ----------
     created_date : datetime
         Category's created date
-    total_service_items : str
+    total_service_items : int
         Category's total service items
     updated_date : datetime
         Category's updated date
@@ -20,5 +20,5 @@ class CategoryMetadata:
 
     def __init__(self, category_metadata_document) -> None:
         self.created_date = category_metadata_document['created_date']
-        self.total_service_items = category_metadata_document['total_service_items']
+        self.total_service_items = int(category_metadata_document['total_service_items'])
         self.updated_date = category_metadata_document['updated_date']

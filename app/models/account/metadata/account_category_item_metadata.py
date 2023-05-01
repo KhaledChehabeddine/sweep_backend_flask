@@ -20,6 +20,6 @@ class AccountCategoryItemMetadata:
     """
 
     def __init__(self, account_category_item_metadata_document) -> None:
-        self.image_format = account_category_item_metadata_document['image_format']
-        self.image_height = account_category_item_metadata_document['image_height']
-        self.image_width = account_category_item_metadata_document['image_width']
+        self.image_format = str(account_category_item_metadata_document['image_format'])
+        self.image_height = int(account_category_item_metadata_document['image_height'])
+        self.image_width = int(account_category_item_metadata_document['image_width'])

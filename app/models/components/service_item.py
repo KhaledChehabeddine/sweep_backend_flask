@@ -30,10 +30,10 @@ class ServiceItem:
     """
 
     def __init__(self, service_item_document: dict) -> None:
-        self.description = service_item_document['description']
+        self.description = str(service_item_document['description'])
         self._id = str(service_item_document['_id'])
-        self.image_path = service_item_document['image_path']
-        self.image_url = create_cloudfront_url(file_path=self.image_path)
+        self.image_path = str(service_item_document['image_path'])
+        self.image_url = create_cloudfront_url(image_path=self.image_path)
         self.metadata = ServiceItemMetadata(service_item_document['metadata']).__dict__
-        self.name = service_item_document['name']
-        self.price = service_item_document['price']
+        self.name = str(service_item_document['name'])
+        self.price = float(service_item_document['price'])

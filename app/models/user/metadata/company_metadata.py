@@ -30,11 +30,11 @@ class CompanyMetadata:
     """
 
     def __init__(self, company_metadata_document: dict) -> None:
-        self.banner_image_format = company_metadata_document['banner_image_format']
-        self.banner_image_height = company_metadata_document['banner_image_height']
-        self.banner_image_width = company_metadata_document['banner_image_width']
-        self.logo_image_format = company_metadata_document['logo_image_format']
-        self.logo_image_height = company_metadata_document['logo_image_height']
-        self.logo_image_width = company_metadata_document['logo_image_width']
-        self.total_employees = company_metadata_document['total_employees']
-        self.total_service_categories = company_metadata_document['total_service_categories']
+        self.banner_image_format = str(company_metadata_document['banner_image_format'])
+        self.banner_image_height = int(company_metadata_document['banner_image_height'])
+        self.banner_image_width = int(company_metadata_document['banner_image_width'])
+        self.logo_image_format = str(company_metadata_document['logo_image_format'])
+        self.logo_image_height = int(company_metadata_document['logo_image_height'])
+        self.logo_image_width = int(company_metadata_document['logo_image_width'])
+        self.total_employees = int(company_metadata_document['total_employees'])
+        self.total_service_categories = int(company_metadata_document['total_service_categories'])

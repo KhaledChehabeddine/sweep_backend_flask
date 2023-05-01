@@ -36,8 +36,8 @@ class Address:
     def __init__(self, address_document) -> None:
         self.city = address_document['city']
         self.country = address_document['country']
-        self.latitude = address_document['latitude']
-        self.longitude = address_document['longitude']
+        self.latitude = float(address_document['latitude'])
+        self.longitude = float(address_document['longitude'])
         self.metadata = AddressMetadata(address_document['metadata']).__dict__
         self.name = address_document['name']
         self.state = address_document['state']

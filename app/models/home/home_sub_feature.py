@@ -30,15 +30,15 @@ class HomeSubFeature:
     """
 
     def __init__(self, home_sub_feature_document: dict) -> None:
-        self.company_ids = home_sub_feature_document['company_ids']
+        self.company_ids = [str(company_id) for company_id in home_sub_feature_document['company_ids']]
         self.home_feature = HomeFeature(home_feature_document=home_sub_feature_document['home_feature']).__dict__
-        self._id = home_sub_feature_document['_id']
+        self._id = str(home_sub_feature_document['_id'])
         self.metadata = HomeSubFeatureMetadata(
             home_sub_feature_metadata_document=home_sub_feature_document['metadata']
         ).__dict__
-        self.subtitle = home_sub_feature_document['subtitle']
-        self.title = home_sub_feature_document['title']
-        self.worker_ids = home_sub_feature_document['worker_ids']
+        self.subtitle = str(home_sub_feature_document['subtitle'])
+        self.title = str(home_sub_feature_document['title'])
+        self.worker_ids = [str(worker_id) for worker_id in home_sub_feature_document['worker_ids']]
 
     def database_dict(self) -> dict:
         """
