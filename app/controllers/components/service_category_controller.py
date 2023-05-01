@@ -8,7 +8,6 @@ from flask import Blueprint, Response, jsonify, request
 from pymongo import ASCENDING, errors
 from app.database.database import get_database
 from app.functions.create_object_metadatas import create_service_category_metadata
-from app.functions.update_object_metadatas import update_service_category_metadata
 from app.models.components.service_category import ServiceCategory
 from app.aws.aws_s3_client import delete_image_from_aws_s3
 
@@ -97,7 +96,7 @@ def update_service_category_by_id(_id: str) -> Response:
     service_category_document = request.json
 
     service_category_document['metadata'] = \
-        update_service_category_metadata(service_category_document=service_category_document)
+        create_service_category_metadata(service_category_document=service_category_document)
 
     service_category = ServiceCategory(service_category_document=service_category_document)
     result = service_category_collection.update_one(

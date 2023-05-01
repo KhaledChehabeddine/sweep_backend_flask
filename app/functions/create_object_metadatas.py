@@ -74,12 +74,17 @@ def create_service_category_metadata(service_category_document: dict) -> dict:
     :param service_category_document: A service category document
     :return: A dictionary representation of the service category metadata
     """
-    service_category_image = ('', service_category_document['image'], service_category_document['image_path'])
-    service_category_document['metadata'] = upload_image_to_aws_s3(
-        object_metadata_document=service_category_document['metadata'],
-        object_image=service_category_image
-    ).json['data']
-    service_category_document['metadata']['created_date'] = datetime.now()
+    if service_category_document['image']:
+        service_category_image = ('', service_category_document['image'], service_category_document['image_path'])
+        service_category_document['metadata'] = upload_image_to_aws_s3(
+            object_metadata_document=service_category_document['metadata'],
+            object_image=service_category_image
+        ).json['data']
+    try:
+        if service_category_document['metadata']['created_date']:
+            pass
+    except KeyError:
+        service_category_document['metadata']['created_date'] = datetime.now()
     service_category_document['metadata']['updated_date'] = datetime.now()
 
     return service_category_document['metadata']

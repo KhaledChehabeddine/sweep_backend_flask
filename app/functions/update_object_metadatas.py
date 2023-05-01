@@ -3,8 +3,6 @@
 Functions to update metadatas for their respective object
 """
 from datetime import datetime
-
-from app.aws.aws_s3_client import upload_image_to_aws_s3
 from app.functions.create_object_metadatas import create_address_metadata
 
 
@@ -26,22 +24,6 @@ def update_home_feature_metadata(home_feature_metadata_document: dict) -> dict:
     home_feature_metadata_document['updated_date'] = datetime.now()
 
     return home_feature_metadata_document
-
-
-def update_service_category_metadata(service_category_document: dict) -> dict:
-    """
-    :param service_category_document: A service category document
-    :return: A updated service category document
-    """
-    if service_category_document['image']:
-        service_category_image = ('', service_category_document['image'], service_category_document['image_path'])
-        service_category_document['metadata'] = upload_image_to_aws_s3(
-            object_metadata_document=service_category_document['metadata'],
-            object_image=service_category_image
-        ).json['data']
-    service_category_document['metadata']['updated_date'] = datetime.now()
-
-    return service_category_document['metadata']
 
 
 def update_service_provider_metadata(service_provider_document: dict) -> dict:
