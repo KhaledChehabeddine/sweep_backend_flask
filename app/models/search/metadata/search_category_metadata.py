@@ -3,8 +3,6 @@
 A search metadata model used to convert a search metadata document into a user metadata object
 """
 
-from datetime import datetime
-
 
 class SearchCategoryMetadata:
     """
