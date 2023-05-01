@@ -4,8 +4,8 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete reservations from the database
 """
 from datetime import datetime
-from flask import Blueprint, Response, jsonify, request
-from pymongo.errors import OperationFailure
+from flask import Blueprint, Response, request
+# from pymongo.errors import OperationFailure
 from app.aws.aws_s3_client import upload_image_to_aws_s3
 from app.models.history.reservation import Reservation
 
@@ -38,18 +38,18 @@ def create_reservation() -> Response:
     reservation_document['metadata'] = {}  # Missing metadata function
     reservation_document = _configure_reservation_document(reservation_document=reservation_document)
     reservation_document = Reservation(reservation_document=reservation_document)
-    try:
-       #  reservation_id = str(reservation_document.insert_one(reservation_document.database_dict()).inserted_id)
-    except OperationFailure:
-        return jsonify(
-            message='Account category not added to the database.',
-            status=500
-        )
-    return jsonify(
-       #  data=reservation_id,
-        message='Account category added to the database.',
-        status=200
-    )
+    # try:
+    #   reservation_id = str(reservation_document.insert_one(reservation_document.database_dict()).inserted_id)
+    # except OperationFailure:
+    #    return jsonify(
+    #        message='Account category not added to the database.',
+    #        status=500
+    #    )
+    # return jsonify(
+    #   data=reservation_id,
+    #    message='Account category added to the database.',
+    #    status=200
+    # )
 
 
 @raw_reservation_api_v1.route('/read/id/<string:_id>', methods=['GET'])
