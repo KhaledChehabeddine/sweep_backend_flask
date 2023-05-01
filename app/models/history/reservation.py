@@ -12,6 +12,8 @@ class Reservation:
 
     Attributes:
     ----------
+    customer_id : str
+        Reservation's customer id
     datetime : datetime
         Reservation's datetime
     description : str
@@ -35,11 +37,12 @@ class Reservation:
     """
 
     def __init__(self, reservation_document: dict) -> None:
+        self.customer_id = str(reservation_document['customer_id'])
         self.datetime = reservation_document['datetime']
         self.description = reservation_document['description']
         self._id = str(reservation_document['_id'])
         self.image_path = reservation_document['image_path']
-        self.image_url = create_cloudfront_url(file_path=self.image_path)
+        self.image_url = create_cloudfront_url(image_path=self.image_path)
         self.metadata = ReservationMetadata(reservation_document['metadata']).__dict__
         self.price = reservation_document['price']
         self.service_provider_id = str(reservation_document['service_provider_id'])
@@ -51,9 +54,11 @@ class Reservation:
         :return: A dictionary representation of the reservation object (without _id)
         """
         return {
+            'customer_id': self.customer_id,
             'datetime': self.datetime,
             'description': self.description,
             'image_path': self.image_path,
+            'image_url': self.image_url,
             'metadata': self.metadata,
             'price': self.price,
             'service_provider_id': self.service_provider_id,

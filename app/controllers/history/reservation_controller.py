@@ -43,15 +43,15 @@ def create_reservation() -> Response:
     reservation_document = _configure_reservation_document(reservation_document=reservation_document)
     reservation = Reservation(reservation_document=reservation_document)
     try:
-        reservation_id = str(reservation_collection.insert_one(reservation_document.database_dict()).inserted_id)
+        reservation_id = str(reservation_collection.insert_one(reservation.database_dict()).inserted_id)
     except OperationFailure:
         return jsonify(
-            message='Account category not added to the database.',
+            message='Reservation not added to the database.',
             status=500
         )
     return jsonify(
         data=reservation_id,
-        message='Account category added to the database.',
+        message='Reservation added to the database.',
         status=200
     )
 
@@ -78,16 +78,16 @@ def read_reservation_by_id(_id: str) -> Response:
 
 
 @raw_reservation_api_v1.route('/read/customer_id/<string:name>', methods=['GET'])
-def read_reservations_by_customer_id(_id: str) -> Response:
+def read_reservations_by_customer_id(customer_id: str) -> Response:
     """
-    :param _id: Customer's id
+    :param customer_id: Customer's id
     :return: Response object with message if the customer's reservations were found (if
     yes: add reservations) and the status code
     """
-    reservation_documents = reservation_collection.find({'customer_id': _id})
+    reservation_documents = reservation_collection.find({'customer_id': customer_id})
     if reservation_documents is None:
         return jsonify(
-            message='Reservations not found.',
+            message='Customer reservations not found.',
             status=404
         )
     reservations = []
@@ -96,17 +96,41 @@ def read_reservations_by_customer_id(_id: str) -> Response:
         reservations.append(reservation.database_dict())
     return jsonify(
         data=reservations,
-        message='Reservations found.',
+        message='Customer reservations found.',
         status=200
     )
 
 
-@raw_reservation_api_v1.route('/read', methods=['GET'])
+@raw_reservation_api_v1.route('/read/service_provider_id/<string:name>', methods=['GET'])
+def read_reservations_by_service_provider_id(service_provider_id: str) -> Response:
+    """
+    :param service_provider_id: Service provider's id
+    :return: Response object with message if the service provider's reservations were found (if
+    yes: add reservations) and the status code
+    """
+    reservation_documents = reservation_collection.find({'service_provider_id': service_provider_id})
+    if reservation_documents is None:
+        return jsonify(
+            message='Service provider reservations not found.',
+            status=404
+        )
+    reservations = []
+    for reservation_document in reservation_documents:
+        reservation = Reservation(reservation_document=reservation_document)
+        reservations.append(reservation.database_dict())
+    return jsonify(
+        data=reservations,
+        message='Service provider reservations found.',
+        status=200
+    )
+
+
+@raw_reservation_api_v1.route('/read/all', methods=['GET'])
 def read_reservations() -> Response:
     """
     :return: Response object with message if the reservations were found (if yes: add reservations) and the status code
     """
-    reservation_documents = reservation_collection.find({})
+    reservation_documents = reservation_collection
     if reservation_documents is None:
         return jsonify(
             message='Reservations not found.',
@@ -142,4 +166,4 @@ def delete_reservation_by_id(_id: str) -> Response:
     )
 
 
-raw_reservation_api_v1 = raw_reservation_api_v1
+reservation_api_v1 = raw_reservation_api_v1

@@ -14,7 +14,7 @@ class Customer:
     ----------
     _id : str
         Customer's id
-    metadata: dict
+    metadata : dict
         Customer's metadata document
     reservation_ids : list[str]
         Customer's reservation ids
