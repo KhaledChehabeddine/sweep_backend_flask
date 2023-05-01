@@ -84,7 +84,8 @@ def upload_image_to_aws_s3(object_metadata_document: dict, object_image: tuple[s
     """
     :param object_metadata_document: An object metadata document
     :param object_image: A tuple of the image info in the format [type, data, path]
-    :return: Response object with a message describing if the image was uploaded and the status code
+    :return: Response object with a message describing if the image was uploaded (if yes: add configured object metadata
+    document) and the status code
     """
     try:
         object_metadata_document[object_image[0] + 'image_format'] = object_image[2].split('.')[-1]
@@ -101,7 +102,7 @@ def upload_image_to_aws_s3(object_metadata_document: dict, object_image: tuple[s
             content_type = AWS_IMAGE_FORMATS[object_metadata_document[object_image[0] + 'image_format']]
 
             get_aws_s3_client().upload_fileobj(
-                BytesIO(image_bytes),
+                image_bytes_io,
                 os.getenv('AWS_S3_BUCKET'),
                 object_image[2],
                 ExtraArgs={
@@ -125,7 +126,7 @@ def upload_images_to_aws_s3(object_metadata_document: dict, object_images: list[
     :param object_metadata_document: An object metadata document
     :param object_images: A list of tuples of each image info in the format [type, data, path]
     :return: Response object with a message describing if the images were uploaded to AWS S3 and CloudFront invalidation
-    was done
+    was done (if yes: add configured object metadata document) and the status code
     """
     for object_image in object_images:
         object_metadata_document = upload_image_to_aws_s3(

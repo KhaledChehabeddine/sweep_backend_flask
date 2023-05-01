@@ -19,5 +19,5 @@ class HomeMainFeatureRewardMetadata:
     """
 
     def __init__(self, home_main_feature_reward_metadata_document: dict) -> None:
-        self.total_amount_claimed = home_main_feature_reward_metadata_document['total_amount_claimed']
-        self.total_claimed_customers = home_main_feature_reward_metadata_document['total_claimed_customers']
+        self.total_amount_claimed = float(home_main_feature_reward_metadata_document['total_amount_claimed'])
+        self.total_claimed_customers = int(home_main_feature_reward_metadata_document['total_claimed_customers'])

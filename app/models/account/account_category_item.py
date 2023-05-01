@@ -24,10 +24,10 @@ class AccountCategoryItem:
     """
 
     def __init__(self, account_category_item_document: dict) -> None:
-        self.image_path = account_category_item_document['image_path']
-        self.image_url = create_cloudfront_url(file_path=self.image_path)
+        self.image_path = str(account_category_item_document['image_path'])
+        self.image_url = create_cloudfront_url(image_path=self.image_path)
         self.metadata = AccountCategoryItemMetadata(account_category_item_document['metadata']).__dict__
-        self.name = account_category_item_document['name']
+        self.name = str(account_category_item_document['name'])
 
     def database_dict(self) -> dict:
         """

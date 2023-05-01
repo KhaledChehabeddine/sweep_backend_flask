@@ -15,4 +15,4 @@ class AddressMetadata:
     """
 
     def __init__(self, address_metadata_document) -> None:
-        self.formatted_address = address_metadata_document['formatted_address']
+        self.formatted_address = str(address_metadata_document['formatted_address'])

@@ -21,6 +21,6 @@ class HomeSubFeatureMetadata:
     """
 
     def __init__(self, home_sub_feature_metadata_document: dict) -> None:
-        self.total_companies = home_sub_feature_metadata_document['total_companies']
-        self.total_service_providers = home_sub_feature_metadata_document['total_service_providers']
-        self.total_workers = home_sub_feature_metadata_document['total_workers']
+        self.total_companies = int(home_sub_feature_metadata_document['total_companies'])
+        self.total_service_providers = int(home_sub_feature_metadata_document['total_service_providers'])
+        self.total_workers = int(home_sub_feature_metadata_document['total_workers'])

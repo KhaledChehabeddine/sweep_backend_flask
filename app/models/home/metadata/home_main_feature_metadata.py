@@ -21,6 +21,6 @@ class HomeMainFeatureMetadata:
     """
 
     def __init__(self, home_main_feature_metadata_document: dict) -> None:
-        self.image_format = home_main_feature_metadata_document['image_format']
-        self.image_height = home_main_feature_metadata_document['image_height']
-        self.image_width = home_main_feature_metadata_document['image_width']
+        self.image_format = str(home_main_feature_metadata_document['image_format'])
+        self.image_height = int(home_main_feature_metadata_document['image_height'])
+        self.image_width = int(home_main_feature_metadata_document['image_width'])

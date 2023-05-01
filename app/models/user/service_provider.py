@@ -34,18 +34,18 @@ class ServiceProvider:
     """
 
     def __init__(self, service_provider_document: dict) -> None:
-        self.average_rating = service_provider_document['average_rating']
+        self.average_rating = float(service_provider_document['average_rating'])
         self.categories = [
             Category(category_document=category_document).__dict__
             for category_document in service_provider_document['categories']
         ]
-        self.description = service_provider_document['description']
-        self.flags = service_provider_document['flags']
+        self.description = str(service_provider_document['description'])
+        self.flags = [str(flag) for flag in service_provider_document['flags']]
         self.metadata = ServiceProviderMetadata(
             service_provider_metadata_document=service_provider_document['metadata']
         ).__dict__
         self.reviews = [
             Review(review_document=review_document).__dict__ for review_document in service_provider_document['reviews']
         ]
-        self.service_provider_type = service_provider_document['service_provider_type']
+        self.service_provider_type = str(service_provider_document['service_provider_type'])
         self.user = User(user_document=service_provider_document['user']).__dict__
