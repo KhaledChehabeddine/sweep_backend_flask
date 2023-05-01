@@ -129,7 +129,7 @@ def read_workers_by_company_id(company_id: str) -> Response:
     )
 
 
-@raw_worker_api_v1.route('/read', methods=['GET'])
+@raw_worker_api_v1.route('/read/all', methods=['GET'])
 def read_workers() -> Response:
     """
     :return: Response object with a message describing if the workers were found (if yes: add workers) and the status

@@ -110,7 +110,7 @@ def read_company_by_id(_id: str) -> Response:
     )
 
 
-@raw_company_api_v1.route('/read', methods=['GET'])
+@raw_company_api_v1.route('/read/all', methods=['GET'])
 def read_companies() -> Response:
     """
     :return: Response object with a message describing if all the companies were found (if yes: add companies) and the

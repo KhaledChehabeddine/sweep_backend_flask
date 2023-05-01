@@ -138,7 +138,7 @@ def read_account_categories_exclude_name(name: str) -> Response:
     )
 
 
-@raw_account_category_api_v1.route('/read', methods=['GET'])
+@raw_account_category_api_v1.route('/read/all', methods=['GET'])
 def read_account_categories() -> Response:
     """
     :return: Response object with a message describing if all the account categories were found (if yes: add account
