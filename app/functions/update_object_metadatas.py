@@ -3,26 +3,15 @@
 Functions to update metadatas for their respective object
 """
 from datetime import datetime
+
 from app.aws.aws_s3_client import upload_image_to_aws_s3
 from app.functions.create_object_metadatas import create_address_metadata
-
-
-def update_account_category_metadata(account_category_document: dict) -> dict:
-    """
-    :param account_category_document: An account category document
-    :return: A dictionary representation of the account category metadata
-    """
-    account_category_document['metadata']['total_account_category_items'] = \
-        len(account_category_document['account_category_items'])
-    account_category_document['metadata']['updated_date'] = datetime.now()
-
-    return account_category_document['metadata']
 
 
 def update_category_metadata(category_metadata_document: dict) -> dict:
     """
     :param category_metadata_document: A category metadata document
-    :return: A dictionary representation of the category metadata
+    :return: A updated category metadata document
     """
     category_metadata_document['updated_date'] = datetime.now()
 
@@ -39,23 +28,20 @@ def update_home_feature_metadata(home_feature_metadata_document: dict) -> dict:
     return home_feature_metadata_document
 
 
-def update_home_main_feature_metadata(object_document: dict) -> dict:
+def update_service_category_metadata(service_category_document: dict) -> dict:
     """
-    :param object_document:
-    :return: A updated object document
+    :param service_category_document: A service category document
+    :return: A updated service category document
     """
-    if object_document['image']:
-        object_image = ('', object_document['file_path'], object_document['image'])
-        object_document['home_main_feature']['metadata'] = upload_image_to_aws_s3(
-            object_metadata_document=object_document['home_main_feature']['metadata'],
-            object_image=object_image
+    if service_category_document['image']:
+        service_category_image = ('', service_category_document['image'], service_category_document['image_path'])
+        service_category_document['metadata'] = upload_image_to_aws_s3(
+            object_metadata_document=service_category_document['metadata'],
+            object_image=service_category_image
         ).json['data']
+    service_category_document['metadata']['updated_date'] = datetime.now()
 
-    object_document['home_main_feature']['home_feature']['metadata'] = update_home_feature_metadata(
-            home_feature_metadata_document=object_document['home_main_feature']['home_feature']['metadata']
-        )
-
-    return object_document
+    return service_category_document['metadata']
 
 
 def update_service_provider_metadata(service_provider_document: dict) -> dict:

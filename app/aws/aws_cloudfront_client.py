@@ -52,9 +52,9 @@ def create_cloudfront_invalidation() -> Response:
     )
 
 
-def create_cloudfront_url(file_path: str) -> str:
+def create_cloudfront_url(image_path: str) -> str:
     """
-    :param file_path: The path of the file
-    :return: CloudFront URL for the file in the distribution origin
+    :param image_path: The path of the image
+    :return: CloudFront URL for the image in the distribution origin
     """
-    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + file_path
+    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + image_path

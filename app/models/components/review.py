@@ -26,8 +26,8 @@ class Review:
     """
 
     def __init__(self, review_document: dict) -> None:
-        self.customer_id = review_document['customer_id']
-        self.feedback = review_document['feedback']
+        self.customer_id = str(review_document['customer_id'])
+        self.feedback = str(review_document['feedback'])
         self._id = ObjectId(review_document['_id']) if ObjectId.is_valid(review_document['_id']) else ObjectId()
         self.metadata = ReviewMetadata(review_document['metadata']).__dict__
-        self.rating = review_document['rating']
+        self.rating = int(review_document['rating'])

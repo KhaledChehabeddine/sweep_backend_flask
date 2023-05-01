@@ -3,18 +3,7 @@
 Functions to create metadatas for their respective object
 """
 from datetime import datetime
-
-
-def create_account_category_metadata(account_category_document: dict) -> dict:
-    """
-    :param account_category_document: An account category document
-    :return: A dictionary representation of the account category metadata
-    """
-    return {
-        'created_date': datetime.now(),
-        'total_account_category_items': len(account_category_document['account_category_items']),
-        'updated_date': datetime.now()
-    }
+from app.aws.aws_s3_client import upload_image_to_aws_s3
 
 
 def create_address_metadata(address_document: dict) -> dict:
@@ -52,16 +41,23 @@ def create_home_feature_metadata() -> dict:
     }
 
 
-def create_home_main_feature_metadata(aws_s3_upload_data: dict) -> dict:
+def create_home_main_feature_metadata(home_main_feature_document: dict) -> dict:
     """
-    :param aws_s3_upload_data: A dictionary representation of the information about the uploaded image
-    :return: A dictionary representation of the home main feature metadata
+    :param home_main_feature_document: A home main feature document
+    :return: A home main feature document with configured metadata
     """
-    return {
-        'image_format': aws_s3_upload_data['image_format'],
-        'image_height': aws_s3_upload_data['image_height'],
-        'image_width': aws_s3_upload_data['image_width']
-    }
+    if home_main_feature_document['image']:
+        home_main_feature_image = (
+            '',
+            home_main_feature_document['image'],
+            home_main_feature_document['image_path']
+        )
+        home_main_feature_document['metadata'] = upload_image_to_aws_s3(
+            object_metadata_document=home_main_feature_document['metadata'],
+            object_image=home_main_feature_image
+        ).json['data']
+
+    return home_main_feature_document
 
 
 def create_review_metadata() -> dict:
@@ -71,6 +67,22 @@ def create_review_metadata() -> dict:
     return {
         'created_date': datetime.now()
     }
+
+
+def create_service_category_metadata(service_category_document: dict) -> dict:
+    """
+    :param service_category_document: A service category document
+    :return: A dictionary representation of the service category metadata
+    """
+    service_category_image = ('', service_category_document['image'], service_category_document['image_path'])
+    service_category_document['metadata'] = upload_image_to_aws_s3(
+        object_metadata_document=service_category_document['metadata'],
+        object_image=service_category_image
+    ).json['data']
+    service_category_document['metadata']['created_date'] = datetime.now()
+    service_category_document['metadata']['updated_date'] = datetime.now()
+
+    return service_category_document['metadata']
 
 
 def create_service_provider_metadata(service_provider_document: dict) -> dict:

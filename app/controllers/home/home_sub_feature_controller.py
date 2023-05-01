@@ -3,7 +3,6 @@
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete home sub features from the database
 """
-
 import pymongo
 from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
@@ -12,15 +11,28 @@ from app.database.database import get_database
 from app.functions.create_object_metadatas import create_home_feature_metadata
 from app.functions.update_object_metadatas import update_home_feature_metadata
 from app.models.home.home_sub_feature import HomeSubFeature
-from app.routes.blueprints import sweep_api_v1
 
-home_sub_feature_api_v1 = Blueprint('home_sub_feature_api_v1', __name__, url_prefix='/home_sub_feature')
+raw_home_sub_feature_api_v1 = Blueprint('home_sub_feature_api_v1', __name__, url_prefix='/home_sub_feature')
 home_sub_feature_collection = get_database()['home_sub_features']
 
 home_sub_feature_collection.create_index([('title', pymongo.ASCENDING)], unique=True)
 
 
-@home_sub_feature_api_v1.route('/create', methods=['POST'])
+def _configure_home_sub_feature(home_sub_feature_document: dict) -> dict:
+    """
+    :param home_sub_feature_document: Home sub feature document
+    :return: A home sub feature document with configured metadata
+    """
+    home_sub_feature_document['metadata']['total_companies'] = len(home_sub_feature_document['company_ids'])
+    home_sub_feature_document['metadata']['total_service_providers'] = len(
+        home_sub_feature_document['company_ids'] + home_sub_feature_document['worker_ids']
+    )
+    home_sub_feature_document['metadata']['total_workers'] = len(home_sub_feature_document['worker_ids'])
+
+    return home_sub_feature_document
+
+
+@raw_home_sub_feature_api_v1.route('/create', methods=['POST'])
 def create_home_sub_feature() -> Response:
     """
     :return: Response object with a message describing if the home sub feature was created (if yes: add home sub
@@ -28,13 +40,7 @@ def create_home_sub_feature() -> Response:
     """
     home_sub_feature_document = request.json
 
-    home_sub_feature_document['metadata'] = {
-        'total_companies': len(home_sub_feature_document['company_ids']),
-        'total_service_providers': len(
-            home_sub_feature_document['company_ids'] + home_sub_feature_document['worker_ids']
-        ),
-        'total_workers': len(home_sub_feature_document['worker_ids'])
-    }
+    home_sub_feature_document = _configure_home_sub_feature(home_sub_feature_document=home_sub_feature_document)
 
     home_sub_feature_document['home_feature']['metadata'] = create_home_feature_metadata()
 
@@ -53,7 +59,7 @@ def create_home_sub_feature() -> Response:
     )
 
 
-@home_sub_feature_api_v1.route('/read/id/<string:_id>', methods=['GET'])
+@raw_home_sub_feature_api_v1.route('/read/id/<string:_id>', methods=['GET'])
 def read_home_sub_feature_by_id(_id: str) -> Response:
     """
     :param _id: Home sub feature's id
@@ -74,7 +80,7 @@ def read_home_sub_feature_by_id(_id: str) -> Response:
     )
 
 
-@home_sub_feature_api_v1.route('/read', methods=['GET'])
+@raw_home_sub_feature_api_v1.route('/read', methods=['GET'])
 def read_home_sub_features() -> Response:
     """
     :return: Response object with a message describing if all the home sub features were found (if yes: add home
@@ -88,7 +94,7 @@ def read_home_sub_features() -> Response:
             home_sub_features.append(home_sub_feature.__dict__)
         return jsonify(
             data=home_sub_features,
-            message='Home sub features found in the database.',
+            message='All home sub features found in the database.',
             status=200
         )
     return jsonify(
@@ -97,22 +103,16 @@ def read_home_sub_features() -> Response:
     )
 
 
-@home_sub_feature_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
+@raw_home_sub_feature_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_home_sub_feature_by_id(_id: str) -> Response:
     """
     :param _id: Home sub feature's id
-    :return: Response object with a message describing if the home sub feature was found (if yes: update home
-    sub feature) and the status code
+    :return: Response object with a message describing if the home sub feature was found (if yes: update home sub
+    feature) and the status code
     """
     home_sub_feature_document = request.json
 
-    home_sub_feature_document['metadata'] = {
-        'total_companies': len(home_sub_feature_document['company_ids']),
-        'total_service_providers': len(
-            home_sub_feature_document['company_ids'] + home_sub_feature_document['worker_ids']
-        ),
-        'total_workers': len(home_sub_feature_document['worker_ids'])
-    }
+    home_sub_feature_document = _configure_home_sub_feature(home_sub_feature_document=home_sub_feature_document)
 
     home_sub_feature_document['home_feature']['metadata'] = update_home_feature_metadata(
         home_feature_metadata_document=home_sub_feature_document['home_feature']['metadata']
@@ -134,12 +134,12 @@ def update_home_sub_feature_by_id(_id: str) -> Response:
     )
 
 
-@home_sub_feature_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
+@raw_home_sub_feature_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
 def delete_home_sub_feature_by_id(_id: str) -> Response:
     """
     :param _id: Home sub feature's id
-    :return: Response object with a message describing if the home sub feature was found (if yes: delete home
-    sub feature) and the status code
+    :return: Response object with a message describing if the home sub feature was found (if yes: delete home sub
+    feature) and the status code
     """
     result = home_sub_feature_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
@@ -153,4 +153,4 @@ def delete_home_sub_feature_by_id(_id: str) -> Response:
     )
 
 
-sweep_api_v1.register_blueprint(home_sub_feature_api_v1)
+home_sub_feature_api_v1 = raw_home_sub_feature_api_v1

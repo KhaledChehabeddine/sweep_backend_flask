@@ -39,12 +39,12 @@ class User:
         self.addresses = [
             Address(address_document=address_document).__dict__ for address_document in user_document['addresses']
         ]
-        self.country = user_document['country']
-        self.country_code = user_document['country_code']
-        self.email = user_document['email']
+        self.country = str(user_document['country'])
+        self.country_code = str(user_document['country_code'])
+        self.email = str(user_document['email'])
         self.metadata = UserMetadata(user_metadata_document=user_document['metadata']).__dict__
-        self.password = user_document['password']
-        self.phone_number = user_document['phone_number']
-        self.user_type = user_document['user_type']
-        self.username = user_document['username']
-        self.verified = user_document['verified']
+        self.password = str(user_document['password'])
+        self.phone_number = str(user_document['phone_number'])
+        self.user_type = str(user_document['user_type'])
+        self.username = str(user_document['username'])
+        self.verified = bool(user_document['verified'])

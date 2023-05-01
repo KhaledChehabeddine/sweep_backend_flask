@@ -21,5 +21,5 @@ class AccountCategoryMetadata:
 
     def __init__(self, account_category_metadata_document) -> None:
         self.created_date = account_category_metadata_document['created_date']
-        self.total_account_category_items = account_category_metadata_document['total_account_category_items']
+        self.total_account_category_items = int(account_category_metadata_document['total_account_category_items'])
         self.updated_date = account_category_metadata_document['updated_date']

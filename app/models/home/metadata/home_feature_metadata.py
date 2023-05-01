@@ -2,6 +2,7 @@
 
 A home feature metadata model used to convert a home feature metadata document into a home feature metadata object
 """
+from datetime import datetime
 
 
 class HomeFeatureMetadata:
