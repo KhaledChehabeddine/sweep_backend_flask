@@ -36,10 +36,10 @@ class Company:
 
     def __init__(self, company_document: dict) -> None:
         self.banner_image_path = company_document['banner_image_path']
-        self.banner_image_url = create_cloudfront_url(file_path=self.banner_image_path)
+        self.banner_image_url = create_cloudfront_url(image_path=self.banner_image_path)
         self._id = str(company_document['_id'])
         self.logo_image_path = company_document['logo_image_path']
-        self.logo_image_url = create_cloudfront_url(file_path=self.logo_image_path)
+        self.logo_image_url = create_cloudfront_url(image_path=self.logo_image_path)
         self.name = company_document['name']
         self.metadata = CompanyMetadata(company_document['metadata']).__dict__
         self.service_category_ids = company_document['service_category_ids']

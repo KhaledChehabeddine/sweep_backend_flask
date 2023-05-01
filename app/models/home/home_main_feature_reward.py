@@ -29,10 +29,13 @@ class HomeMainFeatureReward:
     """
 
     def __init__(self, home_main_feature_reward_document: dict) -> None:
-        self.amount = home_main_feature_reward_document['amount']
-        self.claimed_customer_ids = home_main_feature_reward_document['claimed_customer_ids']
-        self.code = home_main_feature_reward_document['code']
-        self._id = home_main_feature_reward_document['_id']
+        self.amount = float(home_main_feature_reward_document['amount'])
+        self.claimed_customer_ids = [
+            str(claimed_customer_id)
+            for claimed_customer_id in home_main_feature_reward_document['claimed_customer_ids']
+        ]
+        self.code = str(home_main_feature_reward_document['code'])
+        self._id = str(home_main_feature_reward_document['_id'])
         self.home_main_feature = HomeMainFeature(
             home_main_feature_document=home_main_feature_reward_document['home_main_feature']
         ).__dict__

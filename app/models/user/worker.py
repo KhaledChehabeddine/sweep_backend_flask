@@ -41,17 +41,17 @@ class Worker:
     """
 
     def __init__(self, worker_document: dict) -> None:
-        self.banner_image_path = worker_document['banner_image_path']
-        self.banner_image_url = create_cloudfront_url(file_path=self.banner_image_path)
-        self.company_id = worker_document['company_id']
-        self.first_name = worker_document['first_name']
+        self.banner_image_path = str(worker_document['banner_image_path'])
+        self.banner_image_url = create_cloudfront_url(image_path=self.banner_image_path)
+        self.company_id = str(worker_document['company_id'])
+        self.first_name = str(worker_document['first_name'])
         self._id = str(worker_document['_id'])
-        self.last_name = worker_document['last_name']
+        self.last_name = str(worker_document['last_name'])
         self.metadata = WorkerMetadata(worker_document['metadata']).__dict__
-        self.middle_name = worker_document['middle_name']
-        self.profile_image_path = worker_document['profile_image_path']
-        self.profile_image_url = create_cloudfront_url(file_path=self.profile_image_path)
-        self.service_category_id = worker_document['service_category_id']
+        self.middle_name = str(worker_document['middle_name'])
+        self.profile_image_path = str(worker_document['profile_image_path'])
+        self.profile_image_url = create_cloudfront_url(image_path=self.profile_image_path)
+        self.service_category_id = str(worker_document['service_category_id'])
         self.service_provider = ServiceProvider(worker_document['service_provider']).__dict__
 
     def database_dict(self) -> dict:
