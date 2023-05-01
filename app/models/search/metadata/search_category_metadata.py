@@ -13,20 +13,20 @@ class SearchCategoryMetadata:
     Attributes
     ----------
     created_date : datetime
-        The date and time the search object was created
-    updated_date : datetime
-        The date and time the search object was updated
+        Search Category's created date
     total_companies : int
-        Home sub feature's total companies
+        Search Category's total companies
     total_service_providers : int
-        Home sub feature's total service providers (sum of companies and workers)
+        Search Category's total service providers
     total_workers : int
-        Home sub feature's total workers
+        Search Category's total workers
+    updated_date : datetime
+        Search Category's updated date
     """
 
     def __init__(self, search_metadata_dict: dict) -> None:
-        self.created_date = datetime.strptime(search_metadata_dict['created_date'], '%Y-%m-%d %H:%M:%S')
-        self.updated_date = datetime.strptime(search_metadata_dict['updated_data'], '%Y-%m-%d %H:%M:%S')
-        self.total_companies = search_metadata_dict['total_companies']
-        self.total_service_providers = search_metadata_dict['total_service_providers']
-        self.total_workers = search_metadata_dict['total_workers']
+        self.created_date = search_metadata_dict['created_date']
+        self.total_companies = int(search_metadata_dict['total_companies'])
+        self.total_service_providers = int(search_metadata_dict['total_service_providers'])
+        self.total_workers = int(search_metadata_dict['total_workers'])
+        self.updated_date = search_metadata_dict['updated_data']

@@ -12,14 +12,14 @@ class Search:
     Attributes
     ----------
     _id : str
-        The ID of the search object
+        Search object's ID
     metadata : SearchMetadata
-        The metadata for the search object
-    categories : List[str]
-        A list of categories for the search results
+        Search object's metadata
+    query : str
+        Search object's query for the search object
     """
 
     def __init__(self, search_dict: dict) -> None:
-        self._id = search_dict['_id']
+        self._id = str(search_dict['_id'])
         self.metadata = SearchMetadata(search_dict['metadata'])
-        self.categories = search_dict['categories']
+        self.query = str(search_dict['query'])
