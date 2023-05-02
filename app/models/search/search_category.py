@@ -19,8 +19,6 @@ class SearchCategory:
         Search Category's ID
     metadata : SearchCategoryMetadata
         The metadata for the search category object
-    service_providers_ids : List[str]
-        Search Category's total service providers associated with the category name
     tags :List[str]
         Search Category's tags associated with the category name
     worker_ids : List[str]
@@ -34,8 +32,6 @@ class SearchCategory:
         self.metadata = SearchCategoryMetadata(
             search_category_metadata_document= search_category_document['metadata']
         ).__dict__
-        self.service_providers_ids = [str(service_provider_id) for service_provider_id in search_category_document[
-            'service_providers_ids']]
         self.tags = [str(tag) for tag in search_category_document['tags']]
         self.worker_ids = [str(worker_id) for worker_id in search_category_document['worker_ids']]
 
@@ -48,7 +44,6 @@ class SearchCategory:
             'category_name': self.category_name,
             'company_ids': self.company_ids,
             'metadata': self.metadata,
-            'service_providers_ids': self.service_providers_ids,
             'tags': self.tags,
             'worker_ids': self.worker_ids
         }

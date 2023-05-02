@@ -14,8 +14,6 @@ class SearchCategoryMetadata:
         Search Category's created date
     total_companies : int
         Search Category's total companies
-    total_service_providers : int
-        Search Category's total service providers
     total_workers : int
         Search Category's total workers
     updated_date : datetime
@@ -25,6 +23,5 @@ class SearchCategoryMetadata:
     def __init__(self, search_category_metadata_document: dict) -> None:
         self.created_date = search_category_metadata_document['created_date']
         self.total_companies = int(search_category_metadata_document['total_companies'])
-        self.total_service_providers = int(search_category_metadata_document['total_service_providers'])
         self.total_workers = int(search_category_metadata_document['total_workers'])
         self.updated_date = search_category_metadata_document['updated_data']
