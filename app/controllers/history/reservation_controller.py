@@ -32,7 +32,7 @@ def _configure_reservation_document(reservation_document: dict) -> dict:
     return reservation_document
 
 
-@raw_reservation_api_v1.route('create', methods=['POST'])
+@raw_reservation_api_v1.route('/create', methods=['POST'])
 def create_reservation() -> Response:
     """
     :return: Response object with a message describing if the reservation was created (if yes: add account category
@@ -128,22 +128,23 @@ def read_reservations_by_service_provider_id(service_provider_id: str) -> Respon
 @raw_reservation_api_v1.route('/read/all', methods=['GET'])
 def read_reservations() -> Response:
     """
-    :return: Response object with message if the reservations were found (if yes: add reservations) and the status code
+    :return: Response object with message if the reservations were found (if yes: return reservations)
+    and the status code
     """
-    reservation_documents = reservation_collection
-    if reservation_documents is None:
-        return jsonify(
-            message='Reservations not found.',
-            status=404
-        )
     reservations = []
-    for reservation_document in reservation_documents:
-        reservation = Reservation(reservation_document=reservation_document)
-        reservations.append(reservation.database_dict())
+    reservation_documents = reservation_collection.find()
+    if reservation_documents:
+        for reservation_document in reservation_documents:
+            reservation = Reservation(reservation_document=reservation_document)
+            reservations.append(reservation.database_dict())
+        return jsonify(
+            data=reservations,
+            message='Reservations found.',
+            status=200
+        )
     return jsonify(
-        data=reservations,
-        message='Reservations found.',
-        status=200
+        message='Reservations not found.',
+        status=404
     )
 
 
