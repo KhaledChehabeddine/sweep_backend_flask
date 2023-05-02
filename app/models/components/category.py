@@ -4,6 +4,7 @@ A category model used to convert a category document into a category object
 """
 from bson import ObjectId
 from app.models.components.metadata.category_metadata import CategoryMetadata
+from app.models.components.service_item import ServiceItem
 
 
 class Category:
@@ -19,12 +20,12 @@ class Category:
         Category's metadata document
     name : str
         Category's name
-    service_item_ids : List[str]
-        Category's service item ids
+    service_items : List[dict]
+        Category's service item documents
     """
 
     def __init__(self, category_document) -> None:
         self._id = ObjectId(category_document['_id']) if ObjectId.is_valid(category_document['_id']) else ObjectId()
         self.metadata = CategoryMetadata(category_document['metadata']).__dict__
         self.name = str(category_document['name'])
-        self.service_item_ids = [str(service_item_id) for service_item_id in category_document['service_item_ids']]
+        self.service_items = [ServiceItem(service_item).__dict__ for service_item in category_document['service_items']]
