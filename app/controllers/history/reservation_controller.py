@@ -4,32 +4,16 @@ A controller that assigns a child blueprint to sweep_api_v1 with routes for func
 delete reservations from the database
 """
 from datetime import datetime
+from bson import ObjectId
 from flask import Blueprint, Response, request, jsonify
-from pymongo import ASCENDING
 from pymongo.errors import OperationFailure
-from app.aws.aws_s3_client import upload_image_to_aws_s3
+from app.controllers.user.company_controller import read_company_by_id
+from app.controllers.user.worker_controller import read_worker_by_id
 from app.database.database import get_database
 from app.models.history.reservation import Reservation
 
 raw_reservation_api_v1 = Blueprint('reservation_api_v1', __name__, url_prefix='/reservation')
 reservation_collection = get_database()['reservations']
-
-reservation_collection.create_index([('name', ASCENDING)], unique=True)
-
-
-def _configure_reservation_document(reservation_document: dict) -> dict:
-    """
-    :param reservation_document: A reservation document
-    :return: A reservation document with the configured metadata
-    """
-    reservation_document['metadata'] = upload_image_to_aws_s3(
-        object_metadata_document=reservation_document['metadata'],
-        object_image=('', reservation_document['image'], reservation_document['image_path'])
-    ).json['data']
-
-    reservation_document['metadata']['datetime'] = datetime.now()
-
-    return reservation_document
 
 
 @raw_reservation_api_v1.route('/create', methods=['POST'])
@@ -40,7 +24,25 @@ def create_reservation() -> Response:
     """
 
     reservation_document = request.json
-    reservation_document = _configure_reservation_document(reservation_document=reservation_document)
+
+    if reservation_document['service_provider_type'] == 'worker':
+        service_provider = read_worker_by_id(_id=reservation_document['service_provider_id']).json['data']
+        reservation_document['image_path'] = service_provider['profile_image_path']
+        reservation_document['image_url'] = service_provider['profile_image_url']
+        reservation_document['metadata']['image_format'] = service_provider['metadata']['profile_image_format']
+        reservation_document['metadata']['image_height'] = service_provider['metadata']['profile_image_height']
+        reservation_document['metadata']['image_width'] = service_provider['metadata']['profile_image_width']
+
+    if reservation_document['service_provider_type'] == 'company':
+        service_provider = read_company_by_id(_id=reservation_document['service_provider_id']).json['data']
+        reservation_document['image_path'] = service_provider['logo_image_path']
+        reservation_document['image_url'] = service_provider['logo_image_url']
+        reservation_document['metadata']['image_format'] = service_provider['metadata']['logo_image_format']
+        reservation_document['metadata']['image_height'] = service_provider['metadata']['logo_image_height']
+        reservation_document['metadata']['image_width'] = service_provider['metadata']['logo_image_width']
+
+    reservation_document['metadata']['created_date'] = datetime.now()
+
     reservation = Reservation(reservation_document=reservation_document)
     try:
         reservation_id = str(reservation_collection.insert_one(reservation.database_dict()).inserted_id)
@@ -63,7 +65,7 @@ def read_reservation_by_id(_id: str) -> Response:
     :return: Response object with a message describing if the reservation was found (if yes: add reservation)
     and the status code
     """
-    reservation_document = reservation_collection.find_one({'_id': _id})
+    reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
     if reservation_document is None:
         return jsonify(
             message='Reservation not found.',
@@ -71,7 +73,7 @@ def read_reservation_by_id(_id: str) -> Response:
         )
     reservation = Reservation(reservation_document=reservation_document)
     return jsonify(
-        data=reservation.database_dict(),
+        data=reservation.__dict__,
         message='Reservation found.',
         status=200
     )
@@ -93,7 +95,7 @@ def read_reservations_by_customer_id(customer_id: str) -> Response:
     reservations = []
     for reservation_document in reservation_documents:
         reservation = Reservation(reservation_document=reservation_document)
-        reservations.append(reservation.database_dict())
+        reservations.append(reservation.__dict__)
     return jsonify(
         data=reservations,
         message='Customer reservations found.',
@@ -117,7 +119,7 @@ def read_reservations_by_service_provider_id(service_provider_id: str) -> Respon
     reservations = []
     for reservation_document in reservation_documents:
         reservation = Reservation(reservation_document=reservation_document)
-        reservations.append(reservation.database_dict())
+        reservations.append(reservation.__dict__)
     return jsonify(
         data=reservations,
         message='Service provider reservations found.',
@@ -136,12 +138,13 @@ def read_reservations() -> Response:
     if reservation_documents:
         for reservation_document in reservation_documents:
             reservation = Reservation(reservation_document=reservation_document)
-            reservations.append(reservation.database_dict())
-        return jsonify(
-            data=reservations,
-            message='Reservations found.',
-            status=200
-        )
+            reservations.append(reservation.__dict__)
+        if reservations:
+            return jsonify(
+                data=reservations,
+                message='Reservations found.',
+                status=200
+            )
     return jsonify(
         message='Reservations not found.',
         status=404
@@ -154,13 +157,13 @@ def delete_reservation_by_id(_id: str) -> Response:
     :param _id: Reservation's id
     :return: Response object with message if the reservation was deleted and the status code
     """
-    reservation_document = reservation_collection.find_one({'_id': _id})
+    reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
     if reservation_document is None:
         return jsonify(
             message='Reservation not found.',
             status=404
         )
-    reservation_collection.delete_one({'_id': _id})
+    reservation_collection.delete_one({'_id': ObjectId(_id)})
     return jsonify(
         message='Reservation deleted.',
         status=200

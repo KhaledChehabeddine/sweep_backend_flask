@@ -102,7 +102,7 @@ def upload_image_to_aws_s3(object_metadata_document: dict, object_image: tuple[s
             content_type = AWS_IMAGE_FORMATS[object_metadata_document[object_image[0] + 'image_format']]
 
             get_aws_s3_client().upload_fileobj(
-                image_bytes_io,
+                BytesIO(image_bytes),
                 os.getenv('AWS_S3_BUCKET'),
                 object_image[2],
                 ExtraArgs={

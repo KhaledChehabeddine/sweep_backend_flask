@@ -28,8 +28,10 @@ class Reservation:
         Reservation's metadata document
     price : str
         Reservation's price
-    service_provider_id: str
+    service_provider_id : str
         Reservation's service provider id
+    service_provider_type: str
+        Reservation's service provider type
     subtitle : str
         Reservation's subtitle
     title : str
@@ -42,10 +44,11 @@ class Reservation:
         self.description = reservation_document['description']
         self._id = str(reservation_document['_id'])
         self.image_path = reservation_document['image_path']
-        self.image_url = create_cloudfront_url(image_path=self.image_path)
+        self.image_url = create_cloudfront_url(reservation_document['image_path'])
         self.metadata = ReservationMetadata(reservation_document['metadata']).__dict__
         self.price = reservation_document['price']
         self.service_provider_id = str(reservation_document['service_provider_id'])
+        self.service_provider_type = str(reservation_document['service_provider_type'])
         self.subtitle = reservation_document['subtitle']
         self.title = reservation_document['title']
 
@@ -62,6 +65,7 @@ class Reservation:
             'metadata': self.metadata,
             'price': self.price,
             'service_provider_id': self.service_provider_id,
+            'service_provider_type': self.service_provider_type,
             'subtitle': self.subtitle,
             'title': self.title
         }
