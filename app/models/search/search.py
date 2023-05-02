@@ -26,7 +26,10 @@ class Search:
         ).__dict__
         self.query = str(search_dict['query'])
 
-    def database_dict(self):
+    def database_dict(self) -> dict:
+        """
+        :return: Search's dictionary for creating a document (without _id)
+        """
         return {
             '_id': self._id,
             'metadata': self.metadata,
