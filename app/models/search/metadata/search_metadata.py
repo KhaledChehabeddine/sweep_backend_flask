@@ -16,6 +16,6 @@ class SearchMetadata:
         Search's updated date
     """
 
-    def __init__(self, search_metadata_dict: dict) -> None:
-        self.created_date = search_metadata_dict['created_date']
-        self.updated_date = search_metadata_dict['updated_date']
+    def __init__(self, search_metadata_document: dict) -> None:
+        self.created_date = search_metadata_document['created_date']
+        self.updated_date = search_metadata_document['updated_date']

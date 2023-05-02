@@ -21,5 +21,14 @@ class Search:
 
     def __init__(self, search_dict: dict) -> None:
         self._id = str(search_dict['_id'])
-        self.metadata = SearchMetadata(search_dict['metadata'])
+        self.metadata = SearchMetadata(
+            search_metadata_document=search_dict['metadata']
+        ).__dict__
         self.query = str(search_dict['query'])
+
+    def database_dict(self):
+        return {
+            '_id': self._id,
+            'metadata': self.metadata,
+            'query': self.query
+        }

@@ -22,9 +22,9 @@ class SearchCategoryMetadata:
         Search Category's updated date
     """
 
-    def __init__(self, search_metadata_dict: dict) -> None:
-        self.created_date = search_metadata_dict['created_date']
-        self.total_companies = int(search_metadata_dict['total_companies'])
-        self.total_service_providers = int(search_metadata_dict['total_service_providers'])
-        self.total_workers = int(search_metadata_dict['total_workers'])
-        self.updated_date = search_metadata_dict['updated_data']
+    def __init__(self, search_category_metadata_document: dict) -> None:
+        self.created_date = search_category_metadata_document['created_date']
+        self.total_companies = int(search_category_metadata_document['total_companies'])
+        self.total_service_providers = int(search_category_metadata_document['total_service_providers'])
+        self.total_workers = int(search_category_metadata_document['total_workers'])
+        self.updated_date = search_category_metadata_document['updated_data']
