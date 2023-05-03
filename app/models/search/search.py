@@ -27,7 +27,7 @@ class Search:
             search_metadata_document=search_document['metadata']
         ).__dict__
         self.query = str(search_document['query'])
-        self.search_results = [search_result for search_result in search_document['search_results']]
+        self.search_results = [str(search_result_id) for search_result_id in search_document['search_results']]
 
     def database_dict(self) -> dict:
         """
