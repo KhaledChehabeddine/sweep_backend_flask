@@ -79,7 +79,7 @@ def read_home_main_feature_reward_by_id(_id: str) -> Response:
     )
 
 
-@raw_home_main_feature_reward_api_v1.route('/read', methods=['GET'])
+@raw_home_main_feature_reward_api_v1.route('/read/all', methods=['GET'])
 def read_home_main_feature_rewards() -> Response:
     """
     :return: Response object with a message describing if all the home main feature rewards were found (if yes: add home

@@ -80,7 +80,7 @@ def read_home_sub_feature_by_id(_id: str) -> Response:
     )
 
 
-@raw_home_sub_feature_api_v1.route('/read', methods=['GET'])
+@raw_home_sub_feature_api_v1.route('/read/all', methods=['GET'])
 def read_home_sub_features() -> Response:
     """
     :return: Response object with a message describing if all the home sub features were found (if yes: add home
