@@ -26,7 +26,7 @@ def create_category_metadata(category_document: dict) -> dict:
     """
     return {
         'created_date': datetime.now(),
-        'total_service_items': len(category_document['service_item_ids']),
+        'total_service_items': len(category_document['service_items']),
         'updated_date': datetime.now()
     }
 

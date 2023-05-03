@@ -63,8 +63,8 @@ def read_search_by_id(_id: str) -> Response:
     )
 
 
-@raw_search_api_v1.route('/read/query /<string:query>', methods=['GET'])
-def read_search_by_id(query: str) -> Response:
+@raw_search_api_v1.route('/read/query/<string:query>', methods=['GET'])
+def read_search_by_query(query: str) -> Response:
     """
     :param query: Service Category's query
     :return: Response object with a message describing if the searches were found (if yes: add user objects)
