@@ -1,6 +1,6 @@
 """Summary: Create Object Metadata Functions
 
-Functions to create metadatas for their respective object
+Functions to create metadata for their respective object
 """
 from datetime import datetime
 from app.aws.aws_s3_client import upload_image_to_aws_s3
@@ -63,6 +63,15 @@ def create_home_main_feature_metadata(home_main_feature_document: dict) -> dict:
 def create_review_metadata() -> dict:
     """
     :return: A dictionary representation of the review metadata
+    """
+    return {
+        'created_date': datetime.now()
+    }
+
+
+def create_search_metadata() -> dict:
+    """
+    :return: A dictionary representation of the search metadata
     """
     return {
         'created_date': datetime.now()
