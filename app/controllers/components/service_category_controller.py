@@ -64,7 +64,7 @@ def read_service_category_by_id(_id: str) -> Response:
     )
 
 
-@raw_service_category_api_v1.route('/read', methods=['GET'])
+@raw_service_category_api_v1.route('/read/all', methods=['GET'])
 def read_service_categories() -> Response:
     """
     :return: Response object with a message describing if the service categories were found (if yes: add user objects)

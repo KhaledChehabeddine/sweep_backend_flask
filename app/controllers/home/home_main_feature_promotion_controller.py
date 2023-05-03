@@ -99,7 +99,7 @@ def read_home_main_feature_promotion_by_id(_id: str) -> Response:
     )
 
 
-@raw_home_main_feature_promotion_api_v1.route('/read', methods=['GET'])
+@raw_home_main_feature_promotion_api_v1.route('/read/all', methods=['GET'])
 def read_home_main_feature_promotions() -> Response:
     """
     :return: Response object with a message describing if all the home main feature promotions were found (if yes: add
