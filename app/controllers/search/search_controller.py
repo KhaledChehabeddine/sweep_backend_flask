@@ -63,7 +63,7 @@ def read_search_by_id(_id: str) -> Response:
     )
 
 
-@raw_search_api_v1.route('/read/id/<string:query>', methods=['GET'])
+@raw_search_api_v1.route('/read/query /<string:query>', methods=['GET'])
 def read_search_by_id(query: str) -> Response:
     """
     :param query: Service Category's query
