@@ -1,4 +1,4 @@
-"""Summary: Search CategoryMetadata Model
+"""Summary: Search Category Metadata Model
 
 A search metadata model used to convert a search metadata document into a user metadata object
 """

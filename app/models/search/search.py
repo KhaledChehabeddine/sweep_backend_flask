@@ -17,14 +17,17 @@ class Search:
         Search object's metadata
     query : str
         Search object's query for the search object
+    search_results : List[SearchResult]
+        Search object's search results
     """
 
-    def __init__(self, search_dict: dict) -> None:
-        self._id = str(search_dict['_id'])
+    def __init__(self, search_document: dict) -> None:
+        self._id = str(search_document['_id'])
         self.metadata = SearchMetadata(
-            search_metadata_document=search_dict['metadata']
+            search_metadata_document=search_document['metadata']
         ).__dict__
-        self.query = str(search_dict['query'])
+        self.query = str(search_document['query'])
+        self.search_results = [search_result for search_result in search_document['search_results']]
 
     def database_dict(self) -> dict:
         """
@@ -33,5 +36,6 @@ class Search:
         return {
             '_id': self._id,
             'metadata': self.metadata,
-            'query': self.query
+            'query': self.query,
+            'search_results': self.search_results
         }
