@@ -14,13 +14,10 @@ class ServiceProviderMetadata:
     ----------
     total_categories : int
         Service provider's total categories
-    total_flags : int
-        Service provider's total flags
     total_reviews : int
         Service provider's total reviews
     """
 
     def __init__(self, service_provider_metadata_document: dict) -> None:
         self.total_categories = int(service_provider_metadata_document['total_categories'])
-        self.total_flags = int(service_provider_metadata_document['total_flags'])
         self.total_reviews = int(service_provider_metadata_document['total_reviews'])
