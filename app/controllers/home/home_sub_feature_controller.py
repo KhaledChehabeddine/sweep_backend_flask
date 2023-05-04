@@ -92,11 +92,12 @@ def read_home_sub_features() -> Response:
         for home_sub_feature_document in home_sub_feature_documents:
             home_sub_feature = HomeSubFeature(home_sub_feature_document=home_sub_feature_document)
             home_sub_features.append(home_sub_feature.__dict__)
-        return jsonify(
-            data=home_sub_features,
-            message='All home sub features found in the database.',
-            status=200
-        )
+        if home_sub_features:
+            return jsonify(
+                data=home_sub_features,
+                message='All home sub features found in the database.',
+                status=200
+            )
     return jsonify(
         message='No home sub feature found in the database.',
         status=500

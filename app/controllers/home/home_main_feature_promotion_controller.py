@@ -113,11 +113,12 @@ def read_home_main_feature_promotions() -> Response:
                 home_main_feature_promotion_document=home_main_feature_promotion_document
             )
             home_main_feature_promotions.append(home_main_feature_promotion.__dict__)
-        return jsonify(
-            data=home_main_feature_promotions,
-            message='All home main feature promotions found in the database.',
-            status=200
-        )
+        if home_main_feature_promotions:
+            return jsonify(
+                data=home_main_feature_promotions,
+                message='All home main feature promotions found in the database.',
+                status=200
+            )
     return jsonify(
         message='No home main feature promotion found in the database.',
         status=500

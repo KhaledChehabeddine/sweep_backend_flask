@@ -122,11 +122,12 @@ def read_companies() -> Response:
         for company_document in company_documents:
             company = _configure_company(company_document=company_document)
             companies.append(company.__dict__)
-        return jsonify(
-            data=companies,
-            message='All companies found in the database.',
-            status=200
-        )
+        if companies:
+            return jsonify(
+                data=companies,
+                message='All companies found in the database.',
+                status=200
+            )
     return jsonify(
         message='No company found in the database.',
         status=500

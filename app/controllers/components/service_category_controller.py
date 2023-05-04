@@ -76,11 +76,12 @@ def read_service_categories() -> Response:
         for service_category_document in service_category_documents:
             service_category = ServiceCategory(service_category_document=service_category_document)
             service_categories.append(service_category.__dict__)
-        return jsonify(
-            data=service_categories,
-            message='All service categories found in the database.',
-            status=200,
-        )
+        if service_categories:
+            return jsonify(
+                data=service_categories,
+                message='All service categories found in the database.',
+                status=200,
+            )
     return jsonify(
         message='No service category found in the database.',
         status=500
