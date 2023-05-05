@@ -150,11 +150,12 @@ def read_account_categories() -> Response:
         for account_category_document in account_category_documents:
             account_category = AccountCategory(account_category_document=account_category_document)
             account_categories.append(account_category.__dict__)
-        return jsonify(
-            data=account_categories,
-            message='Account categories found in the database.',
-            status=200
-        )
+        if account_categories:
+            return jsonify(
+                data=account_categories,
+                message='Account categories found in the database.',
+                status=200
+            )
     return jsonify(
         message='No account category found in the database.',
         status=500

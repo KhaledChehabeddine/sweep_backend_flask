@@ -141,11 +141,12 @@ def read_workers() -> Response:
         for worker_document in worker_documents:
             worker = _configure_worker(worker_document=worker_document)
             workers.append(worker.__dict__)
-        return jsonify(
-            data=workers,
-            message='All workers found in the database.',
-            status=200,
-        )
+        if workers:
+            return jsonify(
+                data=workers,
+                message='All workers found in the database.',
+                status=200,
+            )
     return jsonify(
         message='No worker found in the database.',
         status=500

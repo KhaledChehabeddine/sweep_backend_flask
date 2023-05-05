@@ -21,8 +21,6 @@ class ServiceProvider:
         Service provider's category documents
     description : str
         Service provider's description
-    flags : list[str]
-        Service provider's flag documents
     metadata : dict
         Service provider's metadata document
     reviews : list[dict]
@@ -40,7 +38,6 @@ class ServiceProvider:
             for category_document in service_provider_document['categories']
         ]
         self.description = str(service_provider_document['description'])
-        self.flags = [str(flag) for flag in service_provider_document['flags']]
         self.metadata = ServiceProviderMetadata(
             service_provider_metadata_document=service_provider_document['metadata']
         ).__dict__

@@ -93,11 +93,12 @@ def read_home_main_feature_rewards() -> Response:
                 home_main_feature_reward_document=home_main_feature_reward_document
             )
             home_main_feature_rewards.append(home_main_feature_reward.__dict__)
-        return jsonify(
-            data=home_main_feature_rewards,
-            message='Home main feature rewards found in the database.',
-            status=200
-        )
+        if home_main_feature_rewards:
+            return jsonify(
+                data=home_main_feature_rewards,
+                message='Home main feature rewards found in the database.',
+                status=200
+            )
     return jsonify(
         message='No home main feature reward found in the database.',
         status=500
