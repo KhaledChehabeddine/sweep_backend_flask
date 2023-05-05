@@ -48,12 +48,12 @@ def create_reservation() -> Response:
         reservation_id = str(reservation_collection.insert_one(reservation.database_dict()).inserted_id)
     except OperationFailure:
         return jsonify(
-            message='Reservation not added to the database.',
+            message='Reservation not created nor added to the database.',
             status=500
         )
     return jsonify(
         data=reservation_id,
-        message='Reservation added to the database.',
+        message='Reservation created & added to the database.',
         status=200
     )
 
@@ -68,13 +68,13 @@ def read_reservation_by_id(_id: str) -> Response:
     reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
     if reservation_document is None:
         return jsonify(
-            message='Reservation not found.',
+            message='Reservation not found using the id.',
             status=404
         )
     reservation = Reservation(reservation_document=reservation_document)
     return jsonify(
         data=reservation.__dict__,
-        message='Reservation found.',
+        message='Reservation found using id.',
         status=200
     )
 
@@ -89,7 +89,7 @@ def read_reservations_by_customer_id(customer_id: str) -> Response:
     reservation_documents = reservation_collection.find({'customer_id': customer_id})
     if reservation_documents is None:
         return jsonify(
-            message='Customer reservations not found.',
+            message='Reservation not found using the customer id.',
             status=404
         )
     reservations = []
@@ -98,7 +98,7 @@ def read_reservations_by_customer_id(customer_id: str) -> Response:
         reservations.append(reservation.__dict__)
     return jsonify(
         data=reservations,
-        message='Customer reservations found.',
+        message='Reservation found using the customer id.',
         status=200
     )
 
@@ -113,7 +113,7 @@ def read_reservations_by_service_provider_id(service_provider_id: str) -> Respon
     reservation_documents = reservation_collection.find({'service_provider_id': service_provider_id})
     if reservation_documents is None:
         return jsonify(
-            message='Service provider reservations not found.',
+            message='Reservation not found using the service provider id.',
             status=404
         )
     reservations = []
@@ -122,7 +122,7 @@ def read_reservations_by_service_provider_id(service_provider_id: str) -> Respon
         reservations.append(reservation.__dict__)
     return jsonify(
         data=reservations,
-        message='Service provider reservations found.',
+        message='Reservation found using the service provider id.',
         status=200
     )
 
@@ -146,7 +146,7 @@ def read_reservations() -> Response:
                 status=200
             )
     return jsonify(
-        message='Reservations not found.',
+        message='No reservations found.',
         status=404
     )
 
@@ -160,12 +160,12 @@ def delete_reservation_by_id(_id: str) -> Response:
     reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
     if reservation_document is None:
         return jsonify(
-            message='Reservation not found.',
+            message='Reservation not found nor deleted using the id.',
             status=404
         )
     reservation_collection.delete_one({'_id': ObjectId(_id)})
     return jsonify(
-        message='Reservation deleted.',
+        message='Reservation deleted using the id.',
         status=200
     )
 
