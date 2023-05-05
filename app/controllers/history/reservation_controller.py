@@ -66,16 +66,16 @@ def read_reservation_by_id(_id: str) -> Response:
     and the status code
     """
     reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
-    if reservation_document is None:
+    if reservation_document:
+        reservation = Reservation(reservation_document=reservation_document)
         return jsonify(
-            message='Reservation not found.',
-            status=404
+            data=reservation.__dict__,
+            message='Reservation found in the database using the id.',
+            status=200
         )
-    reservation = Reservation(reservation_document=reservation_document)
     return jsonify(
-        data=reservation.__dict__,
-        message='Reservation found.',
-        status=200
+        message='Reservation not found in the database using the id.',
+        status=404
     )
 
 
@@ -86,20 +86,20 @@ def read_reservations_by_customer_id(customer_id: str) -> Response:
     :return: Response object with message if the customer's reservations were found (if
     yes: add reservations) and the status code
     """
-    reservation_documents = reservation_collection.find({'customer_id': customer_id})
-    if reservation_documents is None:
-        return jsonify(
-            message='Customer reservations not found.',
-            status=404
-        )
     reservations = []
-    for reservation_document in reservation_documents:
-        reservation = Reservation(reservation_document=reservation_document)
-        reservations.append(reservation.__dict__)
+    reservation_documents = reservation_collection.find({'customer_id': customer_id})
+    if reservation_documents:
+        for reservation_document in reservation_documents:
+            reservation = Reservation(reservation_document=reservation_document)
+            reservations.append(reservation.__dict__)
+        return jsonify(
+            data=reservations,
+            message='Reservation found in the database using the customer id.',
+            status=200
+        )
     return jsonify(
-        data=reservations,
-        message='Customer reservations found.',
-        status=200
+        message='Reservation not found in the database using the customer id.',
+        status=404
     )
 
 
@@ -110,20 +110,20 @@ def read_reservations_by_service_provider_id(service_provider_id: str) -> Respon
     :return: Response object with message if the service provider's reservations were found (if
     yes: add reservations) and the status code
     """
-    reservation_documents = reservation_collection.find({'service_provider_id': service_provider_id})
-    if reservation_documents is None:
-        return jsonify(
-            message='Service provider reservations not found.',
-            status=404
-        )
     reservations = []
-    for reservation_document in reservation_documents:
-        reservation = Reservation(reservation_document=reservation_document)
-        reservations.append(reservation.__dict__)
+    reservation_documents = reservation_collection.find({'service_provider_id': service_provider_id})
+    if reservation_documents:
+        for reservation_document in reservation_documents:
+            reservation = Reservation(reservation_document=reservation_document)
+            reservations.append(reservation.__dict__)
+        return jsonify(
+            data=reservations,
+            message='Reservation found in the database using the service provider id.',
+            status=200
+        )
     return jsonify(
-        data=reservations,
-        message='Service provider reservations found.',
-        status=200
+        message='Reservation not found in the database using the service provider id.',
+        status=404
     )
 
 
@@ -142,11 +142,11 @@ def read_reservations() -> Response:
         if reservations:
             return jsonify(
                 data=reservations,
-                message='Reservations found.',
+                message='All reservations found in the database.',
                 status=200
             )
     return jsonify(
-        message='Reservations not found.',
+        message='No reservation found in the database.',
         status=404
     )
 
@@ -158,15 +158,15 @@ def delete_reservation_by_id(_id: str) -> Response:
     :return: Response object with message if the reservation was deleted and the status code
     """
     reservation_document = reservation_collection.find_one({'_id': ObjectId(_id)})
-    if reservation_document is None:
+    if reservation_document:
+        reservation_collection.delete_one({'_id': ObjectId(_id)})
         return jsonify(
-            message='Reservation not found.',
-            status=404
+            message='Reservation deleted using the id.',
+            status=200
         )
-    reservation_collection.delete_one({'_id': ObjectId(_id)})
     return jsonify(
-        message='Reservation deleted.',
-        status=200
+        message='Reservation not found nor deleted using the id.',
+        status=404
     )
 
 
