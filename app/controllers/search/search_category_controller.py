@@ -122,29 +122,24 @@ def update_search_category_by_id(_id: str) -> Response:
     search_category = SearchCategory(search_category_document=search_category_document)
 
     existing_category = search_category_collection.find_one({'_id': ObjectId(_id)})
-
     if not existing_category:
         return jsonify(
             message='Search Category not found in the database.',
             status=404
         )
     try:
-        result = search_category_collection.update_one({'_id': ObjectId(_id)}, {'$set':
-                                                                                search_category.database_document()})
-        if result.modified_count > 0:
-            return jsonify(
-                message=f'Search updated in the database using id {_id}.',
-                status=200
-            )
-        else:
-            return jsonify(
-                message=f'No search found with id {_id}.',
-                status=404
-            )
+        result = search_category_collection.update_one({'_id': ObjectId(_id)},
+                                                       {'$set': search_category.database_document()})
     except errors.OperationFailure:
         return jsonify(
             message='Search Category not updated in the database.',
             status=500
+        )
+    if result.modified_count:
+        return jsonify(
+            data=_id,
+            message='Search Category updated in the database.',
+            status=200
         )
 
 
@@ -164,7 +159,6 @@ def update_search_category_by_name(category_name: str) -> Response:
     search_category = SearchCategory(search_category_document=search_category_document)
 
     existing_category = search_category_collection.find_one({'category_name': category_name})
-
     if not existing_category:
         return jsonify(
             message='Search Category not found in the database.',
@@ -172,21 +166,17 @@ def update_search_category_by_name(category_name: str) -> Response:
         )
     try:
         result = search_category_collection.update_one({'category_name': category_name},
-                                                       {'$set': search_category.database_document()})
-        if result.modified_count > 0:
-            return jsonify(
-                message=f'Search updated in the database using category name {category_name}.',
-                status=200
-            )
-        else:
-            return jsonify(
-                message=f'No search found with category name {category_name}.',
-                status=404
-            )
+                                                         {'$set': search_category.database_document()})
     except errors.OperationFailure:
         return jsonify(
             message='Search Category not updated in the database.',
             status=500
+        )
+    if result.modified_count:
+        return jsonify(
+            data=search_category.__dict__,
+            message='Search Category updated in the database.',
+            status=200
         )
 
 

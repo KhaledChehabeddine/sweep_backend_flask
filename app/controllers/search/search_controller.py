@@ -124,17 +124,15 @@ def update_search_by_id(_id: str) -> Response:
         {'_id': ObjectId(_id)},
         {'$set': search.database_dict()}
     )
-
-    if result.modified_count > 0:
+    if result.modified_count == 1:
         return jsonify(
-            message=f'Search updated in the database using id {_id}.',
+            message='Search item updated in the database using the id.',
             status=200
         )
-    else:
-        return jsonify(
-            message=f'No search found with id {_id}.',
-            status=404
-        )
+    return jsonify(
+        message='Search item not updated in the database using the id.',
+        status=404
+    )
 
 
 @raw_search_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
