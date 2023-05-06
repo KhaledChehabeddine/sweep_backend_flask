@@ -9,7 +9,9 @@ from app.controllers.history.reservation_controller import reservation_api_v1
 from app.controllers.home.home_main_feature_promotion_controller import home_main_feature_promotion_api_v1
 from app.controllers.home.home_main_feature_reward_controller import home_main_feature_reward_api_v1
 from app.controllers.home.home_sub_feature_controller import home_sub_feature_api_v1
+from app.controllers.search.search_category_controller import search_category_api_v1
 from app.controllers.search.search_controller import search_api_v1
+from app.controllers.search.search_result_controller import search_result_api_v1
 from app.controllers.user.company_controller import company_api_v1
 from app.controllers.user.worker_controller import worker_api_v1
 
@@ -21,6 +23,8 @@ raw_sweep_api_v1.register_blueprint(home_main_feature_promotion_api_v1)
 raw_sweep_api_v1.register_blueprint(home_main_feature_reward_api_v1)
 raw_sweep_api_v1.register_blueprint(home_sub_feature_api_v1)
 raw_sweep_api_v1.register_blueprint(search_api_v1)
+raw_sweep_api_v1.register_blueprint(search_category_api_v1)
+raw_sweep_api_v1.register_blueprint(search_result_api_v1)
 raw_sweep_api_v1.register_blueprint(service_category_api_v1)
 raw_sweep_api_v1.register_blueprint(worker_api_v1)
 raw_sweep_api_v1.register_blueprint(reservation_api_v1)

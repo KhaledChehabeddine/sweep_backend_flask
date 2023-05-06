@@ -141,3 +141,13 @@ def create_search_category_metadata():
         'created_date': datetime.now(),
         'updated_date': datetime.now()
     }
+
+
+def create_search_result_category_metadata():
+    """
+    :return: A dictionary representation of the search result category metadata
+    """
+    return {
+        'created_date': datetime.now(),
+        'updated_date': datetime.now()
+    }
