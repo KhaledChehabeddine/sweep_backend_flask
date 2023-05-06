@@ -170,7 +170,7 @@ def update_search_category_by_name(category_name: str) -> Response:
         )
     try:
         result = search_category_collection.update_one({'category_name': category_name},
-                                                         {'$set': search_category.database_document()})
+                                                       {'$set': search_category.database_document()})
     except errors.OperationFailure:
         return jsonify(
             message='Search Category not updated in the database.',
@@ -206,11 +206,11 @@ def delete_search_category_by_id(_id: str) -> Response:
         result = search_category_collection.delete_one({'_id': ObjectId(_id)})
         if result.deleted_count == 1:
             return jsonify(
-                message='Search item deleted from the database using the id.',
+                message='Search category item deleted from the database using the id.',
                 status=200
             )
         return jsonify(
-            message='Search item not deleted from the database using the id.',
+            message='Search category item not deleted from the database using the id.',
             status=404
         )
     except errors.OperationFailure:
@@ -218,3 +218,6 @@ def delete_search_category_by_id(_id: str) -> Response:
             message='Search Category not deleted from the database.',
             status=500
         )
+
+
+search_category_api_v1 = raw_search_category_api_v1
