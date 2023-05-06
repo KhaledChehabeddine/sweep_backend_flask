@@ -124,14 +124,14 @@ def read_all_customers() -> Response:
     )
 
 
-@raw_customer_api_v1.route('read/id/reservations/all', methods=['GET'])
+@raw_customer_api_v1.route('read/id/<string:_id>/reservations/all', methods=['GET'])
 def read_all_customer_reservations_by_id(_id: str) -> Response:
     """
     :param _id: Customer id
     :return: Response object with a message describing if the customer's reservations were read and the status code
     """
     if customer_collection.find({'_id': ObjectId(_id)}):
-        read_reservations_by_customer_id(_id)
+        return read_reservations_by_customer_id(_id)
     return jsonify(
         message='No reservation for the customer found in the database.',
         status=404

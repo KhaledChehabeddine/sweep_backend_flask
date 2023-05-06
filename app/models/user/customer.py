@@ -2,7 +2,6 @@
 
 A customer model used to convert a customer document into a customer object
 """
-from app.models.user.metadata.customer_metadata import CustomerMetadata
 from app.models.user.user import User
 
 
@@ -18,8 +17,6 @@ class Customer:
     last_name : str
         Customer's last name
         Customer's id
-    metadata : dict
-        Customer's metadata document
     recent_searches : list
         Customer's recent searches
     transaction_history : list
@@ -32,7 +29,6 @@ class Customer:
         self.first_name = str(customer_document['first_name'])
         self._id = str(customer_document['_id'])
         self.last_name = str(customer_document['last_name'])
-        self.metadata = CustomerMetadata(customer_metadata_document=customer_document['metadata']).__dict__
         self.recent_searches = customer_document['recent_searches']
         self.transaction_history = customer_document['transaction_history']
         self.user = User(user_document=customer_document['user']).__dict__
@@ -44,7 +40,6 @@ class Customer:
         return {
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'metadata': self.metadata,
             'recent_searches': self.recent_searches,
             'transaction_history': self.transaction_history,
             'user': self.user

@@ -92,11 +92,12 @@ def read_reservations_by_customer_id(customer_id: str) -> Response:
         for reservation_document in reservation_documents:
             reservation = Reservation(reservation_document=reservation_document)
             reservations.append(reservation.__dict__)
-        return jsonify(
-            data=reservations,
-            message='Reservation found in the database using the customer id.',
-            status=200
-        )
+        if reservations:
+            return jsonify(
+                data=reservations,
+                message='Reservation found in the database using the customer id.',
+                status=200
+            )
     return jsonify(
         message='Reservation not found in the database using the customer id.',
         status=404
