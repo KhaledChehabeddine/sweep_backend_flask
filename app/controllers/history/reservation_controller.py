@@ -161,11 +161,11 @@ def delete_reservation_by_id(_id: str) -> Response:
     if reservation_document:
         reservation_collection.delete_one({'_id': ObjectId(_id)})
         return jsonify(
-            message='Reservation deleted using the id.',
+            message='Reservation deleted from the database using the id.',
             status=200
         )
     return jsonify(
-        message='Reservation not found nor deleted using the id.',
+        message='Reservation not deleted from the database using the id.',
         status=404
     )
 
