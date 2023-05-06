@@ -46,5 +46,6 @@ class Customer:
             'last_name': self.last_name,
             'metadata': self.metadata,
             'recent_searches': self.recent_searches,
+            'transaction_history': self.transaction_history,
             'user': self.user
         }
