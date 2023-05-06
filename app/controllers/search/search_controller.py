@@ -34,6 +34,7 @@ def create_search() -> Response:
         return jsonify(
             message='Search not added to the database.',
             status=500
+
         )
     return jsonify(
         data=search_id,
@@ -59,7 +60,7 @@ def read_search_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Search not found in the database using the id.',
-        status=500
+        status=404
     )
 
 
@@ -67,10 +68,10 @@ def read_search_by_id(_id: str) -> Response:
 def read_search_by_query(query: str) -> Response:
     """
     :param query: Service Category's query
-    :return: Response object with a message describing if the searches were found (if yes: add user objects)
+    :return: Response object with a message describing if the searches were found (if yes: add search objects)
     and the status code
     """
-    search_document = search_collection.find_one({'query': ObjectId(query)})
+    search_document = search_collection.find_one({'query': query})
     if search_document:
         search = Search(search_document=search_document)
         return jsonify(
@@ -80,7 +81,7 @@ def read_search_by_query(query: str) -> Response:
         )
     return jsonify(
         message='Search not found in the database using the query.',
-        status=500
+        status=404
     )
 
 
@@ -103,7 +104,7 @@ def read_searches() -> Response:
         )
     return jsonify(
         message='No search found in the database.',
-        status=500
+        status=404
     )
 
 
@@ -151,7 +152,7 @@ def delete_search_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Search item not deleted from the database using the id.',
-        status=500
+        status=404
     )
 
 

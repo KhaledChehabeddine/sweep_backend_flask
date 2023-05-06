@@ -131,3 +131,13 @@ def create_user_metadata() -> dict:
         'last_login_date': datetime.now(),
         'updated_date': datetime.now()
     }
+
+
+def create_search_category_metadata():
+    """
+    :return: A dictionary representation of the search category metadata
+    """
+    return {
+        'created_date': datetime.now(),
+        'updated_date': datetime.now()
+    }
