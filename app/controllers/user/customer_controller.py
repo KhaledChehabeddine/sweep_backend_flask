@@ -23,7 +23,7 @@ def create_customer() -> Response:
     """
 
     customer_document = request.json
-    customer_document['metadata']['created_date'] = datetime.now()
+    customer_document['user']['metadata']['created_date'] = datetime.now()
     customer = Customer(customer_document=customer_document)
     try:
         customer_id = str(customer_collection.insert_one(customer.database_dict()).inserted_id)
@@ -36,6 +36,48 @@ def create_customer() -> Response:
         data=customer_id,
         message='Customer added to the database.',
         status=200
+    )
+
+
+@raw_customer_api_v1.route('/update/id/<string:_id>/add/search', methods=['PUT'])
+def update_customer_add_search_by_id(_id: str) -> Response:
+    """
+    :param _id: Customer id
+    :return: Response object with a message describing if the search was added to customer and the status code
+    """
+    customer_document = customer_collection.find_one({'_id': ObjectId(_id)})
+    if customer_document:
+        customer = Customer(customer_document=customer_document)
+        customer.recent_searches.append(request.json)
+        customer_collection.update_one({'_id': ObjectId(_id)}, {'$set': customer.database_dict()})
+        return jsonify(
+            message='Search added to customer using the id.',
+            status=200
+        )
+    return jsonify(
+        message='Search not added to customer using the id.',
+        status=404
+    )
+
+
+@raw_customer_api_v1.route('/update/id/<string:_id>/add/transaction', methods=['PUT'])
+def update_customer_add_transaction_by_id(_id: str) -> Response:
+    """
+    :param _id: Customer id
+    :return: Response object with a message describing if the transaction was added to customer and the status code
+    """
+    customer_document = customer_collection.find_one({'_id': ObjectId(_id)})
+    if customer_document:
+        customer = Customer(customer_document=customer_document)
+        customer.transaction_history.append(request.json)
+        customer_collection.update_one({'_id': ObjectId(_id)}, {'$set': customer.database_dict()})
+        return jsonify(
+            message='Transaction added to customer using the id.',
+            status=200
+        )
+    return jsonify(
+        message='Transaction not added to customer using the id.',
+        status=404
     )
 
 
@@ -70,11 +112,12 @@ def read_all_customers() -> Response:
         for customer_document in customer_documents:
             customer = Customer(customer_document=customer_document)
             customers.append(customer.__dict__)
-        return jsonify(
-            data=customers,
-            message='All customers found in the database.',
-            status=200
-        )
+        if customers:
+            return jsonify(
+                data=customers,
+                message='All customers found in the database.',
+                status=200
+            )
     return jsonify(
         message='No customer found in the database.',
         status=404
