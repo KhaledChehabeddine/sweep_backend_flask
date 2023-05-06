@@ -163,6 +163,27 @@ def update_customer_by_id(_id: str) -> Response:
     )
 
 
+@raw_customer_api_v1.route('/update/id/<string:_id>/delete/all/search', methods=['PUT'])
+def update_customer_delete_all_search_by_id(_id: str) -> Response:
+    """
+    :param _id: Customer id
+    :return: Response object with a message describing if the customers searches were deleted and the status code
+    """
+    customer_document = customer_collection.find_one({'_id': ObjectId(_id)})
+    if customer_document:
+        customer = Customer(customer_document=customer_document)
+        customer.recent_searches = []
+        customer_collection.update_one({'_id': ObjectId(_id)}, {'$set': customer.database_dict()})
+        return jsonify(
+            message='All searches deleted from customer using the id.',
+            status=200
+        )
+    return jsonify(
+        message='Searches not deleted from customer using the id.',
+        status=404
+    )
+
+
 @raw_customer_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
 def delete_customer_by_id(_id: str) -> Response:
     """
