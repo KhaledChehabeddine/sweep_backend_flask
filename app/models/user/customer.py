@@ -20,6 +20,10 @@ class Customer:
         Customer's id
     metadata : dict
         Customer's metadata document
+    recent_searches : list
+        Customer's recent searches
+    transaction_history : list
+        Customer's transaction history
     user : dict
         Customer's user document
     """
@@ -29,9 +33,11 @@ class Customer:
         self._id = str(customer_document['_id'])
         self.last_name = str(customer_document['last_name'])
         self.metadata = CustomerMetadata(customer_metadata_document=customer_document['metadata']).__dict__
+        self.recent_searches = customer_document['recent_searches']
+        self.transaction_history = customer_document['transaction_history']
         self.user = User(user_document=customer_document['user']).__dict__
 
-    def database_dict(self):
+    def database_dict(self) -> dict:
         """
         :return: A dictionary representation of the customer object without the _id
         """
@@ -39,5 +45,6 @@ class Customer:
             'first_name': self.first_name,
             'last_name': self.last_name,
             'metadata': self.metadata,
+            'recent_searches': self.recent_searches,
             'user': self.user
         }
