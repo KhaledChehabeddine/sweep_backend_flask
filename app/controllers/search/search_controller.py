@@ -7,7 +7,7 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo import ASCENDING, errors
 from app.database.database import get_database
-from app.functions.create_object_metadatas import create_search_metadata
+from app.functions.create_object_metadata import create_search_metadata
 from app.models.search.search import Search
 
 raw_search_api_v1 = Blueprint('search_api_v1', __name__, url_prefix='/search')

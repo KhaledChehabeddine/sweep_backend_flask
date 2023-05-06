@@ -7,7 +7,7 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo import ASCENDING, errors
 from app.database.database import get_database
-from app.functions.create_object_metadatas import create_service_category_metadata
+from app.functions.create_object_metadata import create_service_category_metadata
 from app.models.components.service_category import ServiceCategory
 from app.aws.aws_s3_client import delete_image_from_aws_s3
 
