@@ -168,6 +168,7 @@ def update_search_category_by_name(category_name: str) -> Response:
             message='Search Category not found in the database.',
             status=404
         )
+
     try:
         result = search_category_collection.update_one({'category_name': category_name},
                                                        {'$set': search_category.database_document()})
@@ -176,17 +177,18 @@ def update_search_category_by_name(category_name: str) -> Response:
             message='Search Category not updated in the database.',
             status=500
         )
+
     if result.modified_count:
         return jsonify(
             data=search_category.__dict__,
             message='Search Category updated in the database.',
             status=200
         )
-    else:
-        return jsonify(
-            message='An error occurred while updating the search category.',
-            status=500
-        )
+
+    return jsonify(
+        message='An error occurred while updating the search category.',
+        status=500
+    )
 
 
 @raw_search_category_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
