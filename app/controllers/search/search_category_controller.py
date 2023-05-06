@@ -141,6 +141,10 @@ def update_search_category_by_id(_id: str) -> Response:
             message='Search Category updated in the database.',
             status=200
         )
+    return jsonify(
+        message='An error occurred while updating the search category.',
+        status=500
+    )
 
 
 @raw_search_category_api_v1.route('/update/name/<string:category_name>', methods=['PUT'])
