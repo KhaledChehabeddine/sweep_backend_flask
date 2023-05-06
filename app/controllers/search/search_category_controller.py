@@ -182,6 +182,11 @@ def update_search_category_by_name(category_name: str) -> Response:
             message='Search Category updated in the database.',
             status=200
         )
+    else:
+        return jsonify(
+            message='An error occurred while updating the search category.',
+            status=500
+        )
 
 
 @raw_search_category_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
