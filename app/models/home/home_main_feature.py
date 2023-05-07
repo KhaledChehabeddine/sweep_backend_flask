@@ -34,4 +34,3 @@ class HomeMainFeature:
         self.metadata = HomeMainFeatureMetadata(
             home_main_feature_metadata_document=home_main_feature_document['metadata']
         ).__dict__
-
