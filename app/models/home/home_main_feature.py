@@ -35,13 +35,3 @@ class HomeMainFeature:
             home_main_feature_metadata_document=home_main_feature_document['metadata']
         ).__dict__
 
-    def database_dict(self) -> dict:
-        """
-        :return: Home main feature's dictionary for creating a document (without _id)
-        """
-        return {
-            'home_feature': self.home_feature,
-            'home_main_feature_type': self.home_main_feature_type,
-            'image_path': self.image_path,
-            'metadata': self.metadata,
-        }
