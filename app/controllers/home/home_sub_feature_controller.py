@@ -8,8 +8,8 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.functions.create_object_metadatas import create_home_feature_metadata
-from app.functions.update_object_metadatas import update_home_feature_metadata
+from app.functions.create_object_metadata import create_home_feature_metadata
+from app.functions.update_object_metadata import update_home_feature_metadata
 from app.models.home.home_sub_feature import HomeSubFeature
 
 raw_home_sub_feature_api_v1 = Blueprint('home_sub_feature_api_v1', __name__, url_prefix='/home_sub_feature')

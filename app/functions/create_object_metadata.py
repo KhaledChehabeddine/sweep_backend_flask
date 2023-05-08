@@ -1,6 +1,6 @@
 """Summary: Create Object Metadata Functions
 
-Functions to create metadatas for their respective object
+Functions to create metadata for their respective object
 """
 from datetime import datetime
 from app.aws.aws_s3_client import upload_image_to_aws_s3
@@ -69,6 +69,16 @@ def create_review_metadata() -> dict:
     }
 
 
+def create_search_metadata(search_document) -> dict:
+    """
+    :return: A dictionary representation of the search metadata
+    """
+    return {
+        'created_date': datetime.now(),
+        'total_search_results': len(search_document['search_results']),
+    }
+
+
 def create_service_category_metadata(service_category_document: dict) -> dict:
     """
     :param service_category_document: A service category document
@@ -120,5 +130,27 @@ def create_user_metadata() -> dict:
     return {
         'created_date': datetime.now(),
         'last_login_date': datetime.now(),
+        'updated_date': datetime.now()
+    }
+
+
+def create_search_category_metadata(search_category_document: dict) -> dict:
+    """
+    :return: A dictionary representation of the search category metadata
+    """
+    return {
+        'created_date': datetime.now(),
+        'updated_date': datetime.now(),
+        'total_companies': len(search_category_document['company_ids']),
+        'total_workers': len(search_category_document['worker_ids'])
+    }
+
+
+def create_search_result_category_metadata():
+    """
+    :return: A dictionary representation of the search result category metadata
+    """
+    return {
+        'created_date': datetime.now(),
         'updated_date': datetime.now()
     }

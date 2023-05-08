@@ -7,8 +7,8 @@ from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo.errors import OperationFailure
 from app.database.database import get_database
-from app.functions.create_object_metadatas import create_home_feature_metadata, create_home_main_feature_metadata
-from app.functions.update_object_metadatas import update_home_feature_metadata
+from app.functions.create_object_metadata import create_home_feature_metadata, create_home_main_feature_metadata
+from app.functions.update_object_metadata import update_home_feature_metadata
 from app.models.home.home_main_feature_reward import HomeMainFeatureReward
 from app.aws.aws_s3_client import delete_image_from_aws_s3
 

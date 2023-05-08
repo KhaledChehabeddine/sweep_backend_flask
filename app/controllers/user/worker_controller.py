@@ -9,9 +9,9 @@ from flask import Blueprint, Response, jsonify, request
 from pymongo import errors
 from app.aws.aws_s3_client import upload_images_to_aws_s3, delete_images_from_aws_s3
 from app.database.database import get_database
-from app.functions.create_mongodb_indexes import create_service_provider_indexes
-from app.functions.create_object_metadatas import create_service_provider_metadata
-from app.functions.update_object_metadatas import update_service_provider_metadata
+from app.functions.create_mongodb_indices import create_service_provider_indexes
+from app.functions.create_object_metadata import create_service_provider_metadata
+from app.functions.update_object_metadata import update_service_provider_metadata
 from app.models.user.worker import Worker
 
 raw_worker_api_v1 = Blueprint('worker_api_v1', __name__, url_prefix='/worker')

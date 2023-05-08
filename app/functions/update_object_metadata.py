@@ -1,9 +1,9 @@
 """Summary: Update Object Metadata Functions
 
-Functions to update metadatas for their respective object
+Functions to update metadata for their respective object
 """
 from datetime import datetime
-from app.functions.create_object_metadatas import create_address_metadata
+from app.functions.create_object_metadata import create_address_metadata
 
 
 def update_category_metadata(category_metadata_document: dict) -> dict:
