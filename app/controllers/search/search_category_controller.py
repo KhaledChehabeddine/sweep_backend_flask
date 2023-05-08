@@ -116,8 +116,7 @@ def update_search_category_by_id(_id: str) -> Response:
     """
     search_category_document = request.json
 
-    search_category_document['metadata'] = \
-        create_search_category_metadata()
+    search_category_document['metadata'] = create_search_category_metadata()
 
     search_category = SearchCategory(search_category_document=search_category_document)
 
