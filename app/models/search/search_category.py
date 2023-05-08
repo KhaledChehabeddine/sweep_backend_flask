@@ -30,7 +30,7 @@ class SearchCategory:
         self.category_name = str(search_category_document['category_name'])
         self._id = str(search_category_document['_id'])
         self.metadata = SearchCategoryMetadata(
-            search_category_metadata_document= search_category_document['metadata']
+            search_category_metadata_document=search_category_document['metadata']
         ).__dict__
         self.tags = [str(tag) for tag in search_category_document['tags']]
         self.worker_ids = [str(worker_id) for worker_id in search_category_document['worker_ids']]
@@ -40,7 +40,6 @@ class SearchCategory:
         :return: Home main feature reward's dictionary for creating a document (without _id)
         """
         return {
-            '_id': self._id,
             'category_name': self.category_name,
             'company_ids': self.company_ids,
             'metadata': self.metadata,

@@ -25,7 +25,7 @@ def create_search_category() -> Response:
     search_category_document = request.json
 
     search_category_document['metadata'] = \
-        create_search_category_metadata()
+        create_search_category_metadata(search_category_document=search_category_document)
 
     search_category = SearchCategory(search_category_document=search_category_document)
     try:
@@ -117,7 +117,7 @@ def update_search_category_by_id(_id: str) -> Response:
     search_category_document = request.json
 
     search_category_document['metadata'] = \
-        create_search_category_metadata()
+        create_search_category_metadata(search_category_document=search_category_document)
 
     search_category = SearchCategory(search_category_document=search_category_document)
 
@@ -141,50 +141,6 @@ def update_search_category_by_id(_id: str) -> Response:
             message='Search Category updated in the database.',
             status=200
         )
-    return jsonify(
-        message='An error occurred while updating the search category.',
-        status=500
-    )
-
-
-@raw_search_category_api_v1.route('/update/name/<string:category_name>', methods=['PUT'])
-def update_search_category_by_name(category_name: str) -> Response:
-    """
-    :param category_name: Search Category's name
-    :return: Response object with a message describing if the search category was updated (if yes: return search
-    category object) and the status code
-    """
-
-    search_category_document = request.json
-
-    search_category_document['metadata'] = \
-        create_search_category_metadata()
-
-    search_category = SearchCategory(search_category_document=search_category_document)
-
-    existing_category = search_category_collection.find_one({'category_name': category_name})
-    if not existing_category:
-        return jsonify(
-            message='Search Category not found in the database.',
-            status=404
-        )
-
-    try:
-        result = search_category_collection.update_one({'category_name': category_name},
-                                                       {'$set': search_category.database_document()})
-    except errors.OperationFailure:
-        return jsonify(
-            message='Search Category not updated in the database.',
-            status=500
-        )
-
-    if result.modified_count:
-        return jsonify(
-            data=search_category.__dict__,
-            message='Search Category updated in the database.',
-            status=200
-        )
-
     return jsonify(
         message='An error occurred while updating the search category.',
         status=500

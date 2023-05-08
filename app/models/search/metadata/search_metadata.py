@@ -12,13 +12,10 @@ class SearchMetadata:
     ----------
     created_date : datetime
         Search's created date
-    updated_date : datetime
-        Search's updated date
     total_search_results : int
         Search's total search results
     """
 
     def __init__(self, search_metadata_document: dict) -> None:
         self.created_date = search_metadata_document['created_date']
-        self.updated_date = search_metadata_document['updated_date']
         self.total_search_results = int(search_metadata_document['total_search_results'])

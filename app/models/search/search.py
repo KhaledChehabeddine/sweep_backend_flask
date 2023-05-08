@@ -34,7 +34,6 @@ class Search:
         :return: Search's dictionary for creating a document (without _id)
         """
         return {
-            '_id': self._id,
             'metadata': self.metadata,
             'query': self.query,
             'search_results': self.search_results

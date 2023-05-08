@@ -13,7 +13,7 @@ from app.models.search.search import Search
 raw_search_api_v1 = Blueprint('search_api_v1', __name__, url_prefix='/search')
 search_collection = get_database()['searches']
 
-search_collection.create_index([('name', ASCENDING)], unique=True)
+search_collection.create_index([('query', ASCENDING)], unique=True)
 
 
 @raw_search_api_v1.route('/create', methods=['POST'])
@@ -24,8 +24,7 @@ def create_search() -> Response:
     """
     search_document = request.json
 
-    search_document['metadata'] = \
-        create_search_metadata()
+    search_document['metadata'] = create_search_metadata(search_document=search_document)
 
     search = Search(search_document=search_document)
     try:
@@ -117,7 +116,7 @@ def update_search_by_id(_id: str) -> Response:
     search_document = request.json
 
     search_document['metadata'] = \
-        create_search_metadata()
+        create_search_metadata(search_document=search_document)
 
     search = Search(search_document=search_document)
     result = search_collection.update_one(

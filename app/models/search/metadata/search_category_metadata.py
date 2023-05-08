@@ -24,4 +24,4 @@ class SearchCategoryMetadata:
         self.created_date = search_category_metadata_document['created_date']
         self.total_companies = int(search_category_metadata_document['total_companies'])
         self.total_workers = int(search_category_metadata_document['total_workers'])
-        self.updated_date = search_category_metadata_document['updated_data']
+        self.updated_date = search_category_metadata_document['updated_date']
