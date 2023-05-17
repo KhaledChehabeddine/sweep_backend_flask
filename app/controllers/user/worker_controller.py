@@ -3,12 +3,17 @@
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete workers from the database
 """
+import json
+import logging
+from datetime import datetime
 from typing import Any
 from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo import errors
 from app.aws.aws_s3_client import upload_images_to_aws_s3, delete_images_from_aws_s3
 from app.database.database import get_database
+from app.elasticsearch.elasticsearch_client import get_elasticsearch_client
+from app.elasticsearch.elasticsearch_search import search_workers
 from app.functions.create_mongodb_indices import create_service_provider_indexes
 from app.functions.create_object_metadata import create_service_provider_metadata
 from app.functions.update_object_metadata import update_service_provider_metadata
@@ -16,8 +21,20 @@ from app.models.user.worker import Worker
 
 raw_worker_api_v1 = Blueprint('worker_api_v1', __name__, url_prefix='/worker')
 worker_collection = get_database()['workers']
+elasticsearch_client = get_elasticsearch_client()
+elasticsearch_index = elasticsearch_client.create_index(index_name='workers', body={})
 
 create_service_provider_indexes(service_provider_collection=worker_collection)
+
+if not elasticsearch_client.client.indices.exists(index='workers'):
+    elasticsearch_client.create_index(index_name='workers', body={})
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        return super().default(o)
 
 
 def _configure_worker(worker_document: dict) -> Worker:
@@ -73,6 +90,25 @@ def create_worker() -> Response:
     worker = Worker(worker_document=worker_document)
     try:
         worker_id = str(worker_collection.insert_one(worker.database_dict()).inserted_id)
+
+        # Remove the _id field
+        del worker_document['_id']
+
+        # Convert ObjectId to string if _id exists
+        if 'service_provider' in worker_document and '_id' in worker_document['service_provider']:
+            worker_document['service_provider']['_id'] = str(worker_document['service_provider']['_id'])
+        for category in worker_document['service_provider']['categories']:
+            if '_id' in category:
+                category['_id'] = str(category['_id'])
+            for item in category['service_items']:
+                if '_id' in item:
+                    item['_id'] = str(item['_id'])
+
+        # Serialize worker_document to JSON with custom encoder
+        json_data = json.dumps(worker_document, cls=CustomJSONEncoder)
+
+        # Index the worker document in Elasticsearch
+        elasticsearch_client.client.index(index='workers', id=worker_id, body=json_data)
     except errors.OperationFailure:
         return jsonify(
             message='Worker not added to the database.',
@@ -80,7 +116,7 @@ def create_worker() -> Response:
         )
     return jsonify(
         data=worker_id,
-        message='Worker added to the database.',
+        message='Worker added to the database and indexed in Elasticsearch.',
         status=200
     )
 
@@ -153,19 +189,54 @@ def read_workers() -> Response:
     )
 
 
+@raw_worker_api_v1.route('/search/<string:query>', methods=['GET'])
+def search_workers_endpoint(query: str) -> Response:
+    if query:
+        # Perform the search operation using the query
+        workers = search_workers(query)
+
+        # Convert workers to a list of dictionaries
+        serialized_workers = []
+        for worker in workers:
+            serialized_worker = worker.database_dict()
+            if '_id' in serialized_worker:
+                serialized_worker['id'] = str(serialized_worker.pop('_id'))  # Convert ObjectId to string
+            serialized_workers.append(serialized_worker)
+
+        # Convert ObjectId fields to strings
+        serialized_workers = convert_object_ids(serialized_workers)
+
+        # Return the search results
+        return jsonify(workers=serialized_workers, message='Search results', status=200)
+    else:
+        # Handle the case when no query parameter is provided
+        return jsonify(message='No query parameter provided', status=400)
+
+
+def convert_object_ids(data: Any) -> Any:
+    # Helper function to convert ObjectId to string recursively
+    if isinstance(data, list):
+        return [convert_object_ids(item) for item in data]
+    elif isinstance(data, dict):
+        return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data
+
+
 @raw_worker_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_worker_by_id(_id: str) -> Response:
     """
     :param _id: Worker's id
-    :return: Response object with a message describing if the worker was updated and the status
-    code
+    :return: Response object with a message describing if the worker was updated and the status code
     """
     worker_document = request.json
 
     worker_images = []
-    if worker_document['banner_image']:
+    if worker_document.get('banner_image'):
         worker_images.append(('banner_', worker_document['banner_image_path'], worker_document['banner_image']))
-    if worker_document['profile_image']:
+    if worker_document.get('profile_image'):
         worker_images.append(('profile_', worker_document['profile_image_path'], worker_document['profile_image']))
     worker_document = _configure_worker_document(worker_document=worker_document, worker_images=worker_images)
 
@@ -173,17 +244,37 @@ def update_worker_by_id(_id: str) -> Response:
         update_service_provider_metadata(service_provider_document=worker_document['service_provider'])
 
     worker = Worker(worker_document=worker_document)
-    result = worker_collection.update_one(
-        {'_id': ObjectId(_id)},
-        {'$set': worker.database_dict()}
-    )
-    if len(worker_images) > 0 or result.modified_count == 1:
-        return jsonify(
-            message='Worker updated in the database using the id.',
-            status=200
+
+    worker_document.pop('_id', None)
+
+    try:
+        result = worker_collection.update_one(
+            {'_id': ObjectId(_id)},
+            {'$set': worker.database_dict()}
         )
+        if result.modified_count == 1:
+            # Update Elasticsearch document
+            try:
+                json_data = json.dumps(worker_document, cls=CustomJSONEncoder)
+                elasticsearch_client.client.index(index='workers', id=_id, body=json_data, refresh=True)
+                return jsonify(
+                    message='Worker updated in the database and Elasticsearch index using the id.',
+                    status=200
+                )
+            except Exception as e:
+                logging.error(f"Error occurred during Elasticsearch update: {e}")
+                return jsonify(
+                    message='Worker updated in the database, but failed to update in Elasticsearch index.',
+                    status=500
+                )
+    except errors.OperationFailure:
+        return jsonify(
+            message='Worker not updated in the database using the id.',
+            status=500
+        )
+
     return jsonify(
-        message='Worker not updated in the database using the id.',
+        message='Worker not found or not updated in the database using the id.',
         status=500
     )
 
@@ -194,19 +285,30 @@ def delete_worker_by_id(_id: str) -> Response:
     :param _id: Worker's id
     :return: Response object with a message describing if the worker was deleted and the status code
     """
-    worker_document = read_worker_by_id(_id=_id).json['data']
+    worker_document = worker_collection.find_one({'_id': ObjectId(_id)})
 
-    image_paths = [worker_document['banner_image_path'], worker_document['profile_image_path']]
-    delete_images_from_aws_s3(image_paths=image_paths)
+    if worker_document:
+        image_paths = [worker_document['banner_image_path'], worker_document['profile_image_path']]
+        delete_images_from_aws_s3(image_paths=image_paths)
 
-    result = worker_collection.delete_one({'_id': ObjectId(_id)})
-    if result.deleted_count == 1:
-        return jsonify(
-            message='Worker deleted from the database using the id.',
-            status=200
-        )
+        result = worker_collection.delete_one({'_id': ObjectId(_id)})
+        if result.deleted_count == 1:
+            try:
+                # Delete the worker document from the Elasticsearch index
+                elasticsearch_client.delete(index_name='workers', id_=str(_id))
+                return jsonify(
+                    message='Worker deleted from the database and Elasticsearch index using the id.',
+                    status=200
+                )
+            except Exception as e:
+                logging.error(f"Failed to delete worker document from Elasticsearch index: {e}")
+                return jsonify(
+                    message='Worker deleted from the database, but failed to delete from Elasticsearch index.',
+                    status=500
+                )
+
     return jsonify(
-        message='Worker not deleted from the database using the id.',
+        message='Worker not found or not deleted from the database using the id.',
         status=500
     )
 

@@ -32,7 +32,6 @@ def update_service_provider_metadata(service_provider_document: dict) -> dict:
     :return: A updated service provider document
     """
     service_provider_document['metadata']['total_categories'] = len(service_provider_document['categories'])
-    service_provider_document['metadata']['total_flags'] = len(service_provider_document['flags'])
     service_provider_document['metadata']['total_reviews'] = len(service_provider_document['reviews'])
 
     for category_document in service_provider_document['categories']:

@@ -29,5 +29,5 @@ class Review:
         self.customer_id = str(review_document['customer_id'])
         self.feedback = str(review_document['feedback'])
         self._id = ObjectId(review_document['_id']) if ObjectId.is_valid(review_document['_id']) else ObjectId()
-        self.metadata = ReviewMetadata(review_document['metadata']).__dict__
+        self.metadata = review_document.get('metadata') or {}
         self.rating = int(review_document['rating'])

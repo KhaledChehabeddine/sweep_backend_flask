@@ -3,13 +3,18 @@
 A controller that assigns a child blueprint to sweep_api_v1 with routes for functions to create, read, update, and
 delete companies from the database
 """
+import json
+from datetime import datetime
 from typing import Any
 from bson import ObjectId
+from elasticsearch import NotFoundError
 from flask import Blueprint, Response, jsonify, request
 from pymongo import ASCENDING, errors
 from app.aws.aws_s3_client import upload_images_to_aws_s3, delete_images_from_aws_s3
-from app.controllers.user.worker_controller import read_workers_by_company_id
+from app.controllers.user.worker_controller import read_workers_by_company_id, convert_object_ids
 from app.database.database import get_database
+from app.elasticsearch.elasticsearch_client import get_elasticsearch_client
+from app.elasticsearch.elasticsearch_search import search_companies
 from app.functions.create_mongodb_indices import create_service_provider_indexes
 from app.functions.create_object_metadata import create_service_provider_metadata
 from app.functions.update_object_metadata import update_service_provider_metadata
@@ -20,6 +25,18 @@ company_collection = get_database()['companies']
 
 company_collection.create_index([('name', ASCENDING)], unique=True)
 create_service_provider_indexes(service_provider_collection=company_collection)
+elasticsearch_client = get_elasticsearch_client()
+if not elasticsearch_client.client.indices.exists(index='companies'):
+    elasticsearch_client.create_index(index_name='companies', body={})
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        elif isinstance(o, ObjectId):
+            return str(o)
+        return super().default(o)
 
 
 def _configure_company(company_document: dict) -> Company:
@@ -60,8 +77,11 @@ def _configure_company_document(company_document: dict, company_images: list[tup
 @raw_company_api_v1.route('/create', methods=['POST'])
 def create_company() -> Response:
     """
-    :return: Response object with a message describing if the company was created (if yes: add company id) and the
-    status code
+    Create a company.
+
+    Returns:
+        Response: Response object with a message describing if the company was created (if yes: add company id) and the
+        status code.
     """
     company_document = request.json
 
@@ -75,16 +95,32 @@ def create_company() -> Response:
         create_service_provider_metadata(service_provider_document=company_document['service_provider'])
 
     company = Company(company_document=company_document)
+
     try:
+        # Remove the '_id' field from the company document
+        if '_id' in company_document:
+            del company_document['_id']
+
+        # Insert the company document in MongoDB
         company_id = str(company_collection.insert_one(company.database_dict()).inserted_id)
+
+        # Remove the '_id' field from the company document again for Elasticsearch indexing
+        if '_id' in company_document:
+            del company_document['_id']
+
+        # Serialize company_document to JSON with custom encoder
+        json_data = json.dumps(company_document, cls=CustomJSONEncoder)
+
+        # Index the company document in Elasticsearch using the company_id as the document ID
+        elasticsearch_client.client.index(index='companies', id=company_id, body=json_data)
     except errors.OperationFailure:
         return jsonify(
-            message='Company not added to the database.',
+            message='Company not added to the database and Elasticsearch.',
             status=500
         )
     return jsonify(
         data=company_id,
-        message='Company added to the database.',
+        message='Company added to the database and indexed in Elasticsearch.',
         status=200
     )
 
@@ -134,34 +170,91 @@ def read_companies() -> Response:
     )
 
 
+@raw_company_api_v1.route('/search/<string:query>', methods=['GET'])
+def search_companies_endpoint(query: str) -> Response:
+    if query:
+        # Perform the search operation using the query
+        companies = search_companies(query)
+
+        # Convert companies to a list of dictionaries
+        serialized_companies = []
+        for company in companies:
+            serialized_company = company.database_dict()
+            if 'id' in serialized_company:
+                serialized_company['_id'] = str(serialized_company.pop('id'))  # Convert id to _id
+            serialized_companies.append(serialized_company)
+
+        serialized_companies = convert_object_ids(serialized_companies)
+
+        # Return the search results
+        return jsonify(companies=serialized_companies, message='Search results', status=200)
+    else:
+        # Handle the case when no query parameter is provided
+        return jsonify(message='No query parameter provided', status=400)
+
+
+def convert_object_ids(data: Any) -> Any:
+    # Helper function to convert ObjectId to string recursively
+    if isinstance(data, list):
+        return [convert_object_ids(item) for item in data]
+    elif isinstance(data, dict):
+        return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data
+
 @raw_company_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_company_by_id(_id: str) -> Response:
     """
-    :param _id: Company's id
-    :return: Response object with a message describing if the company was updated and the status code
+    Update a company by ID.
+
+    Args:
+        _id (str): The ID of the company to update.
+
+    Returns:
+        Response: Response object with a message describing if the company was updated and the status code.
     """
     company_document = request.json
 
-    company_images = []
-    if company_document['banner_image']:
-        company_images.append(('banner_', company_document['banner_image_path'], company_document['banner_image']))
-    if company_document['logo_image']:
-        company_images.append(('logo_', company_document['logo_image_path'], company_document['logo_image']))
+    company_images = [
+        ('banner_', company_document['banner_image'], company_document['banner_image_path']),
+        ('logo_', company_document['logo_image'], company_document['logo_image_path'])
+    ]
     company_document = _configure_company_document(company_document=company_document, company_images=company_images)
 
-    company_document['service_provider'] = \
-        update_service_provider_metadata(service_provider_document=company_document['service_provider'])
+    company_document['service_provider'] = update_service_provider_metadata(service_provider_document=company_document['service_provider'])
 
     company = Company(company_document=company_document)
     result = company_collection.update_one(
         {'_id': ObjectId(_id)},
         {'$set': company.database_dict()}
     )
-    if len(company_images) > 0 or result.modified_count == 1:
-        return jsonify(
-            message='Company updated in the database using the id.',
-            status=200
-        )
+    if result.modified_count == 1:
+        # Update the company document in Elasticsearch
+        try:
+            # Remove the '_id' field from the company document
+            if '_id' in company_document:
+                del company_document['_id']
+
+            # Serialize company_document to JSON with custom encoder
+            json_data = json.dumps(company_document, cls=CustomJSONEncoder)
+
+            # Update the company document in Elasticsearch using the _id
+            elasticsearch_client.client.update(
+                index='companies',
+                id=_id,
+                body={'doc': json.loads(json_data)}  # Convert JSON string to dictionary
+            )
+            return jsonify(
+                message='Company updated in the database and Elasticsearch using the id.',
+                status=200
+            )
+        except NotFoundError:
+            return jsonify(
+                message='Company not found in Elasticsearch.',
+                status=500
+            )
     return jsonify(
         message='Company not updated in the database using the id.',
         status=500
@@ -171,22 +264,44 @@ def update_company_by_id(_id: str) -> Response:
 @raw_company_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
 def delete_company_by_id(_id: str) -> Response:
     """
-    :param _id: Company's id
-    :return: Response object with a message describing if the company was deleted and the status code
+    Delete a company by ID.
+
+    Args:
+        _id (str): The ID of the company to delete.
+
+    Returns:
+        Response: Response object with a message describing if the company was deleted and the status code.
     """
-    company_document = read_company_by_id(_id=_id).json['data']
+    # Read the company document from MongoDB
+    company_document = company_collection.find_one({'_id': ObjectId(_id)})
+
+    # Check if company_document is None
+    if company_document is None:
+        return jsonify(
+            message='Company not found in the database.',
+            status=404
+        )
 
     image_paths = [company_document['banner_image_path'], company_document['logo_image_path']]
     delete_images_from_aws_s3(image_paths=image_paths)
 
+    # Delete the company document from MongoDB
     result = company_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
-        return jsonify(
-            message='Company deleted from the database using the id.',
-            status=200
-        )
+        try:
+            # Delete the company document from Elasticsearch using the company ID
+            elasticsearch_client.client.delete(index='companies', id=_id)
+            return jsonify(
+                message='Company deleted from the database and Elasticsearch using the id.',
+                status=200
+            )
+        except NotFoundError:
+            return jsonify(
+                message='Company not found in Elasticsearch.',
+                status=500
+            )
     return jsonify(
-        message='Company not deleted from the database using the id.',
+        message='Company not deleted from the database and Elasticsearch using the id.',
         status=500
     )
 

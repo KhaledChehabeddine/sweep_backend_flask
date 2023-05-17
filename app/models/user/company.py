@@ -11,7 +11,6 @@ class Company:
     """
     A class to represent a company model
 
-
     Attributes
     ----------
     banner_image_path : str
@@ -37,7 +36,7 @@ class Company:
     def __init__(self, company_document: dict) -> None:
         self.banner_image_path = company_document['banner_image_path']
         self.banner_image_url = create_cloudfront_url(image_path=self.banner_image_path)
-        self._id = str(company_document['_id'])
+        self._id = str(company_document.get('_id', ''))
         self.logo_image_path = company_document['logo_image_path']
         self.logo_image_url = create_cloudfront_url(image_path=self.logo_image_path)
         self.name = company_document['name']

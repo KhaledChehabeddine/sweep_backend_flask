@@ -24,6 +24,9 @@ def create_category_metadata(category_document: dict) -> dict:
     :param category_document: A category document
     :return: A dictionary representation of the category metadata
     """
+    for service_item_document in category_document['service_items']:
+        service_item_document['metadata'] = create_service_item_metadata(service_item_document=service_item_document)
+
     return {
         'created_date': datetime.now(),
         'total_service_items': len(category_document['service_items']),
@@ -106,7 +109,6 @@ def create_service_provider_metadata(service_provider_document: dict) -> dict:
     :return: A dictionary representation of the service provider metadata
     """
     service_provider_document['metadata']['total_categories'] = len(service_provider_document['categories'])
-    service_provider_document['metadata']['total_flags'] = len(service_provider_document['flags'])
     service_provider_document['metadata']['total_reviews'] = len(service_provider_document['reviews'])
 
     for category_document in service_provider_document['categories']:
@@ -154,3 +156,19 @@ def create_search_result_category_metadata():
         'created_date': datetime.now(),
         'updated_date': datetime.now()
     }
+
+
+def create_service_item_metadata(service_item_document: dict) -> dict:
+    """
+    :param service_item_document: A service item document
+    :return: A dictionary representation of the service item metadata
+    """
+    service_item_image = ('', service_item_document['image'], service_item_document['image_path'])
+    service_item_document['metadata'] = upload_image_to_aws_s3(
+        object_metadata_document=service_item_document['metadata'],
+        object_image=service_item_image
+    ).json['data']
+    service_item_document['metadata']['created_date'] = datetime.now()
+    service_item_document['metadata']['updated_date'] = datetime.now()
+
+    return service_item_document['metadata']

@@ -19,6 +19,6 @@ class CategoryMetadata:
     """
 
     def __init__(self, category_metadata_document) -> None:
-        self.created_date = category_metadata_document['created_date']
-        self.total_service_items = int(category_metadata_document['total_service_items'])
-        self.updated_date = category_metadata_document['updated_date']
+        self.created_date = category_metadata_document.get('created_date')
+        self.total_service_items = int(category_metadata_document.get('total_service_items', 0))
+        self.updated_date = category_metadata_document.get('updated_date')

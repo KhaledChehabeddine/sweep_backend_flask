@@ -32,17 +32,34 @@ class ServiceProvider:
     """
 
     def __init__(self, service_provider_document: dict) -> None:
-        self.average_rating = float(service_provider_document['average_rating'])
+        self.average_rating = float(service_provider_document.get('average_rating', 0.0))
         self.categories = [
             Category(category_document=category_document).__dict__
-            for category_document in service_provider_document['categories']
+            for category_document in service_provider_document.get('categories', [])
         ]
-        self.description = str(service_provider_document['description'])
+        self.description = str(service_provider_document.get('description', ''))
         self.metadata = ServiceProviderMetadata(
-            service_provider_metadata_document=service_provider_document['metadata']
+            service_provider_metadata_document=service_provider_document.get('metadata', {})
         ).__dict__
         self.reviews = [
-            Review(review_document=review_document).__dict__ for review_document in service_provider_document['reviews']
+            Review(review_document=review_document).__dict__ for review_document in service_provider_document
+            .get('reviews', [])
         ]
-        self.service_provider_type = str(service_provider_document['service_provider_type'])
-        self.user = User(user_document=service_provider_document['user']).__dict__
+        self.service_provider_type = str(service_provider_document.get('service_provider_type', ''))
+        self.user = User(user_document=service_provider_document.get('user', {})).__dict__
+
+    def database_dict(self) -> dict:
+        """
+        :return: A dictionary representation of the service provider object
+        """
+        provider_dict = {
+            'average_rating': self.average_rating,
+            'categories': self.categories,
+            'description': self.description,
+            'metadata': self.metadata,
+            'reviews': self.reviews,
+            'service_provider_type': self.service_provider_type,
+            'user': self.user
+        }
+
+        return provider_dict

@@ -57,4 +57,4 @@ def create_cloudfront_url(image_path: str) -> str:
     :param image_path: The path of the image
     :return: CloudFront URL for the image in the distribution origin
     """
-    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + "" + image_path
+    return os.getenv('AWS_CLOUDFRONT_DOMAIN_NAME') + image_path

@@ -2,9 +2,11 @@
 
 A worker model used to convert a worker document into a worker object
 """
+
 from app.aws.aws_cloudfront_client import create_cloudfront_url
 from app.models.user.service_provider import ServiceProvider
 from app.models.user.metadata.worker_metadata import WorkerMetadata
+from bson import ObjectId
 
 
 class Worker:
@@ -41,24 +43,24 @@ class Worker:
     """
 
     def __init__(self, worker_document: dict) -> None:
-        self.banner_image_path = str(worker_document['banner_image_path'])
+        self.banner_image_path = str(worker_document.get('banner_image_path', ''))
         self.banner_image_url = create_cloudfront_url(image_path=self.banner_image_path)
-        self.company_id = str(worker_document['company_id'])
-        self.first_name = str(worker_document['first_name'])
-        self._id = str(worker_document['_id'])
-        self.last_name = str(worker_document['last_name'])
-        self.metadata = WorkerMetadata(worker_document['metadata']).__dict__
-        self.middle_name = str(worker_document['middle_name'])
-        self.profile_image_path = str(worker_document['profile_image_path'])
+        self.company_id = str(worker_document.get('company_id', ''))
+        self.first_name = str(worker_document.get('first_name', ''))
+        self._id = str(worker_document.get('_id', ''))
+        self.last_name = str(worker_document.get('last_name', ''))
+        self.metadata = WorkerMetadata(worker_document.get('metadata', {})).__dict__
+        self.middle_name = str(worker_document.get('middle_name', ''))
+        self.profile_image_path = str(worker_document.get('profile_image_path', ''))
         self.profile_image_url = create_cloudfront_url(image_path=self.profile_image_path)
-        self.service_category_id = str(worker_document['service_category_id'])
-        self.service_provider = ServiceProvider(worker_document['service_provider']).__dict__
+        self.service_category_id = str(worker_document.get('service_category_id', ''))
+        self.service_provider = ServiceProvider(worker_document.get('service_provider', {}))
 
     def database_dict(self) -> dict:
         """
         :return: A dictionary representation of the worker object (without _id)
         """
-        return {
+        worker_dict = {
             'banner_image_path': self.banner_image_path,
             'banner_image_url': self.banner_image_url,
             'company_id': self.company_id,
@@ -69,5 +71,12 @@ class Worker:
             'profile_image_path': self.profile_image_path,
             'profile_image_url': self.profile_image_url,
             'service_category_id': self.service_category_id,
-            'service_provider': self.service_provider,
         }
+
+        if isinstance(self._id, ObjectId):
+            worker_dict['_id'] = str(self._id)
+
+        if isinstance(self.service_provider, ServiceProvider):
+            worker_dict['service_provider'] = self.service_provider.database_dict()
+
+        return worker_dict

@@ -19,5 +19,5 @@ class ServiceProviderMetadata:
     """
 
     def __init__(self, service_provider_metadata_document: dict) -> None:
-        self.total_categories = int(service_provider_metadata_document['total_categories'])
-        self.total_reviews = int(service_provider_metadata_document['total_reviews'])
+        self.total_categories = int(service_provider_metadata_document.get('total_categories', 0))
+        self.total_reviews = int(service_provider_metadata_document.get('total_reviews', 0))
