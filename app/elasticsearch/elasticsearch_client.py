@@ -30,7 +30,7 @@ def _create_basic_auth_header(username, password):
     :param password: the password to be used for basic authentication
     :return: a base64 encoded string of the username and password
     """
-    credentials = f"{username}:{password}"
+    credentials = "%s:%s" % (username, password)
     credentials_bytes = credentials.encode("utf-8")
     credentials_base64 = b64encode(credentials_bytes).decode("utf-8")
     return credentials_base64
@@ -59,9 +59,9 @@ class ElasticsearchClient:
         try:
             headers = {}
             if api_key:
-                headers["Authorization"] = f"ApiKey {api_key}"
+                headers["Authorization"] = "ApiKey %s" % api_key
             else:
-                headers["Authorization"] = f"Basic {_create_basic_auth_header(username, password)}"
+                headers["Authorization"] = "Basic %s" % _create_basic_auth_header(username, password)
 
             self.client = Elasticsearch(
                 [url],
@@ -70,9 +70,9 @@ class ElasticsearchClient:
             )
 
             if not self.client.ping():
-                raise ConnectionError(f"Failed to ping Elasticsearch at {url}")
+                raise ConnectionError("Failed to ping Elasticsearch at %s" % url)
         except Exception as e:
-            logging.error(f"Failed to connect to Elasticsearch at {url}: {e}")
+            logging.error("Failed to connect to Elasticsearch at %s: %s", url, e)
             raise
 
     def create_index(self, index_name, body):
@@ -83,9 +83,9 @@ class ElasticsearchClient:
         """
         try:
             self.client.indices.create(index=index_name, body=body)  # Update the method call
-            logging.info(f"Elasticsearch index {index_name} created")
+            logging.info("Elasticsearch index %s created", index_name)
         except Exception as e:
-            logging.error(f"Failed to create Elasticsearch index {index_name}: {e}")
+            logging.error("Failed to create Elasticsearch index %s: %s", index_name, e)
 
     def delete_index(self, index_name):
         """
@@ -94,11 +94,11 @@ class ElasticsearchClient:
         """
         try:
             self.client.indices.delete(index=index_name)
-            logging.info(f"Elasticsearch index {index_name} deleted")
+            logging.info("Elasticsearch index %s deleted", index_name)
         except NotFoundError:
-            logging.info(f"Elasticsearch index {index_name} not found")
+            logging.info("Elasticsearch index %s not found", index_name)
         except Exception as e:
-            logging.error(f"Failed to delete Elasticsearch index {index_name}: {e}")
+            logging.error("Failed to delete Elasticsearch index %s: %s", index_name, e)
 
     def search(self, index_name, body):
         """
@@ -110,7 +110,7 @@ class ElasticsearchClient:
             res = self.client.search(index=index_name, body=body)
             return res
         except Exception as e:
-            logging.error(f"Failed to perform search in Elasticsearch index {index_name}: {e}")
+            logging.error("Failed to perform search in Elasticsearch index %s: %s", index_name, e)
             return None
 
     def delete(self, index_name, id_):
@@ -125,8 +125,8 @@ class ElasticsearchClient:
             self.client.delete(index=index_name, id=id_)
             return True
         except NotFoundError:
-            logging.info(f"Document with id {id_} not found in Elasticsearch index {index_name}")
+            logging.info("Document with id %s not found in Elasticsearch index %s", id_, index_name)
             return False
         except Exception as e:
-            logging.error(f"Failed to delete document from Elasticsearch index {index_name}: {e}")
+            logging.error("Failed to delete document from Elasticsearch index %s: %s", index_name, e)
             return False

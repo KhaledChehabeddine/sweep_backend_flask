@@ -31,6 +31,15 @@ if not elasticsearch_client.client.indices.exists(index='companies'):
 
 
 class CustomJSONEncoder(json.JSONEncoder):
+    """
+    Custom JSON encoder that extends the default JSONEncoder class.
+
+    This encoder provides customized serialization for specific types, such as datetime and ObjectId.
+
+    Usage:
+    json.dumps(data, cls=CustomJSONEncoder)
+    """
+
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
@@ -77,11 +86,8 @@ def _configure_company_document(company_document: dict, company_images: list[tup
 @raw_company_api_v1.route('/create', methods=['POST'])
 def create_company() -> Response:
     """
-    Create a company.
-
-    Returns:
-        Response: Response object with a message describing if the company was created (if yes: add company id) and the
-        status code.
+    :return: Response object with a message describing if the company was created (if yes: add company id) and the
+    status code.
     """
     company_document = request.json
 
@@ -101,7 +107,6 @@ def create_company() -> Response:
         if '_id' in company_document:
             del company_document['_id']
 
-        # Insert the company document in MongoDB
         company_id = str(company_collection.insert_one(company.database_dict()).inserted_id)
 
         if '_id' in company_document:
@@ -109,7 +114,7 @@ def create_company() -> Response:
 
         json_data = json.dumps(company_document, cls=CustomJSONEncoder)
 
-        elasticsearch_client.client.index(index='companies', id=company_id, body=json_data)
+        elasticsearch_client.client.index(index='companies', id=company_id, document="", body=json_data)
     except errors.OperationFailure:
         return jsonify(
             message='Company not added to the database and Elasticsearch.',
@@ -169,6 +174,10 @@ def read_companies() -> Response:
 
 @raw_company_api_v1.route('/search/<string:query>', methods=['GET'])
 def search_companies_endpoint(query: str) -> Response:
+    """
+    :param query: The search query.
+    :return: A response object containing the search results as a list of serialized companies.
+    """
     if query:
         companies = search_companies(query)
 
