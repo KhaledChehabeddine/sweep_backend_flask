@@ -2,11 +2,10 @@
 
 A worker model used to convert a worker document into a worker object
 """
-
-from app.aws.aws_cloudfront_client import create_cloudfront_url
 from app.models.user.service_provider import ServiceProvider
 from app.models.user.metadata.worker_metadata import WorkerMetadata
 from bson import ObjectId
+from app.aws.aws_cloudfront_client import create_cloudfront_url
 
 
 class Worker:

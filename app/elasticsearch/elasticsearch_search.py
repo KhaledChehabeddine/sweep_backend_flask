@@ -5,9 +5,6 @@ A set of functions to search for workers and companies based on a given query.
 """
 import functools
 import time
-
-from elasticsearch import NotFoundError
-
 from app.elasticsearch.elasticsearch_index import es
 from app.elasticsearch.elasticsearch_settings import WORKER_INDEX_NAME, COMPANY_INDEX_NAME
 from app.models.user.company import Company
@@ -15,6 +12,12 @@ from app.models.user.worker import Worker
 
 
 def cache(expiration_time):
+    """
+    Cache decorator to cache function results for a specified expiration time.
+
+    :param expiration_time: The expiration time in seconds for the cache.
+    :return: A decorator function.
+    """
     cache_dict = {}
 
     def decorator(func):

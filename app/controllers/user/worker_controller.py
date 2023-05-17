@@ -15,7 +15,7 @@ from app.database.database import get_database
 from app.elasticsearch.elasticsearch_client import get_elasticsearch_client
 from app.elasticsearch.elasticsearch_search import search_workers
 from app.functions.create_mongodb_indices import create_service_provider_indexes
-from app.functions.create_object_metadata import create_service_provider_metadata
+from app.functions.create_object_metadata import create_service_provider_metadata, convert_object_ids
 from app.functions.update_object_metadata import update_service_provider_metadata
 from app.models.user.worker import Worker
 
@@ -211,18 +211,6 @@ def search_workers_endpoint(query: str) -> Response:
     else:
         # Handle the case when no query parameter is provided
         return jsonify(message='No query parameter provided', status=400)
-
-
-def convert_object_ids(data: Any) -> Any:
-    # Helper function to convert ObjectId to string recursively
-    if isinstance(data, list):
-        return [convert_object_ids(item) for item in data]
-    elif isinstance(data, dict):
-        return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
-    elif isinstance(data, ObjectId):
-        return str(data)
-    else:
-        return data
 
 
 @raw_worker_api_v1.route('/update/id/<string:_id>', methods=['PUT'])

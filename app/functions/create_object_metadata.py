@@ -3,6 +3,10 @@
 Functions to create metadata for their respective object
 """
 from datetime import datetime
+from typing import Any
+
+from bson import ObjectId
+
 from app.aws.aws_s3_client import upload_image_to_aws_s3
 
 
@@ -172,3 +176,15 @@ def create_service_item_metadata(service_item_document: dict) -> dict:
     service_item_document['metadata']['updated_date'] = datetime.now()
 
     return service_item_document['metadata']
+
+
+def convert_object_ids(data: Any) -> Any:
+    # Helper function to convert ObjectId to string recursively
+    if isinstance(data, list):
+        return [convert_object_ids(item) for item in data]
+    elif isinstance(data, dict):
+        return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data

@@ -34,7 +34,7 @@ class CustomJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
-        elif isinstance(o, ObjectId):
+        if isinstance(o, ObjectId):
             return str(o)
         return super().default(o)
 
@@ -104,14 +104,11 @@ def create_company() -> Response:
         # Insert the company document in MongoDB
         company_id = str(company_collection.insert_one(company.database_dict()).inserted_id)
 
-        # Remove the '_id' field from the company document again for Elasticsearch indexing
         if '_id' in company_document:
             del company_document['_id']
 
-        # Serialize company_document to JSON with custom encoder
         json_data = json.dumps(company_document, cls=CustomJSONEncoder)
 
-        # Index the company document in Elasticsearch using the company_id as the document ID
         elasticsearch_client.client.index(index='companies', id=company_id, body=json_data)
     except errors.OperationFailure:
         return jsonify(
@@ -173,10 +170,8 @@ def read_companies() -> Response:
 @raw_company_api_v1.route('/search/<string:query>', methods=['GET'])
 def search_companies_endpoint(query: str) -> Response:
     if query:
-        # Perform the search operation using the query
         companies = search_companies(query)
 
-        # Convert companies to a list of dictionaries
         serialized_companies = []
         for company in companies:
             serialized_company = company.database_dict()
@@ -186,23 +181,10 @@ def search_companies_endpoint(query: str) -> Response:
 
         serialized_companies = convert_object_ids(serialized_companies)
 
-        # Return the search results
         return jsonify(companies=serialized_companies, message='Search results', status=200)
     else:
-        # Handle the case when no query parameter is provided
         return jsonify(message='No query parameter provided', status=400)
 
-
-def convert_object_ids(data: Any) -> Any:
-    # Helper function to convert ObjectId to string recursively
-    if isinstance(data, list):
-        return [convert_object_ids(item) for item in data]
-    elif isinstance(data, dict):
-        return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
-    elif isinstance(data, ObjectId):
-        return str(data)
-    else:
-        return data
 
 @raw_company_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_company_by_id(_id: str) -> Response:
@@ -223,7 +205,8 @@ def update_company_by_id(_id: str) -> Response:
     ]
     company_document = _configure_company_document(company_document=company_document, company_images=company_images)
 
-    company_document['service_provider'] = update_service_provider_metadata(service_provider_document=company_document['service_provider'])
+    company_document['service_provider'] = update_service_provider_metadata(service_provider_document=
+                                                                            company_document['service_provider'])
 
     company = Company(company_document=company_document)
     result = company_collection.update_one(
