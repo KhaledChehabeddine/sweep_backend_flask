@@ -3,7 +3,6 @@
 A review model used to convert a review document into a review object
 """
 from bson import ObjectId
-from app.models.components.metadata.review_metadata import ReviewMetadata
 
 
 class Review:

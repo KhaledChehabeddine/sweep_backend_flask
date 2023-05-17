@@ -182,9 +182,8 @@ def convert_object_ids(data: Any) -> Any:
     # Helper function to convert ObjectId to string recursively
     if isinstance(data, list):
         return [convert_object_ids(item) for item in data]
-    elif isinstance(data, dict):
+    if isinstance(data, dict):
         return {convert_object_ids(key): convert_object_ids(value) for key, value in data.items()}
-    elif isinstance(data, ObjectId):
+    if isinstance(data, ObjectId):
         return str(data)
-    else:
-        return data
+    return data

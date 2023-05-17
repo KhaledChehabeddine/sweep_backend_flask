@@ -25,10 +25,9 @@ def cache(expiration_time):
         def wrapper(*args):
             if args in cache_dict and time.time() - cache_dict[args][0] < expiration_time:
                 return cache_dict[args][1]
-            else:
-                result = func(*args)
-                cache_dict[args] = (time.time(), result)
-                return result
+            result = func(*args)
+            cache_dict[args] = (time.time(), result)
+            return result
 
         return wrapper
 

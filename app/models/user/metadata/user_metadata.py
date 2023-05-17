@@ -32,5 +32,4 @@ class UserMetadata:
             return date_string
         if isinstance(date_string, datetime):
             return date_string.strftime('%Y-%m-%dT%H:%M:%S.%f')
-        else:
-            return ''
+        return ''

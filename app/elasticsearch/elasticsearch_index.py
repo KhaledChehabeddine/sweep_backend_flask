@@ -15,7 +15,7 @@ def create_indices():
         except elasticsearch.exceptions.BadRequestError as e:
             logging.error("Failed to create Elasticsearch index %s: %s", WORKER_INDEX_NAME, e)
     else:
-        print("Elasticsearch index %s already exists" % WORKER_INDEX_NAME)
+        print(f"Elasticsearch index {WORKER_INDEX_NAME} already exists")
 
     if not es.indices.exists(index=COMPANY_INDEX_NAME):
         try:
@@ -24,7 +24,7 @@ def create_indices():
         except elasticsearch.exceptions.BadRequestError as e:
             logging.error("Failed to create Elasticsearch index %s: %s", COMPANY_INDEX_NAME, e)
     else:
-        print("Elasticsearch index %s already exists" % COMPANY_INDEX_NAME)
+        print(f"Elasticsearch index {COMPANY_INDEX_NAME} already exists")
 
 
 def index_workers(workers):
