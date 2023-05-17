@@ -179,7 +179,10 @@ def create_service_item_metadata(service_item_document: dict) -> dict:
 
 
 def convert_object_ids(data: Any) -> Any:
-    # Helper function to convert ObjectId to string recursively
+    """
+    :param data:
+    :return: The data with ObjectId instances converted to strings.
+    """
     if isinstance(data, list):
         return [convert_object_ids(item) for item in data]
     if isinstance(data, dict):

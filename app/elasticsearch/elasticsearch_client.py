@@ -71,7 +71,7 @@ class ElasticsearchClient:
 
             if not self.client.ping():
                 raise ConnectionError("Failed to ping Elasticsearch at %s" % url)
-        except Exception as e:
+        except Exception as error:
             logging.error("Failed to connect to Elasticsearch at %s: %s", url, e)
             raise
 
@@ -84,7 +84,7 @@ class ElasticsearchClient:
         try:
             self.client.indices.create(index=index_name, body=body)  # Update the method call
             logging.info("Elasticsearch index %s created", index_name)
-        except Exception as e:
+        except Exception as error:
             logging.error("Failed to create Elasticsearch index %s: %s", index_name, e)
 
     def delete_index(self, index_name):
@@ -97,7 +97,7 @@ class ElasticsearchClient:
             logging.info("Elasticsearch index %s deleted", index_name)
         except NotFoundError:
             logging.info("Elasticsearch index %s not found", index_name)
-        except Exception as e:
+        except Exception as error:
             logging.error("Failed to delete Elasticsearch index %s: %s", index_name, e)
 
     def search(self, index_name, body):
@@ -109,7 +109,7 @@ class ElasticsearchClient:
         try:
             res = self.client.search(index=index_name, body=body)
             return res
-        except Exception as e:
+        except Exception as error:
             logging.error("Failed to perform search in Elasticsearch index %s: %s", index_name, e)
             return None
 
@@ -127,6 +127,6 @@ class ElasticsearchClient:
         except NotFoundError:
             logging.info("Document with id %s not found in Elasticsearch index %s", id_, index_name)
             return False
-        except Exception as e:
+        except Exception as error:
             logging.error("Failed to delete document from Elasticsearch index %s: %s", index_name, e)
             return False
