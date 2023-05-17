@@ -30,8 +30,7 @@ class UserMetadata:
     def _format_datetime(date_string: Any) -> str:
         if isinstance(date_string, str):
             return date_string
-        elif isinstance(date_string, datetime):
+        if isinstance(date_string, datetime):
             return date_string.strftime('%Y-%m-%dT%H:%M:%S.%f')
         else:
             return ''
-
