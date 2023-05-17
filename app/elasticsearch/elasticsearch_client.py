@@ -71,8 +71,8 @@ class ElasticsearchClient:
 
             if not self.client.ping():
                 raise ConnectionError("Failed to ping Elasticsearch at %s" % url)
-        except Exception as e:
-            logging.error("Failed to connect to Elasticsearch at %s: %s", url, e)
+        except Exception:
+            logging.error("Failed to connect to Elasticsearch at %s: %s", url, Exception)
             raise
 
     def create_index(self, index_name, body):
