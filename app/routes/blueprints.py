@@ -12,6 +12,7 @@ from app.controllers.home.home_sub_feature_controller import home_sub_feature_ap
 from app.controllers.search.search_category_controller import search_category_api_v1
 from app.controllers.search.search_controller import search_api_v1
 from app.controllers.user.company_controller import company_api_v1
+from app.controllers.user.customer_controller import customer_api_v1
 from app.controllers.user.worker_controller import worker_api_v1
 
 raw_sweep_api_v1 = Blueprint('sweep_api_v1', __name__, url_prefix='/api/v1/sweep')
@@ -26,5 +27,6 @@ raw_sweep_api_v1.register_blueprint(search_category_api_v1)
 raw_sweep_api_v1.register_blueprint(service_category_api_v1)
 raw_sweep_api_v1.register_blueprint(worker_api_v1)
 raw_sweep_api_v1.register_blueprint(reservation_api_v1)
+raw_sweep_api_v1.register_blueprint(customer_api_v1)
 
 sweep_api_v1 = raw_sweep_api_v1
