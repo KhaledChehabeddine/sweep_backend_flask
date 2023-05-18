@@ -28,10 +28,10 @@ class WorkerMetadata:
     """
 
     def __init__(self, worker_metadata_document: dict) -> None:
-        self.banner_image_format = str(worker_metadata_document['banner_image_format'])
-        self.banner_image_height = int(worker_metadata_document['banner_image_height'])
-        self.banner_image_width = int(worker_metadata_document['banner_image_width'])
-        self.formatted_name = str(worker_metadata_document['formatted_name'])
-        self.profile_image_format = str(worker_metadata_document['profile_image_format'])
-        self.profile_image_height = int(worker_metadata_document['profile_image_height'])
-        self.profile_image_width = int(worker_metadata_document['profile_image_width'])
+        self.banner_image_format = worker_metadata_document.get('banner_image_format')
+        self.banner_image_height = worker_metadata_document.get('banner_image_height')
+        self.banner_image_width = worker_metadata_document.get('banner_image_width')
+        self.formatted_name = worker_metadata_document.get('formatted_name')
+        self.profile_image_format = worker_metadata_document.get('profile_image_format')
+        self.profile_image_height = worker_metadata_document.get('profile_image_height')
+        self.profile_image_width = worker_metadata_document.get('profile_image_width')

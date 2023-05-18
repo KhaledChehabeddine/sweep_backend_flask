@@ -15,4 +15,4 @@ class ReviewMetadata:
     """
 
     def __init__(self, review_metadata_document) -> None:
-        self.created_date = review_metadata_document['created_date']
+        self.created_date = review_metadata_document.get('created_date')

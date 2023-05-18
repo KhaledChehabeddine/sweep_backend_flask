@@ -21,6 +21,9 @@ def update_home_feature_metadata(home_feature_metadata_document: dict) -> dict:
     :param home_feature_metadata_document: A home feature metadata document
     :return: A updated home feature metadata document
     """
+    if 'created_date' not in home_feature_metadata_document:
+        home_feature_metadata_document['created_date'] = datetime.now()
+
     home_feature_metadata_document['updated_date'] = datetime.now()
 
     return home_feature_metadata_document
@@ -32,7 +35,6 @@ def update_service_provider_metadata(service_provider_document: dict) -> dict:
     :return: A updated service provider document
     """
     service_provider_document['metadata']['total_categories'] = len(service_provider_document['categories'])
-    service_provider_document['metadata']['total_flags'] = len(service_provider_document['flags'])
     service_provider_document['metadata']['total_reviews'] = len(service_provider_document['reviews'])
 
     for category_document in service_provider_document['categories']:
