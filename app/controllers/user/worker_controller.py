@@ -121,6 +121,26 @@ def create_worker() -> Response:
     )
 
 
+@raw_worker_api_v1.route('/login/username/<string:username>/password/<string:password>', methods=['POST'])
+def login_worker(username: str, password: str) -> Response:
+    """
+    :return: Response object with a message describing if the customer was logged in and the status code
+    """
+    worker = worker_collection.find_one({'user.username': username})
+    if worker:
+        worker = Worker(worker_document=worker)
+        if worker.service_provider.user.password == password:
+            return jsonify(
+                data=worker.__dict__,
+                message='Worker logged in.',
+                status=200
+            )
+    return jsonify(
+        message='Worker not logged in.',
+        status=404
+    )
+
+
 @raw_worker_api_v1.route('/read/id/<string:_id>', methods=['GET'])
 def read_worker_by_id(_id: str) -> Response:
     """
@@ -301,7 +321,6 @@ def delete_worker_by_id(_id: str) -> Response:
     )
 
 
-# Get service provider by service category id and return a response object
 @raw_worker_api_v1.route('/read/service_category_id/<string:service_category_id>', methods=['GET'])
 def read_workers_by_service_category_id(service_category_id: str) -> Response:
     """

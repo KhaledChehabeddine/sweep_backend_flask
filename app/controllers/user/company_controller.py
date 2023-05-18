@@ -120,6 +120,27 @@ def create_company() -> Response:
     )
 
 
+@raw_company_api_v1.route('/login/username/<string:username>/password/<string:password>', methods=['POST'])
+def login_company(username: str, password: str) -> Response:
+    """
+    :return: Response object with a message describing if the customer was logged in and the status code
+    """
+    company = company_collection.find_one({'user.username': username})
+    if company:
+        company = Company(company_document=company)
+        if company.service_provider.user.password == password:
+            return jsonify(
+                data=company.__dict__,
+                message='Company logged in.',
+                status=200
+            )
+    return jsonify(
+        message='Company not logged in.',
+        status=404
+    )
+
+
+
 @raw_company_api_v1.route('/indexCompanies', methods=['POST'])
 def index_workers():
     """

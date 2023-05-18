@@ -138,6 +138,26 @@ def read_all_customer_reservations_by_id(_id: str) -> Response:
     )
 
 
+@raw_customer_api_v1.route('/login/username/<string:username>/password/<string:password>', methods=['POST'])
+def login_customer(username: str, password: str) -> Response:
+    """
+    :return: Response object with a message describing if the customer was logged in and the status code
+    """
+    customer = customer_collection.find_one({'user.username': username})
+    if customer:
+        customer = Customer(customer_document=customer)
+        if customer.user.password == password:
+            return jsonify(
+                data=customer.__dict__,
+                message='Customer logged in.',
+                status=200
+            )
+    return jsonify(
+        message='Customer not logged in.',
+        status=404
+    )
+
+
 @raw_customer_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_customer_by_id(_id: str) -> Response:
     """
