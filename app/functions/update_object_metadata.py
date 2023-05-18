@@ -21,6 +21,9 @@ def update_home_feature_metadata(home_feature_metadata_document: dict) -> dict:
     :param home_feature_metadata_document: A home feature metadata document
     :return: A updated home feature metadata document
     """
+    if 'created_date' not in home_feature_metadata_document:
+        home_feature_metadata_document['created_date'] = datetime.now()
+
     home_feature_metadata_document['updated_date'] = datetime.now()
 
     return home_feature_metadata_document

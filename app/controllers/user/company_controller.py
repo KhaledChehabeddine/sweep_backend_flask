@@ -32,14 +32,8 @@ if not elasticsearch_client.client.indices.exists(index='companies'):
 
 class CustomJSONEncoder(json.JSONEncoder):
     """
-    Custom JSON encoder that extends the default JSONEncoder class.
-
-    This encoder provides customized serialization for specific types, such as datetime and ObjectId.
-
-    Usage:
-    json.dumps(data, cls=CustomJSONEncoder)
+    :return: A JSON encoder that converts datetime objects to isoformat and ObjectId objects to strings
     """
-
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
@@ -103,7 +97,6 @@ def create_company() -> Response:
     company = Company(company_document=company_document)
 
     try:
-        # Remove the '_id' field from the company document
         if '_id' in company_document:
             del company_document['_id']
 
@@ -127,12 +120,30 @@ def create_company() -> Response:
     )
 
 
+@raw_company_api_v1.route('/indexCompanies', methods=['POST'])
+def index_workers():
+    """
+    :return: Response object with a message describing if the companies were indexed and the status code.
+    """
+    try:
+        companies = company_collection.find()
+
+        for company_document in companies:
+            company_id = str(company_document['_id'])
+            if not elasticsearch_client.client.exists(index='companies', id=company_id):
+                json_data = json.dumps(company_document, cls=CustomJSONEncoder)
+                elasticsearch_client.client.index(index='companies', id=company_id, body=json_data)
+
+        return jsonify(message='Companies indexed in Elasticsearch', status=200)
+    except Exception as e:
+        return jsonify(message='Failed to index companies', error=str(e), status=500)
+
+
 @raw_company_api_v1.route('/read/id/<string:_id>', methods=['GET'])
 def read_company_by_id(_id: str) -> Response:
     """
     :param _id: Company's id
-    :return: Response object with a message describing if the company was found (if yes: add company) and the status
-    code
+    :return: Response object with a message describing if the company was found and the status code
     """
     company_document = company_collection.find_one({'_id': ObjectId(_id)})
     if company_document:
@@ -144,6 +155,34 @@ def read_company_by_id(_id: str) -> Response:
         )
     return jsonify(
         message='Company not found in the database using the id.',
+        status=500
+    )
+
+
+@raw_company_api_v1.route('/read/service_category_id/<string:service_category_id>', methods=['GET'])
+def read_companies_by_service_category_id(service_category_id: str) -> Response:
+    """
+    :param service_category_id: Service category's id
+    :return: Response object with a message describing if the company was found and the status code
+    """
+    company_documents = company_collection.find({
+        'service_category_ids': {
+            '$in': service_category_id
+        }
+    })
+    if company_documents:
+        companies = []
+        for company_document in company_documents:
+            company = _configure_company(company_document=company_document)
+            companies.append(company.__dict__)
+        if companies:
+            return jsonify(
+                data=companies,
+                message='Companies found in the database using the service category id.',
+                status=200
+            )
+    return jsonify(
+        message='No company found in the database using the service category id.',
         status=500
     )
 
@@ -198,13 +237,8 @@ def search_companies_endpoint(query: str) -> Response:
 @raw_company_api_v1.route('/update/id/<string:_id>', methods=['PUT'])
 def update_company_by_id(_id: str) -> Response:
     """
-    Update a company by ID.
-
-    Args:
-        _id (str): The ID of the company to update.
-
-    Returns:
-        Response: Response object with a message describing if the company was updated and the status code.
+    :param _id: Company's id
+    :return: Response object with a message describing if the company was updated and the status code
     """
     company_document = request.json
 
@@ -225,14 +259,11 @@ def update_company_by_id(_id: str) -> Response:
     if result.modified_count == 1:
         # Update the company document in Elasticsearch
         try:
-            # Remove the '_id' field from the company document
             if '_id' in company_document:
                 del company_document['_id']
 
-            # Serialize company_document to JSON with custom encoder
             json_data = json.dumps(company_document, cls=CustomJSONEncoder)
 
-            # Update the company document in Elasticsearch using the _id
             elasticsearch_client.client.update(
                 index='companies',
                 id=_id,
@@ -256,18 +287,11 @@ def update_company_by_id(_id: str) -> Response:
 @raw_company_api_v1.route('/delete/id/<string:_id>', methods=['DELETE'])
 def delete_company_by_id(_id: str) -> Response:
     """
-    Delete a company by ID.
-
-    Args:
-        _id (str): The ID of the company to delete.
-
-    Returns:
-        Response: Response object with a message describing if the company was deleted and the status code.
+    :param _id: Company's id
+    :return: Response object with a message describing if the company was deleted and the status code
     """
-    # Read the company document from MongoDB
     company_document = company_collection.find_one({'_id': ObjectId(_id)})
 
-    # Check if company_document is None
     if company_document is None:
         return jsonify(
             message='Company not found in the database.',
@@ -277,11 +301,9 @@ def delete_company_by_id(_id: str) -> Response:
     image_paths = [company_document['banner_image_path'], company_document['logo_image_path']]
     delete_images_from_aws_s3(image_paths=image_paths)
 
-    # Delete the company document from MongoDB
     result = company_collection.delete_one({'_id': ObjectId(_id)})
     if result.deleted_count == 1:
         try:
-            # Delete the company document from Elasticsearch using the company ID
             elasticsearch_client.client.delete(index='companies', id=_id)
             return jsonify(
                 message='Company deleted from the database and Elasticsearch using the id.',
@@ -296,6 +318,21 @@ def delete_company_by_id(_id: str) -> Response:
         message='Company not deleted from the database and Elasticsearch using the id.',
         status=500
     )
+
+
+@raw_company_api_v1.route('/delete/all/', methods=['DELETE'])
+def delete_all_companies():
+    """
+    :return: response object with a message describing if the workers were deleted and the status code
+    """
+    try:
+        company_collection.delete_many({})
+
+        elasticsearch_client.delete_index(index_name='companies')
+
+        return jsonify(message='All workers deleted from MongoDB and Elasticsearch', status=200)
+    except Exception as e:
+        return jsonify(message='Failed to delete workers', error=str(e), status=500)
 
 
 company_api_v1 = raw_company_api_v1

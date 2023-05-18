@@ -23,6 +23,10 @@ def _configure_home_sub_feature(home_sub_feature_document: dict) -> dict:
     :param home_sub_feature_document: Home sub feature document
     :return: A home sub feature document with configured metadata
     """
+    existing_created_date = home_sub_feature_document['metadata'].get('created_date')
+    if existing_created_date:
+        home_sub_feature_document['metadata']['created_date'] = existing_created_date
+
     home_sub_feature_document['metadata']['total_companies'] = len(home_sub_feature_document['company_ids'])
     home_sub_feature_document['metadata']['total_service_providers'] = len(
         home_sub_feature_document['company_ids'] + home_sub_feature_document['worker_ids']

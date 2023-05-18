@@ -6,7 +6,7 @@ delete workers from the database
 import json
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Any, List
 from bson import ObjectId
 from flask import Blueprint, Response, jsonify, request
 from pymongo import errors
@@ -299,6 +299,48 @@ def delete_worker_by_id(_id: str) -> Response:
         message='Worker not found or not deleted from the database using the id.',
         status=500
     )
+
+
+# Get service provider by service category id and return a response object
+@raw_worker_api_v1.route('/read/service_category_id/<string:service_category_id>', methods=['GET'])
+def read_workers_by_service_category_id(service_category_id: str) -> Response:
+    """
+    :param service_category_id: Service category id
+    :return: Response object with a message describing if the workers were found (if yes: add workers) and the status
+    code
+    """
+    workers = []
+    worker_documents = worker_collection.find({'service_category_id': service_category_id})
+    if worker_documents:
+        for worker_document in worker_documents:
+            worker = _configure_worker(worker_document=worker_document)
+            workers.append(worker.__dict__)
+        if workers:
+            return jsonify(
+                data=workers,
+                message='All workers found in the database.',
+                status=200,
+            )
+    return jsonify(
+        message='No worker found in the database.',
+        status=500
+    )
+
+
+@raw_worker_api_v1.route('/delete/all/', methods=['DELETE'])
+def delete_all_workers():
+    """
+
+    :return: response object with a message describing if the workers were deleted and the status code
+    """
+    try:
+        worker_collection.delete_many({})
+
+        elasticsearch_client.delete_index(index_name='workers')
+
+        return jsonify(message='All workers deleted from MongoDB and Elasticsearch', status=200)
+    except Exception as e:
+        return jsonify(message='Failed to delete workers', error=str(e), status=500)
 
 
 worker_api_v1 = raw_worker_api_v1
