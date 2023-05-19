@@ -194,7 +194,7 @@ def read_companies_by_service_category_id(service_category_id: str) -> Response:
         companies = []
         for company_document in company_documents:
             company = _configure_company(company_document=company_document)
-            companies.append(company._dict_)
+            companies.append(company.__dict__)
         if companies:
             return jsonify(
                 data=companies,
@@ -242,14 +242,14 @@ def search_companies_endpoint(query: str) -> Response:
 
         serialized_companies = []
         for company in companies:
-            serialized_company = company.database_dict()
+            serialized_company = company.__dict__
             if 'id' in serialized_company:
                 serialized_company['_id'] = str(serialized_company.pop('id'))  # Convert id to _id
             serialized_companies.append(serialized_company)
 
         serialized_companies = convert_object_ids(serialized_companies)
 
-        return jsonify(companies=serialized_companies, message='Search results', status=200)
+        return jsonify(data=serialized_companies, message='Search results', status=200)
     else:
         return jsonify(message='No query parameter provided', status=400)
 

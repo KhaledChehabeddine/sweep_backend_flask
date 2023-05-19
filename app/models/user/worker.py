@@ -53,7 +53,7 @@ class Worker:
         self.profile_image_path = str(worker_document.get('profile_image_path', ''))
         self.profile_image_url = create_cloudfront_url(image_path=self.profile_image_path)
         self.service_category_id = str(worker_document.get('service_category_id', ''))
-        self.service_provider = ServiceProvider(worker_document.get('service_provider', {}))
+        self.service_provider = ServiceProvider(worker_document.get('service_provider', {})).__dict__
 
     def database_dict(self) -> dict:
         """
