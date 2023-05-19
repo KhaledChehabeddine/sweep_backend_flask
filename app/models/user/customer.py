@@ -14,13 +14,11 @@ class Customer:
     first_name : str
         Customer's first name
     _id : str
+        Customer's id
     last_name : str
         Customer's last name
-        Customer's id
-    recent_searches : list
+    recent_searches : list[str]
         Customer's recent searches
-    transaction_history : list
-        Customer's transaction history
     user : dict
         Customer's user document
     """
@@ -29,8 +27,7 @@ class Customer:
         self.first_name = str(customer_document['first_name'])
         self._id = str(customer_document['_id'])
         self.last_name = str(customer_document['last_name'])
-        self.recent_searches = customer_document['recent_searches']
-        self.transaction_history = customer_document['transaction_history']
+        self.recent_searches = [str(recent_search) for recent_search in customer_document['recent_searches']]
         self.user = User(user_document=customer_document['user']).__dict__
 
     def database_dict(self) -> dict:
@@ -41,6 +38,5 @@ class Customer:
             'first_name': self.first_name,
             'last_name': self.last_name,
             'recent_searches': self.recent_searches,
-            'transaction_history': self.transaction_history,
             'user': self.user
         }

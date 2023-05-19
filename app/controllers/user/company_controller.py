@@ -107,7 +107,7 @@ def create_company() -> Response:
 
         json_data = json.dumps(company_document, cls=CustomJSONEncoder)
 
-        elasticsearch_client.client.index(index='companies', id=company_id, document="", body=json_data)
+        elasticsearch_client.client.index(index='companies', id=company_id, body=json_data)
     except errors.OperationFailure:
         return jsonify(
             message='Company not added to the database and Elasticsearch.',
@@ -138,7 +138,6 @@ def login_company(username: str, password: str) -> Response:
         message='Company not logged in.',
         status=404
     )
-
 
 
 @raw_company_api_v1.route('/indexCompanies', methods=['POST'])
@@ -188,14 +187,14 @@ def read_companies_by_service_category_id(service_category_id: str) -> Response:
     """
     company_documents = company_collection.find({
         'service_category_ids': {
-            '$in': service_category_id
+            '$in': [service_category_id]
         }
     })
     if company_documents:
         companies = []
         for company_document in company_documents:
             company = _configure_company(company_document=company_document)
-            companies.append(company.__dict__)
+            companies.append(company._dict_)
         if companies:
             return jsonify(
                 data=companies,
