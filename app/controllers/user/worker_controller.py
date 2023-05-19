@@ -218,16 +218,16 @@ def search_workers_endpoint(query: str) -> Response:
         # Convert workers to a list of dictionaries
         serialized_workers = []
         for worker in workers:
-            serialized_worker = worker.database_dict()
+            serialized_worker = worker.__dict__
             if '_id' in serialized_worker:
-                serialized_worker['id'] = str(serialized_worker.pop('_id'))  # Convert ObjectId to string
+                serialized_worker['_id'] = str(serialized_worker.pop('_id'))  # Convert ObjectId to string
             serialized_workers.append(serialized_worker)
 
         # Convert ObjectId fields to strings
         serialized_workers = convert_object_ids(serialized_workers)
 
         # Return the search results
-        return jsonify(workers=serialized_workers, message='Search results', status=200)
+        return jsonify(data=serialized_workers, message='Search results', status=200)
     else:
         # Handle the case when no query parameter is provided
         return jsonify(message='No query parameter provided', status=400)

@@ -146,7 +146,7 @@ def login_customer(username: str, password: str) -> Response:
     customer = customer_collection.find_one({'user.username': username})
     if customer:
         customer = Customer(customer_document=customer)
-        if customer.user.password == password:
+        if customer.user['password'] == password:
             return jsonify(
                 data=customer.__dict__,
                 message='Customer logged in.',
